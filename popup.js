@@ -55,10 +55,19 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // --- LAUNCH SIDE PANEL ---
-  function launchSidePanel() {
-    chrome.runtime.sendMessage({ action: "openSidePanel" }, () => {
-      window.close();
-    });
+  // Fix #1 (Critical): chrome.sidePanel.open() MUST be called within a user gesture
+  // handler in the popup. Relaying through background.js loses the gesture context
+  // and silently fails. We call it directly here.
+  async function launchSidePanel() {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab && chrome.sidePanel?.open) {
+        await chrome.sidePanel.open({ windowId: tab.windowId });
+      }
+    } catch (err) {
+      console.warn("Side panel open failed:", err);
+    }
+    window.close();
   }
 
   if (openSidePanelTopBtn) openSidePanelTopBtn.addEventListener("click", launchSidePanel);
@@ -127,14 +136,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (ruleStripArticles) ruleStripArticles.checked = data.ruleStripArticles !== false;
         if (rulePolishMarkdown) rulePolishMarkdown.checked = data.rulePolishMarkdown !== false;
 
-        // Stats
+        // Stats — Fix #13: guard against null elements to prevent popup blank crashes
         const prompts = data.stats_promptsOptimized || 0;
         const tokens = data.stats_tokensSaved || 0;
         const cost = data.stats_costSaved || 0;
 
-        statPrompts.textContent = formatNumber(prompts);
-        statTokens.textContent = formatNumber(tokens);
-        statCost.textContent = cost > 0 && cost < 0.01 ? `$${cost.toFixed(4)}` : `$${cost.toFixed(2)}`;
+        if (statPrompts) statPrompts.textContent = formatNumber(prompts);
+        if (statTokens) statTokens.textContent = formatNumber(tokens);
+        if (statCost) statCost.textContent = cost > 0 && cost < 0.01 ? `$${cost.toFixed(4)}` : `$${cost.toFixed(2)}`;
 
         // Vault
         vaultPreferences.value = data.vaultPreferences || "";
@@ -142,11 +151,32 @@ document.addEventListener("DOMContentLoaded", () => {
         vaultSmartTriggers.checked = data.vaultSmartTriggers !== false;
         localVaultFiles = data.vaultFiles || [];
         renderVaultFiles();
+
+        // Apply article strip greying after mode is set
+        updateArticleStripState();
       }
     );
   }
 
   // --- SAVE SETTINGS ---
+  // Fix #8: Grey-out "Strip Articles" when not in Squeeze mode — it only activates there.
+  function updateArticleStripState() {
+    if (!ruleStripArticles) return;
+    const mode = document.querySelector('input[name="optimizationMode"]:checked')?.value || "balanced";
+    const isSqueeze = mode === "squeeze";
+    ruleStripArticles.disabled = !isSqueeze;
+    const label = ruleStripArticles.closest("label") || ruleStripArticles.nextElementSibling;
+    if (label) {
+      label.style.opacity = isSqueeze ? "1" : "0.45";
+      label.style.cursor = isSqueeze ? "" : "not-allowed";
+      label.title = isSqueeze ? "" : "Only active in Squeeze mode";
+    }
+  }
+  // Run on mode change
+  document.querySelectorAll('input[name="optimizationMode"]').forEach(radio => {
+    radio.addEventListener("change", updateArticleStripState);
+  });
+
   settingsForm.addEventListener("submit", e => {
     e.preventDefault();
     const mode = document.querySelector('input[name="optimizationMode"]:checked')?.value || "balanced";
@@ -209,10 +239,18 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function processUploadedFiles(files) {
+    const MAX_FILE_BYTES  = 500 * 1024;  // 500 KB per file
+    const MAX_VAULT_BYTES = 3 * 1024 * 1024; // 3 MB total vault
+
     const promises = Array.from(files).map(f => {
       return new Promise(resolve => {
         const ext = f.name.split(".").pop().toLowerCase();
         if (!["txt", "md", "json"].includes(ext)) return resolve(null);
+        // Fix #6: Enforce per-file size limit to prevent storage quota crashes
+        if (f.size > MAX_FILE_BYTES) {
+          alert(`"${f.name}" exceeds the 500 KB limit (${(f.size / 1024).toFixed(0)} KB). Please trim it before uploading.`);
+          return resolve(null);
+        }
         const reader = new FileReader();
         reader.onload = ev => resolve({ name: f.name, content: ev.target.result, size: f.size });
         reader.onerror = () => resolve(null);
@@ -227,8 +265,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const map = new Map();
       localVaultFiles.forEach(f => map.set(f.name, f));
       valid.forEach(f => map.set(f.name, f));
-      localVaultFiles = Array.from(map.values());
+      const merged = Array.from(map.values());
 
+      // Fix #6: Enforce total vault size limit
+      const totalBytes = merged.reduce((sum, f) => sum + (f.size || 0), 0);
+      if (totalBytes > MAX_VAULT_BYTES) {
+        alert(`Vault total would exceed 3 MB (${(totalBytes / 1024 / 1024).toFixed(1)} MB). Remove some files first.`);
+        return;
+      }
+
+      localVaultFiles = merged;
       chrome.storage.local.set({ vaultFiles: localVaultFiles }, () => {
         renderVaultFiles();
       });

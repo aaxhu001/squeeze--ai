@@ -53,6 +53,10 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 });
 
 // --- TOKEN ESTIMATION ENGINE ---
+// NOTE: This is the canonical implementation. Identical copies exist in
+// content.js (estimateTokensLocal) and sidepanel.js for context isolation
+// (content scripts and side panels can't share service worker scope).
+// TODO: Extract to a shared bundle once a build pipeline is added.
 function estimateTokens(text) {
   if (!text || typeof text !== "string") return 0;
   const trimmed = text.trim();
@@ -124,19 +128,28 @@ function maskSensitiveData(text) {
   ];
 
   for (const item of patterns) {
+    // Fix: always reset lastIndex before using global regexes to avoid
+    // the stateful bug where .test() advances lastIndex and .replace() skips matches.
+    item.regex.lastIndex = 0;
+
     if (item.customReplace) {
-      if (item.regex.test(sanitized)) {
+      item.regex.lastIndex = 0;
+      const testCopy = new RegExp(item.regex.source, item.regex.flags);
+      if (testCopy.test(sanitized)) {
+        item.regex.lastIndex = 0;
         sanitized = sanitized.replace(item.regex, (match, p1, p2, p3) => {
           secretsFound.push({ type: item.type, snippet: match.substring(0, 15) + "..." });
           return item.customReplace(match, p1, p2, p3);
         });
       }
     } else {
-      const matches = sanitized.match(item.regex);
-      if (matches && matches.length > 0) {
-        matches.forEach(m => {
-          secretsFound.push({ type: item.type, snippet: m.substring(0, 8) + "..." });
+      item.regex.lastIndex = 0;
+      const allMatches = [...sanitized.matchAll(item.regex)];
+      if (allMatches.length > 0) {
+        allMatches.forEach(m => {
+          secretsFound.push({ type: item.type, snippet: m[0].substring(0, 8) + "..." });
         });
+        item.regex.lastIndex = 0;
         sanitized = sanitized.replace(item.regex, item.replacement);
       }
     }
@@ -478,76 +491,71 @@ function optimizeLocally(text, mode = "balanced", rules = {}) {
 
 // --- CONTEXT VAULT INJECTION ---
 async function processVaultContext(prompt, mode, rules) {
-  return new Promise(resolve => {
-    chrome.storage.local.get(
-      ["vaultPreferences", "vaultPrefAlwaysInject", "vaultSmartTriggers", "vaultFiles", "vaultServerUrl", "vaultServerEnabled"],
-      async data => {
-        const prefs = data.vaultPreferences || "";
-        const alwaysInject = data.vaultPrefAlwaysInject !== false;
-        const smartTriggers = data.vaultSmartTriggers !== false;
-        const files = data.vaultFiles || [];
-        const attachedContexts = [];
-        const contextParts = [];
-        let rawTokens = 0;
+  // chrome.storage.local.get returns a Promise in MV3
+  const data = await chrome.storage.local.get([
+    "vaultPreferences", "vaultPrefAlwaysInject", "vaultSmartTriggers",
+    "vaultFiles", "vaultServerUrl", "vaultServerEnabled"
+  ]);
 
-        // 1. Personal Profile / Preferences
-        if (prefs.trim() && alwaysInject) {
-          rawTokens += estimateTokens(prefs);
-          const optPrefs = optimizeLocally(prefs, "balanced", {
-            ruleStripGreetings: true,
-            ruleSimplifyPhrases: true,
-            ruleAbbreviate: false,
-            ruleStripArticles: false,
-            rulePolishMarkdown: true
-          }).optimized;
-          contextParts.push(`[Developer Profile]\n${optPrefs}`);
-          attachedContexts.push("Developer Profile");
-        }
+  const prefs = data.vaultPreferences || "";
+  const alwaysInject = data.vaultPrefAlwaysInject !== false;
+  const smartTriggers = data.vaultSmartTriggers !== false;
+  const files = data.vaultFiles || [];
+  const attachedContexts = [];
+  const contextParts = [];
+  let rawTokens = 0;
 
-        // 2. Local Files matching keywords
-        if (files.length > 0) {
-          const lowerPrompt = prompt.toLowerCase();
-          for (const f of files) {
-            let matches = false;
-            if (smartTriggers) {
-              const baseTokens = f.name
-                .replace(/\.[a-z0-9]+$/i, "")
-                .toLowerCase()
-                .split(/[^a-z0-9]+/)
-                .filter(w => w.length >= 3 || ["db", "js", "ts", "go", "py", "sql", "api", "auth"].includes(w));
+  // 1. Personal Profile / Preferences
+  if (prefs.trim() && alwaysInject) {
+    rawTokens += estimateTokens(prefs);
+    const optPrefs = optimizeLocally(prefs, "balanced", {
+      ruleStripGreetings: true,
+      ruleSimplifyPhrases: true,
+      ruleAbbreviate: false,
+      ruleStripArticles: false,
+      rulePolishMarkdown: true
+    }).optimized;
+    contextParts.push(`[Developer Profile]\n${optPrefs}`);
+    attachedContexts.push("Developer Profile");
+  }
 
-              for (const tok of baseTokens) {
-                if (new RegExp("\\b" + tok + "\\b", "i").test(lowerPrompt)) {
-                  matches = true;
-                  break;
-                }
-              }
-            } else {
-              matches = true;
-            }
+  // 2. Local Files matching keywords
+  if (files.length > 0) {
+    const lowerPrompt = prompt.toLowerCase();
+    for (const f of files) {
+      let matches = false;
+      if (smartTriggers) {
+        const baseTokens = f.name
+          .replace(/\.[a-z0-9]+$/i, "")
+          .toLowerCase()
+          .split(/[^a-z0-9]+/)
+          .filter(w => w.length >= 3 || ["db", "js", "ts", "go", "py", "sql", "api", "auth"].includes(w));
 
-            if (matches && f.content) {
-              rawTokens += estimateTokens(f.content);
-              const optFile = optimizeLocally(maskSensitiveData(f.content).sanitized, mode, rules).optimized;
-              contextParts.push(`[Context: ${f.name}]\n${optFile}`);
-              attachedContexts.push(f.name);
-            }
+        for (const tok of baseTokens) {
+          if (new RegExp("\\b" + tok + "\\b", "i").test(lowerPrompt)) {
+            matches = true;
+            break;
           }
         }
-
-        let contextBlock = "";
-        if (contextParts.length > 0) {
-          contextBlock = `=== SQUEEZED CONTEXT VAULT ===\n${contextParts.join("\n\n")}\n==============================\n\n`;
-        }
-
-        resolve({
-          contextBlock,
-          attachedContexts,
-          rawContextTokens: rawTokens
-        });
+      } else {
+        matches = true;
       }
-    );
-  });
+
+      if (matches && f.content) {
+        rawTokens += estimateTokens(f.content);
+        const optFile = optimizeLocally(maskSensitiveData(f.content).sanitized, mode, rules).optimized;
+        contextParts.push(`[Context: ${f.name}]\n${optFile}`);
+        attachedContexts.push(f.name);
+      }
+    }
+  }
+
+  let contextBlock = "";
+  if (contextParts.length > 0) {
+    contextBlock = `=== SQUEEZED CONTEXT VAULT ===\n${contextParts.join("\n\n")}\n==============================\n\n`;
+  }
+
+  return { contextBlock, attachedContexts, rawContextTokens: rawTokens };
 }
 
 // --- MESSAGE DISPATCHER ---
@@ -630,8 +638,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           snippet: prompt.substring(0, 60).replace(/\n/g, " ") + (prompt.length > 60 ? "..." : "")
         });
 
-        // Keep last 15 history entries
-        if (history.length > 15) history.pop();
+        // Keep last 15 history entries (splice is safe even if > 1 extra entry)
+        if (history.length > 15) history.splice(15);
 
         await chrome.storage.local.set({
           stats_promptsOptimized: (currentStats.stats_promptsOptimized || 0) + 1,

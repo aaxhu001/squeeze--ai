@@ -249,14 +249,25 @@
     if (summaryBtn) summaryBtn.remove();
     if (vaultBadge) vaultBadge.remove();
 
+    // Helper to make a div accessible as a button
+    function makeAccessibleBtn(el, label) {
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", label);
+      el.setAttribute("tabindex", "0");
+      el.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); el.click(); }
+      });
+    }
+
     // 1. Squeeze Trigger Button
     triggerBtn = document.createElement("div");
     triggerBtn.className = "squeeze-trigger-btn inline-btn";
     triggerBtn.dataset.tooltip = "Squeeze Prompt (Ctrl+Shift+S)";
+    makeAccessibleBtn(triggerBtn, "Squeeze Prompt (Ctrl+Shift+S)");
     triggerBtn.addEventListener("mouseenter", () => showTooltip(triggerBtn, triggerBtn.dataset.tooltip));
     triggerBtn.addEventListener("mouseleave", hideTooltip);
     triggerBtn.innerHTML = `
-      <svg viewBox="0 0 512 512" width="16" height="16" style="display: block; color: inherit;">
+      <svg viewBox="0 0 512 512" width="16" height="16" style="display: block; color: inherit;" aria-hidden="true">
         <rect x="120" y="140" width="272" height="48" rx="24" fill="currentColor"/>
         <rect x="144" y="212" width="224" height="48" rx="24" fill="currentColor" fill-opacity="0.8"/>
         <rect x="176" y="284" width="160" height="48" rx="24" fill="currentColor" fill-opacity="0.6"/>
@@ -268,10 +279,11 @@
     pdfBtn = document.createElement("div");
     pdfBtn.className = "squeeze-pdf-btn inline-btn";
     pdfBtn.dataset.tooltip = "Squeeze PDF & Insert";
+    makeAccessibleBtn(pdfBtn, "Squeeze PDF and Insert");
     pdfBtn.addEventListener("mouseenter", () => showTooltip(pdfBtn, pdfBtn.dataset.tooltip));
     pdfBtn.addEventListener("mouseleave", hideTooltip);
     pdfBtn.innerHTML = `
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
         <polyline points="14 2 14 8 20 8"></polyline>
         <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -283,11 +295,12 @@
     undoBtn = document.createElement("div");
     undoBtn.className = "squeeze-undo-btn inline-btn";
     undoBtn.dataset.tooltip = "Undo Prompt Optimization";
+    makeAccessibleBtn(undoBtn, "Undo Prompt Optimization");
     undoBtn.addEventListener("mouseenter", () => showTooltip(undoBtn, undoBtn.dataset.tooltip));
     undoBtn.addEventListener("mouseleave", hideTooltip);
     undoBtn.style.display = "none";
     undoBtn.innerHTML = `
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform: scaleX(-1);">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform: scaleX(-1);" aria-hidden="true">
         <path d="M3 7v6h6"></path>
         <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
       </svg>
@@ -297,10 +310,11 @@
     summaryBtn = document.createElement("div");
     summaryBtn.className = "squeeze-summary-btn inline-btn";
     summaryBtn.dataset.tooltip = "Summarize Chat & New Thread";
+    makeAccessibleBtn(summaryBtn, "Summarize Chat and Open New Thread");
     summaryBtn.addEventListener("mouseenter", () => showTooltip(summaryBtn, summaryBtn.dataset.tooltip));
     summaryBtn.addEventListener("mouseleave", hideTooltip);
     summaryBtn.innerHTML = `
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         <line x1="9" y1="10" x2="15" y2="10"></line>
       </svg>
@@ -310,6 +324,8 @@
     vaultBadge = document.createElement("div");
     vaultBadge.id = "squeezeVaultBadge";
     vaultBadge.className = "squeeze-vault-badge inline-btn";
+    vaultBadge.setAttribute("role", "status");
+    vaultBadge.setAttribute("aria-live", "polite");
     vaultBadge.style.display = "none";
     vaultBadge.style.cursor = "default";
 
@@ -356,10 +372,15 @@
   }
 
   function wireInputEvents(input) {
+    // Debounce secondary updates to avoid scanning the full DOM on every keystroke
+    let inputDebounce;
     input.addEventListener("input", () => {
       updateTriggerActiveState(input);
-      updateVaultBadge(getInputValue(input));
-      updateContextDepth();
+      clearTimeout(inputDebounce);
+      inputDebounce = setTimeout(() => {
+        updateVaultBadge(getInputValue(input));
+        updateContextDepth();
+      }, 300);
     });
 
     // Keyboard shortcut: Ctrl+Shift+S or Cmd+Shift+S to Squeeze
@@ -523,8 +544,17 @@
       let cleaned = extracted.split("\n").map(l => l.trim()).join("\n");
       cleaned = cleaned.replace(/[^\S\r\n]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
 
+      // Fix #15: Cap PDF content to prevent chrome.storage quota overflow and context floods
+      const PDF_CHAR_LIMIT = 50_000; // ≈12,500 tokens
+      if (cleaned.length > PDF_CHAR_LIMIT) {
+        cleaned = cleaned.substring(0, PDF_CHAR_LIMIT);
+        const truncNote = `\n\n[PDF truncated at ~50,000 chars to protect context limits. Full PDF: ${totalPages} pages.]`;
+        cleaned += truncNote;
+        if (subText) subText.innerText = `Content capped at 50K chars (${totalPages}-page PDF). Squeezing...`;
+      }
+
       statusText.innerText = "Squeezing PDF content...";
-      subText.innerText = "Applying token compression...";
+      if (!cleaned.includes("PDF truncated")) subText.innerText = "Applying token compression...";
       workingModalPrompt = cleaned;
       duplicateContextBlocks = findDuplicateContext(cleaned);
       requestOptimization(cleaned, currentOptMode);
@@ -659,7 +689,9 @@
         { action: "optimizePrompt", prompt: promptText, mode },
         response => {
           if (chrome.runtime.lastError) {
-            renderModalError("Communication with Squeeze background service failed. Please refresh this tab.");
+            // Must read .message to suppress Chrome's "Unchecked runtime.lastError" warning
+            const errMsg = chrome.runtime.lastError.message || "Unknown error";
+            renderModalError(`Communication with Squeeze background service failed (${errMsg}). Please refresh this tab.`);
           } else if (response && response.success) {
             renderModalContent(response);
           } else {
@@ -691,10 +723,40 @@
     body.querySelector("#tmErrorCloseBtn").addEventListener("click", closeModal);
   }
 
-  // Generate word diff
+  // Fast line-level diff fallback for large prompts
+  function generateLineDiff(orig, opt) {
+    const origLines = orig.split("\n");
+    const optLines  = opt.split("\n");
+    const origSet   = new Set(origLines.map(l => l.trim()));
+    const optSet    = new Set(optLines.map(l => l.trim()));
+
+    const oldHtml = origLines.map(l => {
+      const t = l.trim();
+      return (t && !optSet.has(t))
+        ? `<del class="tm-diff-del">${escapeHtml(l)}</del>`
+        : escapeHtml(l);
+    }).join("<br>");
+
+    const newHtml = optLines.map(l => {
+      const t = l.trim();
+      return (t && !origSet.has(t))
+        ? `<ins class="tm-diff-ins">${escapeHtml(l)}</ins>`
+        : escapeHtml(l);
+    }).join("<br>");
+
+    return { oldHtml, newHtml };
+  }
+
+  // Generate word diff (LCS-based). Falls back to line-diff for large prompts.
+  const LCS_WORD_CAP = 500;
   function generateDiffView(orig, opt) {
     const origWords = orig.trim().split(/(\s+)/);
-    const optWords = opt.trim().split(/(\s+)/);
+    const optWords  = opt.trim().split(/(\s+)/);
+
+    // Performance guard: LCS is O(m×n) — fallback for large inputs
+    if (origWords.length > LCS_WORD_CAP || optWords.length > LCS_WORD_CAP) {
+      return generateLineDiff(orig, opt);
+    }
 
     const m = origWords.length;
     const n = optWords.length;
@@ -738,10 +800,25 @@
     const logoImg = modalContainer.querySelector(".tm-modal-logo img");
     if (logoImg) logoImg.classList.remove("animating");
 
-    // Quality Intent score
-    let intentScore = 98;
-    if (data.mode === "squeeze") intentScore = 93;
-    else if (data.mode === "polish") intentScore = 99;
+    // Fix #19: Compute intent preservation score from actual word overlap (Jaccard similarity).
+    // This replaces the hardcoded 93/98/99 magic numbers.
+    function computeIntentScore(orig, opt) {
+      const stopWords = new Set(["the","a","an","is","are","was","were","be","been","being",
+        "have","has","had","do","does","did","will","would","could","should","may","might",
+        "shall","can","need","dare","ought","used","i","you","he","she","it","we","they",
+        "what","which","who","whom","this","that","these","those","am","to","of","in","for",
+        "on","with","at","by","from","as","into","through","and","but","or","nor","so","yet"]);
+      const tokenize = str => str.toLowerCase().replace(/[^a-z0-9\s]/g, " ")
+        .split(/\s+/).filter(w => w.length > 2 && !stopWords.has(w));
+      const origWords = new Set(tokenize(orig));
+      const optWords  = new Set(tokenize(opt));
+      const intersection = [...origWords].filter(w => optWords.has(w)).length;
+      const union = new Set([...origWords, ...optWords]).size;
+      if (union === 0) return 100;
+      // Jaccard * 100, clamped to [85, 100] range for UX readability
+      return Math.min(100, Math.max(85, Math.round((intersection / union) * 100)));
+    }
+    const intentScore = computeIntentScore(data.original, data.optimized);
 
     const diff = generateDiffView(data.original, data.optimized);
 
@@ -899,7 +976,10 @@
     // Discard & Apply
     body.querySelector("#tmDiscardBtn").addEventListener("click", closeModal);
     body.querySelector("#tmApplyBtn").addEventListener("click", () => {
-      const finalVal = editArea.value;
+      // Fix: Use textarea value only when Edit Raw view is active.
+      // When Diff view is shown, editArea is hidden and not kept in sync — use data.optimized directly.
+      const inEditMode = editArea.style.display !== "none";
+      const finalVal = inEditMode ? editArea.value : data.optimized;
       lastOptimizedPrompt = finalVal;
       if (activeInputEl) {
         setInputValue(activeInputEl, finalVal);
@@ -932,7 +1012,7 @@
       e.preventDefault();
 
       try {
-        const summary = extractConversationSummary();
+        const { summary, totalTurns, summarizedTurns } = extractConversationSummary();
         if (!summary || summary.length < 30) {
           showToast(summaryBtn, "No chat history to summarize yet!");
           return;
@@ -940,7 +1020,11 @@
 
         chrome.storage.local.set({ pendingChatSummary: summary }, () => {
           navigator.clipboard.writeText(summary).catch(() => {});
-          showToast(summaryBtn, "Context summarized! Opening fresh chat...");
+          // Fix #16: Show transparent turn count in toast
+          const turnInfo = totalTurns > 0
+            ? `Summarized ${summarizedTurns} of ${totalTurns} messages → fresh chat!`
+            : "Context summarized! Opening fresh chat...";
+          showToast(summaryBtn, turnInfo);
 
           // Open fresh chat depending on platform
           setTimeout(() => {
@@ -992,10 +1076,13 @@
       });
     }
 
-    if (turns.length === 0) return "";
+    if (turns.length === 0) return { summary: "", totalTurns: 0, summarizedTurns: 0 };
 
-    // Keep last 3 exchanges
-    const recent = turns.slice(-6);
+    const totalTurns = turns.length;
+    // Keep last 3 exchanges (6 turns)
+    const KEEP = 6;
+    const recent = turns.slice(-KEEP);
+    const summarizedTurns = recent.length;
     let output = "## Context Summary from Previous Chat (Squeezed)\n\n### Recent Discussion Timeline:\n";
 
     recent.forEach(t => {
@@ -1005,7 +1092,7 @@
     });
 
     output += "\n*This context was automatically summarized by Squeeze AI to save tokens. Ready to continue where we left off.*";
-    return output;
+    return { summary: output, totalTurns, summarizedTurns };
   }
 
   // --- CONTEXT USAGE DEPTH BAR ---
@@ -1192,14 +1279,27 @@
 
     mountWidgets();
 
+    // Leading + trailing debounce: fire immediately on first mutation,
+    // then again 600ms after the DOM settles. Prevents missing widget
+    // injection during ChatGPT/Gemini streaming responses.
     let debounceTimer = null;
+    let lastFiredAt = 0;
+    const LEADING_INTERVAL = 1500; // ms before we fire leading again
+    const TRAILING_DELAY = 600;    // ms after last mutation
+
     const observer = new MutationObserver(() => {
-      if (!debounceTimer) {
-        debounceTimer = setTimeout(() => {
-          mountWidgets();
-          debounceTimer = null;
-        }, 200);
+      const now = Date.now();
+      if (now - lastFiredAt > LEADING_INTERVAL) {
+        // Leading fire — instant widget mount
+        mountWidgets();
+        lastFiredAt = now;
       }
+      // Trailing fire — re-check after DOM settles
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        mountWidgets();
+        lastFiredAt = Date.now();
+      }, TRAILING_DELAY);
     });
 
     observer.observe(document.body, { childList: true, subtree: true });

@@ -80,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentMode = "balanced";
   let lastOptimizedResult = null;
   let vaultFilesList = [];
+  let analyticsLastLoaded = 0; // Fix #17: track last analytics render to avoid redundant re-renders
 
   // --- TAB SWITCHING ---
   navButtons.forEach(btn => {
@@ -92,7 +93,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const targetPane = document.getElementById(`pane-${target}`);
       if (targetPane) targetPane.classList.add("active");
 
-      if (target === "analytics") loadAnalytics();
+      // Fix #17: Only reload analytics if >5s have passed since last load
+      if (target === "analytics") {
+        const now = Date.now();
+        if (now - analyticsLastLoaded > 5000) {
+          loadAnalytics();
+          analyticsLastLoaded = now;
+        }
+      }
       if (target === "vault") loadVaultData();
     });
   });
