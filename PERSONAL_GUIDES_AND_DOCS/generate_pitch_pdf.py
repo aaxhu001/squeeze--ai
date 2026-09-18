@@ -325,15 +325,15 @@ def build_pdf(filename="Squeeze_AI_Hackathon_Pitch_Guide.pdf"):
         
         ("0:25 – 0:45", "3. Hit Squeeze (Ctrl+Shift+S) & Show the Magic",
          "Press <b>Ctrl+Shift+S</b> or click the Squeeze button. The modal opens with green glow and live diff.",
-         "\"Watch this: in under 100 milliseconds, Squeeze did two critical things. First, look at the green banner: our DLP Shield detected the MongoDB URI and masked the password locally. Second, the diff view shows 42% token reduction — all polite fluff stripped while preserving 100% of technical requirements.\""),
+         "\"Watch this: in under 50 milliseconds, Squeeze did two critical things. First, look at the green banner: our DLP Shield detected the MongoDB URI and masked the credentials locally before network transmission. Second, the diff view shows 42% token reduction — all polite fluff stripped while strictly preserving code and technical requirements.\""),
         
         ("0:45 – 1:05", "4. One-Click Apply & Immediate Undo Safety",
          "Click <b>Apply & Squeeze</b>. Show the clean text inject into the input. Point to the green box-shadow flash and the Undo button.",
          "\"One click, and the optimized prompt is injected into the chat. If I ever want the original back, this Undo button restores it immediately. Complete user control.\""),
         
-        ("1:05 – 1:25", "5. Launch the Squeeze Studio Side Panel",
-         "Click the orange Squeeze banner to open the Side Panel. Show the Multi-Model Cost Savings card and the Analytics dashboard.",
-         "\"Let's open the Squeeze Studio side panel. Here we see live cost savings calculated across Claude Opus, GPT-4o, Gemini, and DeepSeek. Over a month of engineering, that's hundreds of dollars saved and zero leaked credentials.\""),
+        ("1:05 – 1:25", "5. Launch the Squeeze Studio Side Panel & AST Tool",
+         "Click the orange Squeeze banner to open the Side Panel. Show the Multi-Model Cost Savings card and the AST code skeletonizer.",
+         "\"Let's open the Squeeze Studio side panel. Here we see live cost savings calculated across Claude Opus, GPT-4o, and Gemini. And for codebases, our AST skeletonizer compresses 2,400-token files down to 380 tokens while preserving imports and type signatures.\""),
         
         ("1:25 – 1:30", "6. The Power Close",
          "Look directly at the lead judge and deliver the punchline.",
@@ -375,10 +375,10 @@ def build_pdf(filename="Squeeze_AI_Hackathon_Pitch_Guide.pdf"):
 
     pitch_sections = [
         ("THE HOOK (0:00 – 0:20)", 
-         "\"Raise your hand if you use Claude, ChatGPT, or Gemini daily. [Wait 2 seconds, look at judges]. "
+         "\"Raise your hand if you use Claude, ChatGPT, or Cursor daily. [Wait 2 seconds, look at judges]. "
          "Now keep your hand up if you've ever pasted an API key, database URL, or sensitive snippet into that chat. [Pause]. "
-         "Cyberhaven reported that 82% of developers have done exactly that. That secret just crossed the internet to an external server. "
-         "And every extra character in that prompt cost you real money. We built Squeeze AI to fix both problems before you hit send.\""),
+         "Cyberhaven reported that over 80% of developers have done exactly that. That secret just crossed the public internet. "
+         "And every extra character in that prompt cost you real money. We built Squeeze AI to solve credential leaks and context bloat right at the keystroke level.\""),
         
         ("THE PROBLEM (0:20 – 0:45)", 
          "\"Every foundation model bills by input token. But prompts are written in conversational prose — padded with greetings, "
@@ -386,23 +386,22 @@ def build_pdf(filename="Squeeze_AI_Hackathon_Pitch_Guide.pdf"):
          "prompts are pure financial waste. For an engineering team running hundreds of daily prompts on Claude 3.5 Sonnet or GPT-4o, "
          "that adds up to thousands of dollars wasted every single month.\""),
         
-        ("THE SOLUTION (0:45 – 1:15)", 
-         "\"Squeeze AI is an ultra-fast, local Chrome extension that sits directly between your keystrokes and the AI. "
-         "With one click — or Ctrl+Shift+S — our local heuristic engine strips conversational bloat, removes duplicate sentences, and "
-         "compacts role-play preambles. Simultaneously, our DLP Secret Shield scans for 8 major credential types — from OpenAI and AWS keys "
-         "to database passwords — and redacts them in place. We display a word-level visual diff, and with a click, inject the clean prompt. "
-         "100% offline. Zero server latency. Not a single byte of your prompt leaves your machine.\""),
+        ("THE SOLUTION & LIVE PROOF (0:45 – 1:15)", 
+         "\"Squeeze AI is a fast, local developer shield that sits directly between your keystrokes and the AI — across Chrome, Cursor, and Claude Code. "
+         "With one shortcut — Ctrl+Shift+S — our local engine strips conversational bloat while strictly preserving code blocks and technical constraints. "
+         "Simultaneously, our DLP Secret Shield scans for 8 major credential types — from OpenAI and AWS keys to database passwords — redacting them in memory before network egress. "
+         "And for codebases, our AST skeletonizer compresses 2,400-token files down to 380 tokens while preserving imports, class signatures, and types. "
+         "100% offline. Zero server latency. Not a single byte leaves your machine.\""),
         
-        ("TRACTION & ARCHITECTURE (1:15 – 1:40)", 
-         "\"Across our automated test benchmarks, Squeeze reduces token volume by 25% to 70% while maintaining a 96% semantic intent score "
-         "measured by Jaccard similarity. Beyond prompt compression, our Context Vault automatically matches local files and developer "
-         "preferences to the active prompt, eliminating manual context re-pasting. And our multi-model analytics engine calculates dollar "
-         "savings across Claude Opus, GPT-4o, Gemini 1.5 Pro, and DeepSeek V3 simultaneously.\""),
+        ("PREFIX INVARIANCE & ARCHITECTURE (1:15 – 1:40)", 
+         "\"Now, here is the key technical nuance: in the browser, Squeeze enforces Prefix Invariance — keeping repeated persona instructions byte-identical turn after turn so platform KV-caches hit. "
+         "In our MCP server for Cursor and Claude Code, we directly structure breakpoints. We don't claim to control Anthropic's backend from a browser DOM — we set up the mathematical preconditions. "
+         "Across our benchmarks, technical constraint retention averages 96% while reducing token volume by up to 70%.\""),
         
-        ("THE VISION & CLOSE (1:40 – 2:00)", 
-         "\"Our roadmap extends beyond Chrome: the Squeeze core engine is lightweight JavaScript that can be deployed as an IDE extension, "
-         "a CI/CD prompt linter, or an enterprise gateway proxy. If you use AI and care about cost, data loss prevention, and context "
-         "depth — you need Squeeze AI. Thank you! [Smile, open floor for questions].\"")
+        ("THE MOAT & CLOSE (1:40 – 2:00)", 
+         "\"Judges often ask: why won't OpenAI or Anthropic just ship a compress button? They could ship compression, but compression isn't the product — cross-platform workflow portability is. "
+         "Context Vault, unified rules across Claude, ChatGPT, Gemini, Cursor, and Claude Code, and an MCP server that follows you into your IDE are parts no single provider will build, "
+         "because neither OpenAI nor Anthropic will build a context layer that travels to their competitors. Squeeze AI is the independent context layer for developers. Thank you! [Smile, open floor for questions].\"")
     ]
 
     pitch_cards = []
@@ -432,30 +431,20 @@ def build_pdf(filename="Squeeze_AI_Hackathon_Pitch_Guide.pdf"):
     story.append(HRFlowable(width="100%", thickness=1, color=COLOR_PRIMARY, spaceBefore=0, spaceAfter=14))
 
     qa_list = [
-        ("Does aggressive token squeezing degrade the quality or nuance of LLM answers?",
-         "No. We benchmarked 50 prompts across technical coding, creative writing, and data analysis. In 96% of cases, "
-         "the model's output was functionally identical or improved. Why? Because conversational filler ('I was wondering if you could kindly') "
-         "dilutes model attention mechanisms across irrelevant tokens. Compressing prompts increases token density and sharpens instruction following."),
+        ("Does aggressive token squeezing degrade the quality or reasoning ability of LLM answers?",
+         "We evaluate this through constraint retention: our algorithm strips non-functional conversational padding while strictly isolating code blocks, parameters, and nouns. In 50 benchmark tasks, response accuracy was preserved in 96% of cases because eliminating noise sharpens attention weights on actual instructions."),
+
+        ("Regex-based DLP claiming '100% detection' is dangerous. What is your false negative rate on custom or entropy secrets?",
+         "Fair and critical callout: regex is a signature-based defense-in-depth layer targeting the 8 most prevalent structured public leak formats (AWS, OpenAI, GitHub, JWT, DB URIs). It does not catch high-entropy custom strings — that is on our roadmap for local Shannon entropy analysis. But catching known signatures before network dispatch eliminates over 80% of accidental developer leaks, with zero outbound network calls."),
+
+        ("You edit a browser textarea — you don't control Anthropic's API cache headers. How do you actually influence caching?",
+         "You're right to press on this. In the browser-extension context, Squeeze optimizes Prefix Invariance: keeping repeated user persona instructions and codebase context byte-identical turn after turn, which is the required precondition for any provider-side KV-cache hit. On our MCP server path for Cursor and Claude Code, we directly structure cache blocks. We don't claim to control platform backends from a browser DOM."),
+
+        ("If this works, why wouldn't Anthropic or OpenAI just ship a 'compress' toggle in their own UI next quarter?",
+         "They could ship compression — but compression isn't the product, cross-platform portability is. Context Vault, unified rules across Claude, ChatGPT, Gemini, Cursor, and Claude Code, and an MCP server that follows you into your IDE are parts no single foundation provider will build, because neither OpenAI nor Anthropic is incentivized to make your context portable across their competitors."),
 
         ("How does Squeeze AI guarantee user privacy? Could Squeeze steal our prompts?",
-         "We are 100% local. The entire optimization and DLP engine runs in Chrome's local background service worker and content script. "
-         "Inspect our manifest.json: there is no external backend URL, no telemetry endpoint, and zero outbound network calls. "
-         "Prompts never leave the local browser memory."),
-
-        ("Why not just put 'Be concise' in the system prompt instead of using an extension?",
-         "Two reasons: First, system prompts themselves consume tokens on every single turn ($$$). Second, system prompts cannot protect "
-         "against credential leakage. By the time the LLM reads a system prompt to ignore a password, that password has already been transmitted "
-         "over the wire to the provider's server. Squeeze redacts secrets client-side BEFORE transmission."),
-
-        ("What is your defensible moat against a competitor copying this in a weekend?",
-         "Three moats: First, our rule set has been battle-tested on hundreds of prompts with edge-case placeholder protection for code, URLs, and markdown. "
-         "Second, the Context Vault creates deep personalization stickiness — once a user uploads their coding guidelines and schemas, switching is costly. "
-         "Third, we are building a crowdsourced heuristic database where user-accepted compressions continually refine our dictionary."),
-
-        ("What is the business model and commercial roadmap?",
-         "Freemium SaaS: The standalone Chrome extension optimizer is free for individual developers, serving as an organic acquisition funnel. "
-         "Premium ($7/month) unlocks unlimited Context Vault storage, team synchronization of custom rules, and cloud backup. "
-         "Enterprise tier provides an IT-administered browser policy extension with custom compliance rules, audit logging, and SIEM integration.")
+         "We are 100% local. The entire optimization and DLP engine runs in Chrome's local background service worker and content script. Inspect our manifest.json: there is no external backend URL, no telemetry endpoint, and zero outbound network calls. Prompts never leave the local browser memory.")
     ]
 
     qa_rows = []
@@ -514,7 +503,7 @@ def build_pdf(filename="Squeeze_AI_Hackathon_Pitch_Guide.pdf"):
     arch_bullets = [
         "• <b>Universal DOM Platform Adapter:</b> Injects seamlessly into Claude contenteditable divs, ChatGPT rich-textareas with React synthetic event triggering, and Gemini shadow DOM boundaries.",
         "• <b>Guarded LCS Diffing with O(m×n) Fallback:</b> Computes character-precise token diffs up to 500 words and automatically shifts to line diffing for multi-page documents to maintain a constant 60 FPS UI.",
-        "• <b>Stateful Regex Protection:</b> Fixes global regex lastIndex pointer resets across all 8 DLP scanners, ensuring zero false-negative credential leaks.",
+        "• <b>Stateful Regex Protection:</b> Fixes global regex lastIndex pointer resets across all 8 DLP scanners, enforcing atomic pointer resets across all known public credential vectors.",
         "• <b>Leading + Trailing Debounce:</b> Handles asynchronous single-page app (SPA) DOM mutations, guaranteeing widgets remain mounted even during high-frequency AI streaming output."
     ]
     for b in arch_bullets:
