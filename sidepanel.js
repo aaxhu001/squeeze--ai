@@ -102,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
       if (target === "vault") loadVaultData();
+      if (target === "graph") loadCodeGraph();
     });
   });
 
@@ -660,6 +661,154 @@ Constraints:
       });
     }
   });
+
+  // --- GRAPHIFY & HEADROOM CONTROLLER ---
+  const skelLangSelect = document.getElementById("spSkelLangSelect");
+  const skelLoadSampleBtn = document.getElementById("spSkelLoadSampleBtn");
+  const skelRunBtn = document.getElementById("spSkelRunBtn");
+  const skelInput = document.getElementById("spSkelInput");
+  const skelOutput = document.getElementById("spSkelOutput");
+  const skelResultWrapper = document.getElementById("spSkelResultWrapper");
+  const skelStats = document.getElementById("spSkelStats");
+  const skelCopyBtn = document.getElementById("spSkelCopyBtn");
+  const refreshGraphBtn = document.getElementById("spRefreshGraphBtn");
+  const graphDisplay = document.getElementById("spGraphDisplay");
+
+  const SAMPLES = {
+    python: `import os
+from typing import List, Optional
+
+class PaymentGateway:
+    """Handles multi-currency credit card and ACH transactions."""
+    def __init__(self, api_key: str, sandbox: bool = False):
+        self.api_key = api_key
+        self.sandbox = sandbox
+        self.connect_stripe_backend()
+
+    async def charge_customer(self, customer_id: str, amount_cents: int, currency: str = "USD") -> dict:
+        """Processes real-time charge and sends webhook notifications."""
+        token = self.generate_idempotency_key(customer_id, amount_cents)
+        payload = {"customer": customer_id, "amount": amount_cents, "currency": currency}
+        res = await self.http_client.post("/charges", json=payload, headers={"Idempotency": token})
+        logger.info(f"Charged {amount_cents} cents to {customer_id}")
+        return res.json()
+
+def calculate_fee(amount: float) -> float:
+    return amount * 0.029 + 0.30`,
+
+    typescript: `import { Request, Response } from "express";
+
+export interface SessionPayload {
+  userId: string;
+  roles: string[];
+  issuedAt: number;
+}
+
+export class AuthenticationManager {
+  private jwtSecret: string;
+  constructor(secret: string) {
+    this.jwtSecret = secret;
+  }
+
+  public async verifyRequest(req: Request): Promise<SessionPayload | null> {
+    const bearer = req.headers["authorization"];
+    if (!bearer) return null;
+    const token = bearer.replace("Bearer ", "");
+    return jwt.verify(token, this.jwtSecret) as SessionPayload;
+  }
+}`,
+
+    json: JSON.stringify({
+      status: "success",
+      total: 50,
+      data: Array.from({ length: 15 }, (_, i) => ({
+        id: `txn_${1000 + i}`,
+        amount: 49.99,
+        customer: `Customer ${i}`,
+        signatureHash: "a8f9c104e7681239bcde88392019485728394058273948293049182394829384"
+      }))
+    }, null, 2),
+
+    logs: `2026-09-19T01:15:00.123Z [INFO] Initializing service cluster
+2026-09-19T01:15:01.456Z [WARN] Redis connection timed out on 127.0.0.1:6379, retrying...
+2026-09-19T01:15:01.456Z [WARN] Redis connection timed out on 127.0.0.1:6379, retrying...
+2026-09-19T01:15:01.456Z [WARN] Redis connection timed out on 127.0.0.1:6379, retrying...
+2026-09-19T01:15:01.456Z [WARN] Redis connection timed out on 127.0.0.1:6379, retrying...
+2026-09-19T01:15:05.789Z [INFO] Connected to failover cluster 10.0.1.42`
+  };
+
+  if (skelLoadSampleBtn && skelInput) {
+    skelLoadSampleBtn.addEventListener("click", () => {
+      const lang = skelLangSelect.value;
+      skelInput.value = SAMPLES[lang] || SAMPLES.python;
+      if (skelResultWrapper) skelResultWrapper.style.display = "none";
+    });
+  }
+
+  if (skelRunBtn && skelInput) {
+    skelRunBtn.addEventListener("click", () => {
+      const raw = skelInput.value || "";
+      if (!raw.trim()) {
+        alert("Please paste some code, JSON, or logs first!");
+        return;
+      }
+      const lang = skelLangSelect.value;
+
+      let processed = "";
+      if (lang === "python" && window.SqueezeSkeletonizer?.skeletonizePython) {
+        processed = window.SqueezeSkeletonizer.skeletonizePython(raw);
+      } else if (lang === "typescript" && window.SqueezeSkeletonizer?.skeletonizeTypeScript) {
+        processed = window.SqueezeSkeletonizer.skeletonizeTypeScript(raw);
+      } else if (lang === "json" && window.SqueezeSkeletonizer?.shrinkJson) {
+        processed = window.SqueezeSkeletonizer.shrinkJson(raw, 2);
+      } else if (lang === "logs" && window.SqueezeSkeletonizer?.shrinkLogs) {
+        processed = window.SqueezeSkeletonizer.shrinkLogs(raw);
+      } else if (window.SqueezeSkeletonizer?.skeletonizeCode) {
+        processed = window.SqueezeSkeletonizer.skeletonizeCode(raw, lang);
+      } else {
+        processed = raw;
+      }
+
+      skelOutput.value = processed;
+      const origTok = estimateTokensLocal(raw);
+      const newTok = estimateTokensLocal(processed);
+      const saved = Math.max(0, origTok - newTok);
+      const pct = origTok > 0 ? Math.round((saved / origTok) * 100) : 0;
+
+      skelStats.textContent = `Output: ${newTok.toLocaleString()} tokens (saved ${saved.toLocaleString()} tok, ${pct}%)`;
+      skelResultWrapper.style.display = "block";
+    });
+  }
+
+  if (skelCopyBtn && skelOutput) {
+    skelCopyBtn.addEventListener("click", () => {
+      navigator.clipboard.writeText(skelOutput.value).then(() => {
+        skelCopyBtn.textContent = "Copied! ✨";
+        setTimeout(() => { skelCopyBtn.textContent = "Copy Skeleton"; }, 1800);
+      });
+    });
+  }
+
+  function loadCodeGraph() {
+    if (!graphDisplay) return;
+    chrome.storage.local.get(["vaultFiles"], data => {
+      const files = data.vaultFiles || [];
+      if (files.length === 0) {
+        graphDisplay.innerHTML = '<span style="color: #9e978e;">No files in Context Vault yet. Upload code files (.py, .ts, .js, .json) in the Vault tab to auto-build a dependency graph!</span>';
+        return;
+      }
+
+      const graph = window.SqueezeSkeletonizer?.buildCodebaseGraph
+        ? window.SqueezeSkeletonizer.buildCodebaseGraph(files)
+        : { graphText: "Graph engine unavailable" };
+
+      graphDisplay.innerHTML = `<pre style="margin: 0; white-space: pre-wrap; font-family: inherit;">${escapeHtml(graph.graphText)}</pre>`;
+    });
+  }
+
+  if (refreshGraphBtn) {
+    refreshGraphBtn.addEventListener("click", loadCodeGraph);
+  }
 
   // Initial loads
   chrome.storage.local.get(["optimizationMode"], res => {

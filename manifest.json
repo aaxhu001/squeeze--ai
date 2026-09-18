@@ -42,7 +42,7 @@
         "https://chat.openai.com/*",
         "https://gemini.google.com/*"
       ],
-      "js": ["pdf.min.js", "content.js"],
+      "js": ["pdf.min.js", "skeletonizer.js", "content.js"],
       "css": ["content.css"],
       "run_at": "document_idle"
     }
@@ -54,6 +54,7 @@
         "icons/icon48.png",
         "icons/icon128.png",
         "pdf.worker.min.js",
+        "skeletonizer.js",
         "logo.svg"
       ],
       "matches": [

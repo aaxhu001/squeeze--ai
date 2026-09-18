@@ -52,6 +52,10 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         Analytics
       </button>
+      <button class="sp-nav-btn" data-tab="graph">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Graph &amp; Headroom
+      </button>
     </nav>
 
     <!-- Main Content Area -->
@@ -418,6 +422,78 @@
         </div>
       </section>
 
+      <!-- TAB 6: GRAPHIFY & HEADROOM SUITE -->
+      <section class="sp-pane" id="pane-graph">
+        <!-- Hero Header -->
+        <div class="sp-card" style="background: linear-gradient(135deg, rgba(255,109,0,0.08), rgba(0,229,255,0.06)); border-color: rgba(255,109,0,0.25);">
+          <div class="sp-card-header">
+            <h3 class="sp-card-title">🚀 Graphify &amp; Headroom Suite</h3>
+            <span class="sp-badge-accent">70x Compression</span>
+          </div>
+          <p class="sp-card-desc">Deterministic AST Code Skeletons, Topological Codebase Knowledge Graphs, and Provider Cache-Alignment for Claude, Cursor, and ChatGPT.</p>
+        </div>
+
+        <!-- 1. AST Code Skeletonizer (Graphify) -->
+        <div class="sp-card">
+          <div class="sp-card-header">
+            <h4 class="sp-card-subhead">1. AST Code Skeletonizer (Graphify)</h4>
+            <span class="sp-badge-token" id="spSkelTokenBadge">Saves 70-90% Tokens</span>
+          </div>
+          <p class="sp-card-desc">Strips function implementation bodies into <code>...</code> or <code>{ /* ... */ }</code> while preserving classes, function signatures, docstrings, and exported types.</p>
+          
+          <div class="sp-code-tools-bar" style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <select id="spSkelLangSelect" class="sp-mini-select" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem;">
+              <option value="python">Python (.py)</option>
+              <option value="typescript">TypeScript / JS (.ts, .js)</option>
+              <option value="json">JSON API Response (.json)</option>
+              <option value="logs">Stack Trace / Logs</option>
+            </select>
+            <button class="sp-btn sp-btn-secondary" id="spSkelLoadSampleBtn" style="padding: 4px 10px; font-size: 0.72rem;">Load Sample</button>
+            <button class="sp-btn sp-btn-primary" id="spSkelRunBtn" style="padding: 4px 12px; font-size: 0.72rem; margin-left: auto;">Extract Skeleton ⚡</button>
+          </div>
+
+          <textarea id="spSkelInput" class="sp-textarea" style="height: 120px; font-family: monospace; font-size: 0.72rem;" placeholder="Paste raw Python, TypeScript code, JSON, or stack traces here..."></textarea>
+          
+          <div id="spSkelResultWrapper" style="display: none; margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <span style="font-size: 0.72rem; font-weight: 600; color: #34d399;" id="spSkelStats">Output: ~0 tokens (80% saved)</span>
+              <button class="sp-link-btn" id="spSkelCopyBtn">Copy Skeleton</button>
+            </div>
+            <textarea id="spSkelOutput" class="sp-textarea" style="height: 110px; font-family: monospace; font-size: 0.72rem; background: rgba(0,0,0,0.4); border-color: rgba(52,211,153,0.3);" readonly></textarea>
+          </div>
+        </div>
+
+        <!-- 2. Topological Codebase Graph (Graphify) -->
+        <div class="sp-card">
+          <div class="sp-card-header">
+            <h4 class="sp-card-subhead">2. Codebase Knowledge Graph</h4>
+            <button class="sp-btn sp-btn-secondary" id="spRefreshGraphBtn" style="padding: 3px 8px; font-size: 0.7rem;">Refresh Graph</button>
+          </div>
+          <p class="sp-card-desc">Instead of dumping entire files into the AI, Squeeze maps project classes, functions, and import dependencies into a high-density 150-token graph.</p>
+          
+          <div id="spGraphDisplay" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 10px; max-height: 140px; overflow-y: auto; font-size: 0.72rem; font-family: monospace; color: #ff9d42;">
+            <span style="color: #9e978e;">No files in Context Vault yet. Upload files in the Vault tab to auto-generate a dependency graph.</span>
+          </div>
+        </div>
+
+        <!-- 3. Cache Alignment & MCP Architecture (Headroom) -->
+        <div class="sp-card">
+          <div class="sp-card-header">
+            <h4 class="sp-card-subhead">3. Cache Alignment &amp; MCP Integration</h4>
+            <span class="sp-badge-accent">90% Cache Hit</span>
+          </div>
+          <p class="sp-card-desc">Headroom organizes prompts into <strong>Tier 1 (Static Persona)</strong> &rarr; <strong>Tier 2 (Architecture Graph)</strong> &rarr; <strong>Tier 3 (User Task)</strong> to lock Anthropic &amp; OpenAI prompt caches.</p>
+          
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(0,229,255,0.2); border-radius: 8px; padding: 8px 12px; margin-top: 8px;">
+            <div style="font-size: 0.7rem; font-weight: 700; color: #00e5ff; margin-bottom: 4px;">⚡ Connect to Cursor / Claude Code via MCP:</div>
+            <code style="font-size: 0.68rem; color: #e2e8f0; display: block; background: #0a0a0f; padding: 6px; border-radius: 4px; word-break: break-all;">
+              python3 /Users/aashu/Aashu/Squeeze/squeeze_mcp.py
+            </code>
+            <span style="font-size: 0.65rem; color: #9e978e; margin-top: 4px; display: block;">Add to <code>~/.cursor/mcp.json</code> or Claude Code to compress tool reads automatically.</span>
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <!-- Footer -->
@@ -427,6 +503,7 @@
     </footer>
   </div>
 
+  <script src="skeletonizer.js"></script>
   <script src="sidepanel.js"></script>
 </body>
 </html>

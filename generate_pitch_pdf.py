@@ -278,8 +278,12 @@ def build_pdf(filename="Squeeze_AI_Hackathon_Pitch_Guide.pdf"):
             Paragraph("Real-time regex scanner detecting 8 credential types (OpenAI keys, Anthropic keys, Google AI keys, AWS keys, GitHub tokens, JWTs, DB URIs, and config secrets). Masks secrets locally.", body_style)
         ],
         [
-            Paragraph("<b>📂 Smart Context Vault</b>", styles['Normal']),
-            Paragraph("Upload developer profiles, API schemas, and architecture docs. Smart keyword triggers automatically inject the right context when relevant topics are detected.", body_style)
+            Paragraph("<b>🚀 Graphify AST Code Skeletons</b>", styles['Normal']),
+            Paragraph("Deterministic AST parser for Python, TypeScript, and JSON. Collapses function bodies to <code>...</code>, keeping classes, signatures, and types (saving 70–90% code tokens).", body_style)
+        ],
+        [
+            Paragraph("<b>⚡ Headroom Cache-Aligner &amp; MCP</b>", styles['Normal']),
+            Paragraph("Reorders prompts into static prefixes and task tails to lock 90% provider prompt-caching. Includes a stdio MCP Server for Cursor, Claude Code, and Cline.", body_style)
         ],
         [
             Paragraph("<b>📊 Multi-Model Real-Time Accounting</b>", styles['Normal']),
@@ -291,8 +295,8 @@ def build_pdf(filename="Squeeze_AI_Hackathon_Pitch_Guide.pdf"):
         ('BACKGROUND', (0,0), (0,-1), colors.HexColor("#F8FAFC")),
         ('BOX', (0,0), (-1,-1), 1, COLOR_BORDER),
         ('INNERGRID', (0,0), (-1,-1), 0.5, COLOR_BORDER),
-        ('TOPPADDING', (0,0), (-1,-1), 6),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+        ('TOPPADDING', (0,0), (-1,-1), 4),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 4),
         ('LEFTPADDING', (0,0), (-1,-1), 8),
         ('RIGHTPADDING', (0,0), (-1,-1), 8),
     ]))

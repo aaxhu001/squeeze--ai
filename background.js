@@ -1,8 +1,14 @@
 /**
  * Squeeze AI - Background Service Worker (Manifest V3)
  * High-performance local token optimizer, DLP secret scanner,
- * multi-model cost analytics, and Context Vault engine.
+ * Graphify AST Code Skeletonizer, Headroom CacheAligner & Context Vault engine.
  */
+
+try {
+  importScripts("skeletonizer.js");
+} catch (e) {
+  console.warn("Could not import skeletonizer.js:", e);
+}
 
 // --- MODEL PRICING (USD per 1M input tokens) ---
 const MODEL_RATES = {
@@ -543,9 +549,23 @@ async function processVaultContext(prompt, mode, rules) {
 
       if (matches && f.content) {
         rawTokens += estimateTokens(f.content);
-        const optFile = optimizeLocally(maskSensitiveData(f.content).sanitized, mode, rules).optimized;
-        contextParts.push(`[Context: ${f.name}]\n${optFile}`);
-        attachedContexts.push(f.name);
+        let contentToProcess = f.content;
+        const ext = f.name.split(".").pop().toLowerCase();
+
+        // 🚀 Graphify & Headroom Intelligence:
+        // Automatically skeletonize code and fold JSON arrays to save 70-90% tokens!
+        let labelSuffix = "";
+        if (typeof skeletonizeCode === "function" && ["py", "ts", "tsx", "js", "jsx", "go", "rs"].includes(ext)) {
+          contentToProcess = skeletonizeCode(f.content, f.name);
+          labelSuffix = " (Graphify Skeleton)";
+        } else if (typeof shrinkJson === "function" && ext === "json") {
+          contentToProcess = shrinkJson(f.content, 2);
+          labelSuffix = " (Headroom Shrunk)";
+        }
+
+        const optFile = optimizeLocally(maskSensitiveData(contentToProcess).sanitized, mode, rules).optimized;
+        contextParts.push(`[Context: ${f.name}${labelSuffix}]\n${optFile}`);
+        attachedContexts.push(`${f.name}${labelSuffix ? " [Condensed]" : ""}`);
       }
     }
   }
@@ -721,6 +741,99 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     (async () => {
       const hasAI = typeof globalThis.ai !== "undefined" && typeof globalThis.ai.languageModel !== "undefined";
       sendResponse({ success: true, hasBuiltInAI: hasAI });
+    })();
+    return true;
+  }
+
+  // --- GRAPHIFY & HEADROOM ACTIONS ---
+  if (request.action === "skeletonizeCode") {
+    (async () => {
+      try {
+        const { code, language } = request;
+        const skeleton = typeof skeletonizeCode === "function"
+          ? skeletonizeCode(code, language)
+          : code;
+        const origTokens = estimateTokens(code);
+        const skelTokens = estimateTokens(skeleton);
+        sendResponse({
+          success: true,
+          skeleton,
+          originalTokens: origTokens,
+          skeletonTokens: skelTokens,
+          tokensSaved: Math.max(0, origTokens - skelTokens)
+        });
+      } catch (err) {
+        sendResponse({ success: false, error: err.message });
+      }
+    })();
+    return true;
+  }
+
+  if (request.action === "shrinkJson") {
+    (async () => {
+      try {
+        const { jsonText, maxItems } = request;
+        const shrunk = typeof shrinkJson === "function"
+          ? shrinkJson(jsonText, maxItems || 2)
+          : jsonText;
+        const origTokens = estimateTokens(jsonText);
+        const shrunkTokens = estimateTokens(shrunk);
+        sendResponse({
+          success: true,
+          shrunk,
+          originalTokens: origTokens,
+          shrunkTokens,
+          tokensSaved: Math.max(0, origTokens - shrunkTokens)
+        });
+      } catch (err) {
+        sendResponse({ success: false, error: err.message });
+      }
+    })();
+    return true;
+  }
+
+  if (request.action === "shrinkLogs") {
+    (async () => {
+      try {
+        const { logText } = request;
+        const shrunk = typeof shrinkLogs === "function"
+          ? shrinkLogs(logText)
+          : logText;
+        sendResponse({ success: true, shrunk });
+      } catch (err) {
+        sendResponse({ success: false, error: err.message });
+      }
+    })();
+    return true;
+  }
+
+  if (request.action === "getCodeGraph") {
+    (async () => {
+      try {
+        const data = await chrome.storage.local.get(["vaultFiles"]);
+        const files = data.vaultFiles || [];
+        const graph = typeof buildCodebaseGraph === "function"
+          ? buildCodebaseGraph(files)
+          : { graphText: "Graph engine unavailable", nodes: [] };
+        sendResponse({ success: true, graph });
+      } catch (err) {
+        sendResponse({ success: false, error: err.message });
+      }
+    })();
+    return true;
+  }
+
+  if (request.action === "alignCache") {
+    (async () => {
+      try {
+        const { systemPrompt, context, query } = request;
+        const aligned = typeof alignPromptForCache === "function"
+          ? alignPromptForCache(systemPrompt, context, query)
+          : `${systemPrompt}\n\n${context}\n\n${query}`;
+        sendResponse({ success: true, aligned });
+      } catch (err) {
+        sendResponse({ success: false, error: err.message });
+      }
     })();
     return true;
   }
