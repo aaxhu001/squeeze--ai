@@ -189,7 +189,7 @@ def create_deep_guide_pdf(filename="Squeeze_AI_Complete_Feature_Architecture_Gui
     story.append(Spacer(1, 8))
 
     story.append(Paragraph("Squeeze AI: Engineering Architecture & Feature Guide", cover_title_style))
-    story.append(Paragraph("A comprehensive manual of every subsystem, algorithm, data structure, and judge response.", cover_sub_style))
+    story.append(Paragraph("A comprehensive manual of every subsystem, algorithm, and data structure. Live Production: <b>https://squeeze-ai.surge.sh</b>", cover_sub_style))
     story.append(HRFlowable(width="100%", thickness=2, color=PRIMARY, spaceBefore=0, spaceAfter=10))
 
     # Architecture Overview Matrix
