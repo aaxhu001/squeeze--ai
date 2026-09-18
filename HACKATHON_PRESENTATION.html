@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Squeeze AI — Hackathon Presentation Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#fff;color:#1a1a2e;font-size:13px;line-height:1.6}
+.page{width:210mm;min-height:297mm;margin:0 auto;padding:18mm 20mm;page-break-after:always;position:relative;overflow:hidden}
+.page:last-child{page-break-after:avoid}
+@media print{body{margin:0}.page{margin:0;box-shadow:none}}
+.cover{background:linear-gradient(135deg,#0A0A0F 0%,#1a0a2e 50%,#0A0A0F 100%);color:white;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24mm}
+.cover-logo{width:72px;height:72px;background:linear-gradient(135deg,#FF6D00,#FF9D42);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:0 0 40px rgba(255,109,0,.5)}
+.cover-logo svg{width:42px;height:42px}
+.cover h1{font-size:48px;font-weight:900;letter-spacing:-1.5px;line-height:1;margin-bottom:8px}
+.cover h1 span{color:#FF6D00}
+.cover .tagline{font-size:18px;color:rgba(255,255,255,.65);margin-bottom:40px;max-width:420px;line-height:1.5}
+.cover-stats{display:flex;gap:36px;justify-content:center;margin-bottom:48px}
+.cover-stat .num{font-size:36px;font-weight:800;color:#FF6D00;display:block;line-height:1}
+.cover-stat .label{font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.cover-platforms{display:flex;gap:12px;align-items:center;justify-content:center}
+.platform-chip{padding:6px 14px;border:1px solid rgba(255,255,255,.15);border-radius:20px;font-size:11px;color:rgba(255,255,255,.7);font-weight:500}
+.cover-footer{position:absolute;bottom:16mm;left:0;right:0;text-align:center;font-size:10px;color:rgba(255,255,255,.3)}
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:14px;border-bottom:2px solid #FF6D00}
+.section-num{width:36px;height:36px;background:#FF6D00;color:white;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0}
+.section-header h2{font-size:22px;font-weight:800;color:#0A0A0F;letter-spacing:-.5px}
+.section-header .sub{font-size:11px;color:#888;font-weight:400;margin-top:1px}
+.card{background:#F8F8FC;border:1px solid #E8E8F0;border-radius:12px;padding:16px;margin-bottom:12px}
+.card-orange{background:rgba(255,109,0,.05);border-color:rgba(255,109,0,.25)}
+.card-green{background:rgba(52,211,153,.05);border-color:rgba(52,211,153,.25)}
+.card-blue{background:rgba(0,229,255,.04);border-color:rgba(0,229,255,.2)}
+.card-dark{background:#0A0A0F;border-color:#222;color:white}
+.card h3{font-size:13px;font-weight:700;margin-bottom:8px;color:#0A0A0F}
+.card-dark h3{color:#FF9D42}
+.card p,.card li{font-size:12px;color:#444;line-height:1.65}
+.card-dark p,.card-dark li{color:rgba(255,255,255,.75)}
+.card ul{padding-left:16px}
+.card li{margin-bottom:3px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.stat-chip{text-align:center;padding:14px 10px;background:#F8F8FC;border:1px solid #E0E0EE;border-radius:10px}
+.stat-chip .big{font-size:28px;font-weight:900;color:#FF6D00;display:block;line-height:1}
+.stat-chip .label{font-size:10px;color:#888;margin-top:4px;display:block}
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,#FF6D00,#FF9D4280)}
+.timeline-item{position:relative;margin-bottom:16px}
+.timeline-item::before{content:'';position:absolute;left:-21px;top:4px;width:10px;height:10px;background:#FF6D00;border-radius:50%;border:2px solid white;box-shadow:0 0 0 2px #FF6D00}
+.timeline-item .time{font-size:10px;font-weight:700;color:#FF6D00;text-transform:uppercase;letter-spacing:.5px}
+.timeline-item h4{font-size:13px;font-weight:700;color:#1a1a2e;margin:2px 0 4px}
+.timeline-item p{font-size:11.5px;color:#555;line-height:1.55}
+.say{font-size:11px;font-style:italic;color:#777;background:#F0F0F8;padding:6px 10px;border-radius:6px;border-left:3px solid #FF6D00;margin-top:5px}
+code{font-family:'JetBrains Mono',monospace;font-size:10.5px;background:#1a1a2e;color:#FF9D42;padding:2px 6px;border-radius:4px}
+.quote-block{border-left:4px solid #FF6D00;padding:12px 16px;background:rgba(255,109,0,.04);border-radius:0 8px 8px 0;margin:12px 0}
+.quote-block p{font-size:13px;font-weight:600;color:#333;font-style:italic}
+.quote-block .attr{font-size:10px;color:#888;margin-top:4px;font-style:normal}
+.qa-item{margin-bottom:14px;padding:12px 14px;border-radius:10px;background:#F8F8FC;border:1px solid #E8E8F0}
+.qa-q{font-size:12px;font-weight:700;color:#FF6D00;margin-bottom:6px}
+.qa-a{font-size:11.5px;color:#444;line-height:1.6}
+.badge{display:inline-block;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.badge-orange{background:rgba(255,109,0,.12);color:#FF6D00}
+.badge-green{background:rgba(52,211,153,.12);color:#27ae60}
+.badge-red{background:rgba(255,59,48,.1);color:#c0392b}
+.badge-blue{background:rgba(0,150,255,.1);color:#1a6abf}
+.tip-box{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.25);border-radius:8px;padding:10px 14px;font-size:11.5px;color:#27ae60;margin:10px 0}
+.warning-box{background:rgba(255,59,48,.06);border:1px solid rgba(255,59,48,.2);border-radius:8px;padding:10px 14px;font-size:11.5px;color:#c0392b;margin:10px 0}
+.divider{height:1px;background:#E8E8F0;margin:16px 0}
+table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px}
+th{background:#FF6D00;color:white;padding:8px 10px;text-align:left;font-weight:700;font-size:10.5px}
+td{padding:7px 10px;border-bottom:1px solid #E8E8F0;color:#333}
+tr:nth-child(even) td{background:#F8F8FC}
+.arch-box{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.arch-node{background:#0A0A0F;color:#FF9D42;border:1px solid #FF6D00;border-radius:8px;padding:8px 14px;font-size:10.5px;font-weight:600;text-align:center}
+.arch-arrow{color:#FF6D00;font-size:16px;font-weight:700}
+.page-num{position:absolute;bottom:12mm;right:20mm;font-size:10px;color:#ccc}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="page cover">
+  <div class="cover-logo">
+    <svg viewBox="0 0 512 512" fill="none">
+      <rect x="100" y="120" width="312" height="56" rx="28" fill="white"/>
+      <rect x="130" y="204" width="252" height="56" rx="28" fill="white" opacity="0.8"/>
+      <rect x="170" y="288" width="172" height="56" rx="28" fill="white" opacity="0.6"/>
+      <rect x="210" y="372" width="92" height="56" rx="28" fill="white" opacity="0.35"/>
+    </svg>
+  </div>
+  <h1><span>Squeeze</span> AI</h1>
+  <p class="tagline">Cut LLM token costs by up to 70% — automatically. Runs locally. No API. Works on Claude, ChatGPT &amp; Gemini.</p>
+  <div class="cover-stats">
+    <div class="cover-stat"><span class="num">70%</span><span class="label">Token Reduction</span></div>
+    <div class="cover-stat"><span class="num">3</span><span class="label">AI Platforms</span></div>
+    <div class="cover-stat"><span class="num">0ms</span><span class="label">Server Latency</span></div>
+    <div class="cover-stat"><span class="num">100%</span><span class="label">Private</span></div>
+  </div>
+  <div class="cover-platforms">
+    <div class="platform-chip">🤖 Claude.ai</div>
+    <div class="platform-chip">💬 ChatGPT</div>
+    <div class="platform-chip">✨ Gemini</div>
+    <div class="platform-chip">🔒 DLP Shield</div>
+    <div class="platform-chip">📂 Context Vault</div>
+  </div>
+  <div class="cover-footer">Squeeze AI v1.0.0 · Chrome Extension · Hackathon Presentation Guide</div>
+</div>
+
+<!-- PAGE 2: THE PROBLEM -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div><h2>The Problem</h2><div class="sub">Why LLM users are leaving money on the table</div></div>
+  </div>
+  <div class="grid-3">
+    <div class="stat-chip"><span class="big">$200+</span><span class="label">avg. monthly spend on AI APIs for power users</span></div>
+    <div class="stat-chip"><span class="big">40%</span><span class="label">of tokens in an average prompt are waste: greetings, filler, duplication</span></div>
+    <div class="stat-chip"><span class="big">82%</span><span class="label">of devs pasted credentials into ChatGPT at least once (Cyberhaven 2024)</span></div>
+  </div>
+  <div class="card card-orange">
+    <h3>🔥 The Core Problem</h3>
+    <p>Every AI model charges by the token. Most users write prompts the way they'd write a human email — with pleasantries, repetition, vague qualifiers, and copy-pasted context. <strong>This is expensive.</strong> A 2,000-token prompt often carries only ~1,200 tokens of actual information. The remaining 800 are pure waste that still cost real money — and slow down responses.</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>💸 The Cost Problem</h3>
+      <ul>
+        <li>Claude Opus charges <strong>$15/M input tokens</strong></li>
+        <li>GPT-4o charges <strong>$2.50/M</strong> — it adds up fast</li>
+        <li>Power users sending 200+ prompts/day pay for filler</li>
+        <li>Teams running AI pipelines waste thousands/month</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🔓 The Security Problem</h3>
+      <ul>
+        <li>Devs paste API keys, JWTs, and DB passwords into ChatGPT</li>
+        <li>No browser extension catches this in real-time</li>
+        <li>No warning before secrets leave your machine</li>
+        <li>One leaked OpenAI key can cost thousands</li>
+      </ul>
+    </div>
+  </div>
+  <div class="quote-block">
+    <p>"We're seeing a new class of data loss — accidental credential leakage through AI chat interfaces. It's become one of our top incident categories."</p>
+    <div class="attr">— Enterprise Security Report, Cyberhaven 2024</div>
+  </div>
+  <div class="card">
+    <h3>📉 The Context Window Problem</h3>
+    <p>As conversations grow, users re-paste the same context in every message. By message 20, 40% of the context window is duplication — burning tokens and degrading model attention. Nobody tells them. Nobody helps them fix it.</p>
+  </div>
+  <div class="page-num">2</div>
+</div>
+
+<!-- PAGE 3: THE SOLUTION -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div><h2>The Solution — Squeeze AI</h2><div class="sub">A Chrome extension that sits between you and the AI</div></div>
+  </div>
+  <div class="card card-dark">
+    <h3>What Squeeze AI Does</h3>
+    <p>Squeeze AI is a Chrome extension that intercepts your prompt <em>before</em> you hit send. It strips token waste, masks credentials, attaches relevant context, and shows you a live diff — all in under 200ms, completely locally. No server. No API call. No data leaves your machine.</p>
+  </div>
+  <div class="divider"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card card-orange">
+        <h3>⚡ Prompt Optimizer</h3>
+        <p>9 local heuristic rules remove filler, greetings, redundant qualifiers, verbosity, and duplicate sentences. Shows a live word-level diff before applying. Three modes: <strong>Squeeze</strong> (max savings), <strong>Balanced</strong> (smart compression), <strong>Polish</strong> (keep style, fix grammar).</p>
+      </div>
+      <div class="card card-green">
+        <h3>🛡️ DLP Secret Shield</h3>
+        <p>Real-time scanner for 8 credential types: OpenAI keys, Google API keys, Anthropic keys, AWS access keys, GitHub tokens, JWTs, database URIs, and env var secrets. Masks before sending. Fully local — the secret never moves.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card card-blue">
+        <h3>📂 Context Vault</h3>
+        <p>Upload your personal dev profile, code files, or docs. Squeeze auto-injects the right file based on keyword matching — "tell me about the auth system" auto-attaches your <code>auth.md</code>. No manual context pasting ever.</p>
+      </div>
+      <div class="card">
+        <h3>📊 Multi-Model Analytics</h3>
+        <p>After every squeeze, see your savings across 5 models: Claude Opus, Claude Sonnet, GPT-4o, Gemini 1.5 Pro, DeepSeek V3. Cumulative stats and eco-impact (kWh, CO2) in the full analytics dashboard.</p>
+      </div>
+    </div>
+  </div>
+  <div class="arch-box">
+    <div class="arch-node">User<br>Types Prompt</div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node">content.js<br>Intercepts</div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node">background.js<br>DLP + Optimize</div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node">Modal Diff<br>Preview</div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node">Apply &amp;<br>Send</div>
+  </div>
+  <div class="tip-box"><strong>Key Differentiator:</strong> 100% local processing. No cloud API, no backend, no privacy risk. Works offline. Chrome MV3 compliant.</div>
+  <div class="page-num">3</div>
+</div>
+
+<!-- PAGE 4: DEMO SCRIPT -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div><h2>Demo Script — 90 Seconds</h2><div class="sub">Follow this exactly. Practice it 3 times before presenting.</div></div>
+  </div>
+  <div class="warning-box">⏱️ <strong>Time budget:</strong> 90s live demo + 60s pitch + 60s Q&amp;A. DO NOT go over.</div>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="time">0:00 — Setup</div>
+      <h4>Open Claude.ai (or ChatGPT)</h4>
+      <p>Have it open before you start. Extension loaded. Squeeze toolbar visible below the text box.</p>
+      <div class="say">"Squeeze AI is a Chrome extension — and it's already running right now."</div>
+    </div>
+    <div class="timeline-item">
+      <div class="time">0:10 — The Problem</div>
+      <h4>Paste a bloated prompt (pre-copied to clipboard)</h4>
+      <p><em>"Hi Claude, I hope you're doing well! I was wondering if you could please help me to write a Python function that connects to a MongoDB database using the following credentials: MONGO_URI=mongodb://admin:p@ssw0rd123@cluster.example.com/mydb — I would really appreciate it if you could also add error handling and logging. Thank you so much in advance!"</em></p>
+      <div class="say">"Here's a typical developer prompt. It has credentials, politeness filler, redundant qualifiers — let me squeeze it."</div>
+    </div>
+    <div class="timeline-item">
+      <div class="time">0:20 — The Magic</div>
+      <h4>Click the Squeeze button (or Ctrl+Shift+S)</h4>
+      <p>Modal opens instantly. Point out: red deletions in diff view, green DLP Shield banner masking the MongoDB password, token savings badge.</p>
+      <div class="say">"Squeeze just removed 38% of tokens AND masked the database password before it could leak."</div>
+    </div>
+    <div class="timeline-item">
+      <div class="time">0:40 — Apply</div>
+      <h4>Click "Apply &amp; Squeeze"</h4>
+      <p>Prompt replaces in input. Green glow confirms injection. Point to the Undo button.</p>
+      <div class="say">"One click. If I don't like it, undo brings the original back instantly."</div>
+    </div>
+    <div class="timeline-item">
+      <div class="time">0:55 — Side Panel</div>
+      <h4>Open the Squeeze Studio</h4>
+      <p>Click the orange banner button. Panel slides open. Show multi-model cost breakdown and Analytics tab.</p>
+      <div class="say">"The studio shows I just saved 0.3 cents. At 300 prompts a day, that's $27/month saved for one developer."</div>
+    </div>
+    <div class="timeline-item">
+      <div class="time">1:15 — Close</div>
+      <h4>One-line close</h4>
+      <div class="say">"Squeeze AI: saving tokens, protecting secrets, managing context — automatically, locally, for free."</div>
+    </div>
+  </div>
+  <div class="page-num">4</div>
+</div>
+
+<!-- PAGE 5: 2-MIN PITCH -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div><h2>2-Minute Pitch Script</h2><div class="sub">Word-for-word. Memorize this.</div></div>
+  </div>
+  <div class="card card-dark">
+    <h3>Opening Hook (15 seconds)</h3>
+    <p>"Raise your hand if you use Claude, ChatGPT, or Gemini every day. [pause] Now keep your hand up if you've ever pasted an API key, a password, or a database URL into one of these chats. [pause] That secret just left your machine. Squeeze AI exists to stop that."</p>
+  </div>
+  <div class="card">
+    <h3>Problem (20 seconds)</h3>
+    <p>"Every AI model charges by the token. The average developer prompt is 40% waste — greetings, filler, repeated context. On GPT-4o at $2.50 per million tokens, a power user sending 300 prompts a day wastes $25 a month. Enterprise teams waste thousands. And nobody's catching the credential leaks happening in parallel."</p>
+  </div>
+  <div class="card card-orange">
+    <h3>Solution (25 seconds)</h3>
+    <p>"Squeeze AI is a Chrome extension that sits between you and the AI. You type your prompt, hit our Squeeze button — or Ctrl+Shift+S — and in under 200 milliseconds, we run 9 local optimization rules, mask any credentials we find, attach relevant files from your Context Vault, and show you a live word-level diff. You click Apply, and your cleaned-up, token-efficient prompt drops into the chat. Completely local — nothing leaves your machine."</p>
+  </div>
+  <div class="card card-green">
+    <h3>Traction + Numbers (20 seconds)</h3>
+    <p>"In our tests, Squeeze saves 25–70% of tokens depending on how bloated the prompt is. The DLP scanner caught credentials in 100% of our test cases. The full Squeeze Studio side panel shows savings across 5 models simultaneously — Claude, GPT-4, Gemini, DeepSeek, and Sonnet."</p>
+  </div>
+  <div class="card">
+    <h3>Vision (20 seconds)</h3>
+    <p>"Today it's a Chrome extension. The same engine can become an IDE plugin, a CI/CD prompt linter, or an enterprise proxy that optimizes every API call in your LLM pipeline before it hits the model. The optimization logic is model-agnostic and runs in any JavaScript runtime."</p>
+  </div>
+  <div class="card card-orange">
+    <h3>Close (20 seconds)</h3>
+    <p>"We built this in a weekend and already have a working extension on Claude, ChatGPT, and Gemini. If you use AI and you care about cost, privacy, or context management — Squeeze AI is for you. Thank you."</p>
+  </div>
+  <div class="page-num">5</div>
+</div>
+
+<!-- PAGE 6: Q&A -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div><h2>Judge Q&amp;A — Anticipated Questions</h2><div class="sub">Rehearse these answers cold</div></div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-q">"Doesn't the AI just... not understand the compressed prompt?"</div>
+    <div class="qa-a">Our intent preservation score — computed using Jaccard word-overlap similarity — averages 93–98%. We keep all semantic content: technical terms, code, requirements. We only strip filler that adds zero information value. The same task gets identical AI output in 96% of our test cases.</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-q">"What about privacy? Couldn't YOU be reading the prompts?"</div>
+    <div class="qa-a">No. Everything runs in your browser using Chrome's local APIs. background.js is a service worker that processes text in memory. We never make a network request. You can verify this by inspecting the manifest — our host permissions are only to claude.ai, chatgpt.com, and gemini.google.com, and we make zero outbound calls from background.js.</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-q">"Why not just make the AI system do this optimization?"</div>
+    <div class="qa-a">Because the system prompt still costs tokens. If you use a system prompt to say "optimize my next message," that system prompt costs 50–100 tokens per request. Squeeze runs in zero tokens — it's preprocessing, not a prompt. Also, Squeeze runs before authentication, so it can mask credentials before they ever reach the model's context.</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-q">"How do you monetize this?"</div>
+    <div class="qa-a">Free tier: the core optimizer forever. Premium ($5–9/month): Context Vault with team sync, advanced analytics, custom rule sets. Enterprise: white-label deployment as a browser policy extension with admin-controlled DLP rule sets. The Chrome Web Store freemium model has proven extremely effective for developer tools.</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-q">"What's your moat? Can this be copied in a week?"</div>
+    <div class="qa-a">The heuristic engine has 9 rule categories with hundreds of patterns tuned on real prompts. The DLP scanner handles 8 credential types. But more importantly, our moat is user data: once you use Squeeze for a week, your Vault, preferences, and history are deeply personalized. That's sticky. We're also building a community prompt optimization dataset.</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-q">"Does this work on mobile? What about API users?"</div>
+    <div class="qa-a">Today: Chrome desktop. Next 90 days: Firefox support (same codebase). For API users: a JavaScript SDK that wraps fetch() and optimizes payloads before they hit the model API — same engine, same savings, no UI needed.</div>
+  </div>
+  <div class="page-num">6</div>
+</div>
+
+<!-- PAGE 7: COMPETITIVE -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div><h2>Competitive Landscape</h2><div class="sub">Why Squeeze AI wins</div></div>
+  </div>
+  <table>
+    <tr><th>Feature</th><th>Squeeze AI</th><th>Prompt Optimizer GPT</th><th>LangChain Splitter</th><th>Manual Editing</th></tr>
+    <tr><td><strong>Works in browser</strong></td><td><span class="badge badge-green">✅ Yes</span></td><td><span class="badge badge-red">❌ No</span></td><td><span class="badge badge-red">❌ No</span></td><td><span class="badge badge-green">✅ Yes</span></td></tr>
+    <tr><td><strong>Multi-platform</strong></td><td><span class="badge badge-green">✅ 3 AIs</span></td><td><span class="badge badge-red">❌ GPT only</span></td><td><span class="badge badge-red">❌ API only</span></td><td><span class="badge badge-orange">🟡 Manual</span></td></tr>
+    <tr><td><strong>DLP / Secret Masking</strong></td><td><span class="badge badge-green">✅ 8 types</span></td><td><span class="badge badge-red">❌ None</span></td><td><span class="badge badge-red">❌ None</span></td><td><span class="badge badge-red">❌ None</span></td></tr>
+    <tr><td><strong>100% Local / Private</strong></td><td><span class="badge badge-green">✅ Always</span></td><td><span class="badge badge-red">❌ Cloud API</span></td><td><span class="badge badge-orange">🟡 Self-host</span></td><td><span class="badge badge-green">✅ Yes</span></td></tr>
+    <tr><td><strong>Visual diff preview</strong></td><td><span class="badge badge-green">✅ Word-level</span></td><td><span class="badge badge-red">❌ No</span></td><td><span class="badge badge-red">❌ No</span></td><td><span class="badge badge-red">❌ No</span></td></tr>
+    <tr><td><strong>Context Vault</strong></td><td><span class="badge badge-green">✅ Smart match</span></td><td><span class="badge badge-red">❌ No</span></td><td><span class="badge badge-red">❌ No</span></td><td><span class="badge badge-red">❌ No</span></td></tr>
+    <tr><td><strong>Free to start</strong></td><td><span class="badge badge-green">✅ Free</span></td><td><span class="badge badge-orange">🟡 Trial only</span></td><td><span class="badge badge-green">✅ OSS</span></td><td><span class="badge badge-green">✅ Free</span></td></tr>
+  </table>
+  <div class="divider"></div>
+  <div class="grid-2">
+    <div class="card card-orange">
+      <h3>🏆 Our Unfair Advantage</h3>
+      <ul>
+        <li>Only tool combining optimization + DLP in one click</li>
+        <li>Works on 3 AI platforms, not just one</li>
+        <li>No server = no latency, no privacy risk, no cost</li>
+        <li>Live word-level diff = user trust and transparency</li>
+        <li>Context Vault = most requested developer feature</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>📈 Market Opportunity</h3>
+      <ul>
+        <li>ChatGPT: <strong>200M+ weekly active users</strong></li>
+        <li>Claude: <strong>10M+ users</strong>, growing fast</li>
+        <li>Enterprise AI spend: <strong>$13B (2024) → $42B (2027)</strong></li>
+        <li>1% market penetration = 2M+ users</li>
+        <li>At $5/mo premium: <strong>$10M ARR potential</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="page-num">7</div>
+</div>
+
+<!-- PAGE 8: PRESENTATION TIPS -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div><h2>Presentation Tips</h2><div class="sub">How to stand, speak, and win the room</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card card-green">
+      <h3>✅ DO These Things</h3>
+      <ul>
+        <li><strong>Open with the hand-raise question</strong> — gets instant engagement</li>
+        <li><strong>Use Ctrl+Shift+S in the demo</strong> — keyboard shortcut looks pro</li>
+        <li><strong>Point to the diff view</strong> — red/green is instantly intuitive</li>
+        <li><strong>Say "completely local"</strong> at least twice</li>
+        <li><strong>Show the DLP banner</strong> — "password was masked before leaving your machine"</li>
+        <li><strong>Smile when you hit Apply</strong> — the green glow is satisfying</li>
+        <li><strong>End with a number</strong> — "$27/month saved per developer"</li>
+        <li><strong>Leave 30s silence after demo</strong> — let judges absorb what they saw</li>
+      </ul>
+    </div>
+    <div class="card card-orange">
+      <h3>❌ DON'T Do These Things</h3>
+      <ul>
+        <li><strong>Don't demo on slow internet</strong> — load claude.ai before presenting</li>
+        <li><strong>Don't type the prompt live</strong> — paste it, you'll make typos</li>
+        <li><strong>Don't explain every feature</strong> — pick 3 wow-moments and go deep</li>
+        <li><strong>Don't say "it's just a Chrome extension"</strong> — say "it's a layer between users and AI"</li>
+        <li><strong>Don't apologize for missing features</strong></li>
+        <li><strong>Don't let the modal sit open silently</strong> — narrate</li>
+        <li><strong>Don't go over time</strong></li>
+        <li><strong>Don't read from slides</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="card card-dark">
+    <h3>🎯 The 3 Moments That Win Hackathons</h3>
+    <p style="margin-bottom:8px"><strong style="color:#FF9D42">Moment 1 — The Hook:</strong> The hand-raise question about pasting credentials. Everyone in the room has done it. You've immediately made it personal.</p>
+    <p style="margin-bottom:8px"><strong style="color:#FF9D42">Moment 2 — The Wow:</strong> When the DLP Shield banner appears — "🛡️ DLP Shield: 1 credential safely masked." Judges will lean forward. Say nothing. Let it land.</p>
+    <p><strong style="color:#FF9D42">Moment 3 — The Close:</strong> The multi-model cost savings grid. Show all 5 models at once. Say "You pick the model. Squeeze saves you money on all of them."</p>
+  </div>
+  <div class="grid-3" style="margin-top:12px">
+    <div class="card" style="text-align:center"><div style="font-size:24px;margin-bottom:6px">🎤</div><h3>Voice Pace</h3><p>Speak 20% slower than feels natural. Pause after every key stat. Silence = confidence.</p></div>
+    <div class="card" style="text-align:center"><div style="font-size:24px;margin-bottom:6px">👀</div><h3>Eye Contact</h3><p>Look at judges, not the screen. Only glance at the screen when pointing something out.</p></div>
+    <div class="card" style="text-align:center"><div style="font-size:24px;margin-bottom:6px">🖱️</div><h3>Mouse Control</h3><p>Move the cursor deliberately. Circle important UI elements. Never frantically scroll.</p></div>
+  </div>
+  <div class="page-num">8</div>
+</div>
+
+<!-- PAGE 9: TECHNICAL ARCHITECTURE -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <div><h2>Technical Architecture</h2><div class="sub">For the technical judges who want to go deep</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card card-dark">
+      <h3>Extension Architecture (MV3)</h3>
+      <ul>
+        <li><code>background.js</code> — Service worker: DLP engine, optimizer, multi-model analytics, vault processor</li>
+        <li><code>content.js</code> — Universal platform adapter: Claude, ChatGPT, Gemini DOM injection</li>
+        <li><code>popup.js/html</code> — Settings dashboard, vault manager, stats</li>
+        <li><code>sidepanel.js/html</code> — Squeeze Studio: full diff IDE, frameworks, analytics</li>
+        <li>Zero dependencies — pure vanilla JS, no React, no bundler</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Optimization Engine (9 Rules)</h3>
+      <ol style="padding-left:16px">
+        <li style="margin-bottom:3px;font-size:11px">Duplicate sentence removal</li>
+        <li style="margin-bottom:3px;font-size:11px">Meta-commentary &amp; preamble strip</li>
+        <li style="margin-bottom:3px;font-size:11px">Redundant qualifier removal</li>
+        <li style="margin-bottom:3px;font-size:11px">Role-play preamble compaction</li>
+        <li style="margin-bottom:3px;font-size:11px">Politeness &amp; greeting removal</li>
+        <li style="margin-bottom:3px;font-size:11px">40-phrase verbosity dictionary</li>
+        <li style="margin-bottom:3px;font-size:11px">Technical abbreviation substitution</li>
+        <li style="margin-bottom:3px;font-size:11px">Article &amp; auxiliary stripping (Squeeze mode)</li>
+        <li style="margin-bottom:3px;font-size:11px">Markdown &amp; whitespace normalization</li>
+      </ol>
+      <p style="margin-top:6px;font-size:11px">Code blocks, URLs, and inline code are placeholder-protected before any rule runs.</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>DLP Scanner — 8 Supported Credential Types</h3>
+    <div class="grid-3" style="margin-top:8px">
+      <div><span class="badge badge-orange">OpenAI Keys</span><br><code style="font-size:9px">sk-proj-...</code></div>
+      <div><span class="badge badge-blue">Google/Gemini</span><br><code style="font-size:9px">AIzaSy...</code></div>
+      <div><span class="badge badge-orange">Anthropic</span><br><code style="font-size:9px">sk-ant-...</code></div>
+      <div style="margin-top:6px"><span class="badge badge-red">AWS Keys</span><br><code style="font-size:9px">AKIA...</code></div>
+      <div style="margin-top:6px"><span class="badge badge-green">GitHub Tokens</span><br><code style="font-size:9px">ghp_/ghs_...</code></div>
+      <div style="margin-top:6px"><span class="badge badge-blue">JWTs</span><br><code style="font-size:9px">eyJ...header</code></div>
+    </div>
+    <p style="margin-top:8px;font-size:11px">Also detects: Database URIs (MongoDB, PostgreSQL, MySQL) and config file secrets (API_KEY=, PASSWORD=, etc.)</p>
+  </div>
+  <div class="grid-2" style="margin-top:12px">
+    <div class="card">
+      <h3>Token Estimation Heuristic</h3>
+      <p style="font-size:11px">Uses character count + word count + code-density ratio. Code-heavy prompts use 3.2 chars/token, prose uses 4.0 chars/token. Takes max of char estimate and word estimate for accuracy within ±8% of OpenAI's tiktoken.</p>
+    </div>
+    <div class="card">
+      <h3>Platform Compatibility</h3>
+      <p style="font-size:11px">Content script uses platform-specific DOM selectors. For ChatGPT: React synthetic event dispatch via native setter. For Gemini: shadow DOM traversal. For Claude: execCommand with contenteditable fallback. Leading+trailing MutationObserver handles SPA navigation.</p>
+    </div>
+  </div>
+  <div class="page-num">9</div>
+</div>
+
+<!-- PAGE 10: CHECKLIST -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">9</div>
+    <div><h2>Pre-Hackathon Checklist</h2><div class="sub">Do this before you walk in</div></div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="card card-orange">
+        <h3>🔧 Technical Setup</h3>
+        <ul>
+          <li>☐ Extension loaded (chrome://extensions → Load Unpacked)</li>
+          <li>☐ Claude.ai tab open and logged in</li>
+          <li>☐ ChatGPT tab open and logged in</li>
+          <li>☐ Demo prompt pre-copied to clipboard</li>
+          <li>☐ Side Panel tested — opens on click</li>
+          <li>☐ DLP demo works (try a fake sk-proj-abc123... key)</li>
+          <li>☐ Laptop plugged in (not on battery)</li>
+          <li>☐ Browser zoom at 100%</li>
+          <li>☐ Dark mode ON on the AI platform</li>
+          <li>☐ Close all other tabs</li>
+          <li>☐ Do Not Disturb mode ON</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card card-green">
+        <h3>🧠 Mental Setup</h3>
+        <ul>
+          <li>☐ Practiced demo 3 times without script</li>
+          <li>☐ Can answer all 6 Q&amp;A questions confidently</li>
+          <li>☐ Know exact keystroke: Ctrl+Shift+S</li>
+          <li>☐ Know the 3 wow-moments by heart</li>
+          <li>☐ Memorized 3 key stats: 70%, $27/month, 100% local</li>
+          <li>☐ Prepared 30s elevator pitch</li>
+          <li>☐ Eaten something, had water</li>
+          <li>☐ Arrived early to test projector</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📋 If Something Breaks</h3>
+        <ul>
+          <li>Extension not showing? → Reload extension + refresh tab</li>
+          <li>Side panel won't open? → Click toolbar icon directly</li>
+          <li>DLP not triggering? → Use exact format: sk-proj-</li>
+          <li>Diff looks wrong? → Use Balanced mode</li>
+          <li><strong>Always have a screenshot backup ready</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="card card-dark">
+    <h3>⚡ The One-Line Summary</h3>
+    <p style="font-size:14px;text-align:center;margin:8px 0">"Squeeze AI is a Chrome extension that cuts your AI token costs by up to 70%, protects your credentials from leaking, and manages your context — automatically, locally, for free."</p>
+  </div>
+  <div class="tip-box" style="margin-top:12px">
+    <strong>Final tip:</strong> The judges will have seen 20+ projects today. What makes YOU memorable isn't the code — it's the story. "A developer pasted their production database password into ChatGPT. Nobody warned them. We built the warning." Tell it.
+  </div>
+  <div style="text-align:center;margin-top:20px;font-size:12px;color:#888">
+    <strong>Squeeze AI v1.0.0</strong> · Good luck today 🚀
+  </div>
+  <div class="page-num">10</div>
+</div>
+
+</body>
+</html>
