@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Squeeze Dashboard (Beta)</title>
+  <title>Squeeze AI Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -17,11 +17,17 @@
         <div class="logo-icon">
           <img src="icons/icon48.png" width="28" height="28" alt="Squeeze Logo">
         </div>
-        <span class="logo-text">Squeeze <span class="highlight">for Claude</span></span>
+        <span class="logo-text">Squeeze <span class="highlight">AI</span></span>
       </div>
-      <div class="status-badge" id="statusBadge">
-        <span class="dot"></span>
-        <span class="text">Ready</span>
+      <div class="header-right-actions">
+        <button id="openSidePanelTopBtn" class="sidepanel-launch-btn" title="Open persistent Side Panel Studio">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+          <span>Studio</span>
+        </button>
+        <div class="status-badge" id="statusBadge">
+          <span class="dot"></span>
+          <span class="text">Ready</span>
+        </div>
       </div>
     </header>
 
@@ -37,7 +43,7 @@
       </button>
       <button class="tab-btn" data-tab="vault">
         <svg class="tab-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-        Context Vault
+        Vault
       </button>
     </div>
 
@@ -45,6 +51,15 @@
     <main class="app-content">
       <!-- Dashboard Tab -->
       <section id="dashboardTab" class="tab-pane active">
+        <!-- Persistent Side Panel Banner CTA -->
+        <div class="sidepanel-banner" id="sidePanelBanner">
+          <div class="sidepanel-banner-left">
+            <span class="sidepanel-banner-title">⚡ Squeeze Studio</span>
+            <span class="sidepanel-banner-desc">Side-by-side prompt playground & DLP shield.</span>
+          </div>
+          <button id="openSidePanelActionBtn" class="sidepanel-banner-btn">Open Studio →</button>
+        </div>
+
         <!-- Stats Cards Grid -->
         <div class="stats-grid">
           <div class="stat-card pink-glow">
@@ -66,22 +81,27 @@
 
         <div class="cost-card purple-glow">
           <div class="cost-info">
-            <span class="cost-label">Estimated Money Saved</span>
+            <span class="cost-label">Estimated Cash Saved</span>
             <span class="cost-value" id="statCost">$0.00</span>
           </div>
           <div class="cost-visual">
-            <span class="cost-subtext">Based on Sonnet 5 / Fable 5 input rates</span>
+            <span class="cost-subtext">Across Claude 3.5, GPT-4o & Gemini</span>
           </div>
         </div>
 
-        <!-- Dynamic message or current status -->
+        <!-- Supported Platforms Card -->
         <div class="info-card">
           <div class="info-header">
-            <span class="info-title">Active Optimizer</span>
-            <span class="info-engine-badge" id="infoEngine">Local Heuristics</span>
+            <span class="info-title">Universal Multi-Platform</span>
+            <span class="info-engine-badge">v1.0.0 Active</span>
           </div>
-          <p class="info-text">
-            Using <span id="infoMode">Balanced</span> compression mode. Running offline with heuristic rules. Start typing inside Claude.ai and click the widget to squeeze your prompts.
+          <div class="platforms-badges">
+            <span class="platform-chip">Claude.ai</span>
+            <span class="platform-chip">ChatGPT</span>
+            <span class="platform-chip">Gemini</span>
+          </div>
+          <p class="info-text" style="margin-top: 6px;">
+            Squeeze injects directly into any chat input on Claude, ChatGPT, or Gemini. Use <kbd>Ctrl+Shift+S</kbd> to quick-squeeze!
           </p>
         </div>
       </section>
@@ -92,27 +112,27 @@
           
           <!-- Default Compression Profile -->
           <div class="form-group">
-            <label>Optimization Mode</label>
+            <label>Default Optimization Mode</label>
             <div class="radio-tiles">
               <label class="radio-tile">
                 <input type="radio" name="optimizationMode" value="squeeze">
                 <span class="tile-content">
                   <span class="tile-title">Squeeze</span>
-                  <span class="tile-desc">Telegraphic shorthand, drops articles & abbreviations.</span>
+                  <span class="tile-desc">Telegraphic shorthand, drops articles & auxiliary verbs.</span>
                 </span>
               </label>
               <label class="radio-tile">
                 <input type="radio" name="optimizationMode" value="balanced" checked>
                 <span class="tile-content">
                   <span class="tile-title">Balanced</span>
-                  <span class="tile-desc">Deletes opening greetings and standard polite filler.</span>
+                  <span class="tile-desc">Deletes greetings, pleasantries, and standard polite filler.</span>
                 </span>
               </label>
               <label class="radio-tile">
                 <input type="radio" name="optimizationMode" value="polish">
                 <span class="tile-content">
                   <span class="tile-title">Polish</span>
-                  <span class="tile-desc">Formats list bullet syntax and heading layouts.</span>
+                  <span class="tile-desc">Cleans markdown syntax, spacing, and bullet layouts.</span>
                 </span>
               </label>
             </div>
@@ -120,8 +140,16 @@
 
           <!-- Heuristic Rule Customization Checkboxes -->
           <div class="form-group">
-            <label>Active Rules Customization</label>
+            <label>Optimization & Security Rules</label>
             <div class="checkbox-group">
+              <label class="checkbox-container">
+                <input type="checkbox" id="ruleSecretShield" name="ruleSecretShield" checked>
+                <div class="checkbox-label-wrapper">
+                  <span class="checkbox-label" style="color: #34d399;">🛡️ DLP Secret & Credential Shield</span>
+                  <span class="checkbox-desc">Auto-masks API keys (OpenAI, Google, AWS), JWTs, and passwords.</span>
+                </div>
+              </label>
+
               <label class="checkbox-container">
                 <input type="checkbox" id="ruleStripGreetings" name="ruleStripGreetings" checked>
                 <div class="checkbox-label-wrapper">
@@ -134,7 +162,7 @@
                 <input type="checkbox" id="ruleSimplifyPhrases" name="ruleSimplifyPhrases" checked>
                 <div class="checkbox-label-wrapper">
                   <span class="checkbox-label">Simplify Verbose Phrases</span>
-                  <span class="checkbox-desc">Shortens wordy phrases (e.g. "in order to" -> "to", "due to" -> "because").</span>
+                  <span class="checkbox-desc">Shortens wordy phrases ("in order to" -> "to", "due to" -> "because").</span>
                 </div>
               </label>
               
@@ -150,7 +178,7 @@
                 <input type="checkbox" id="ruleStripArticles" name="ruleStripArticles" checked>
                 <div class="checkbox-label-wrapper">
                   <span class="checkbox-label">Strip Articles & Helpers (Squeeze)</span>
-                  <span class="checkbox-desc">Aggressive telegraphic mode; drops "the", "a", "an", auxiliary verbs.</span>
+                  <span class="checkbox-desc">Telegraphic mode; drops "the", "a", "an", and auxiliary verbs.</span>
                 </div>
               </label>
               
@@ -166,11 +194,11 @@
 
           <!-- Save Button -->
           <button type="submit" class="submit-btn" id="saveBtn">
-            <span>Save Rules</span>
+            <span>Save Settings</span>
             <div class="btn-glow"></div>
           </button>
           
-          <div id="saveFeedback" class="save-feedback">Rules Saved Successfully!</div>
+          <div id="saveFeedback" class="save-feedback">Settings Saved Successfully!</div>
         </form>
       </section>
 
@@ -179,9 +207,9 @@
         <div class="vault-container">
           <!-- Personal Preferences -->
           <div class="vault-section">
-            <h3 class="vault-section-title">Personal Preferences (Global Profile)</h3>
+            <h3 class="vault-section-title">Developer Profile (Global)</h3>
             <p class="vault-section-desc">Global background and guidelines (e.g. coding style, preferred tech stack) injected into queries.</p>
-            <textarea id="vaultPreferences" class="vault-textarea" placeholder="Example: I am a Node.js and TypeScript developer. Prefer functional programming. Write detailed docstrings. Target ES2022."></textarea>
+            <textarea id="vaultPreferences" class="vault-textarea" placeholder="Example: I am a TypeScript and React developer. Prefer functional programming. Write concise code."></textarea>
             <label class="checkbox-container inline-checkbox">
               <input type="checkbox" id="vaultPrefAlwaysInject" name="vaultPrefAlwaysInject" checked>
               <div class="checkbox-label-wrapper">
@@ -216,32 +244,14 @@
               </div>
             </label>
           </div>
-
-          <!-- Unabyss / MCP Connector -->
-          <div class="vault-section">
-            <h3 class="vault-section-title">Unabyss / MCP Endpoint Connector</h3>
-            <p class="vault-section-desc">Connect to a local server or Model Context Protocol endpoint to query dynamic project context.</p>
-            
-            <div class="connector-row">
-              <input type="text" id="vaultServerUrl" class="connector-input" placeholder="e.g. http://localhost:8000/query">
-              <button type="button" id="vaultTestServerBtn" class="connector-btn">Test</button>
-            </div>
-            <div class="connector-status-row">
-              <span id="vaultServerStatus" class="connector-status status-offline">Offline</span>
-              <label class="switch-container">
-                <input type="checkbox" id="vaultServerEnabled">
-                <span class="switch-label">Enable Endpoint Query</span>
-              </label>
-            </div>
-          </div>
         </div>
       </section>
     </main>
     
     <!-- Footer -->
     <footer class="app-footer">
-      <span>Squeeze Beta (Local Heuristics)</span>
-      <a href="https://github.com" target="_blank" class="footer-link">Documentation</a>
+      <span>Squeeze AI · v1.0.0</span>
+      <a href="#" id="footerStudioLink" class="footer-link">Open Studio</a>
     </footer>
   </div>
 

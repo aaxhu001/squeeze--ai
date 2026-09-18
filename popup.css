@@ -938,3 +938,106 @@ input:focus {
   box-shadow: 0 0 18px rgba(224, 154, 46, 0.18) !important;
 }
 
+/* Squeeze Studio Launch Actions */
+.header-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidepanel-launch-btn {
+  background: linear-gradient(135deg, rgba(255, 109, 0, 0.15), rgba(255, 60, 0, 0.05));
+  border: 1px solid rgba(255, 109, 0, 0.4);
+  color: #ff9d42;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.sidepanel-launch-btn:hover {
+  background: rgba(255, 109, 0, 0.25);
+  border-color: #ff6d00;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.sidepanel-banner {
+  background: linear-gradient(135deg, rgba(255, 109, 0, 0.12), rgba(224, 154, 46, 0.06));
+  border: 1px solid rgba(255, 109, 0, 0.3);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sidepanel-banner-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidepanel-banner-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.sidepanel-banner-desc {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.sidepanel-banner-btn {
+  background: #ff6d00;
+  border: none;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(255, 109, 0, 0.3);
+  transition: all 0.15s;
+}
+
+.sidepanel-banner-btn:hover {
+  background: #ff7d1a;
+  transform: translateY(-1px);
+}
+
+/* Multi-Platform Badges */
+.platforms-badges {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.platform-chip {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+kbd {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-family: monospace;
+  font-size: 0.72rem;
+  color: #fff;
+}
+
+

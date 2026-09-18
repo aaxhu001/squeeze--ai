@@ -1,1 +1,274 @@
-document.addEventListener("DOMContentLoaded",()=>{const e=document.querySelectorAll(".tab-btn"),t=document.querySelectorAll(".tab-pane"),n=document.getElementById("statPrompts"),a=document.getElementById("statTokens"),r=document.getElementById("statCost"),l=document.getElementById("infoEngine"),o=document.getElementById("infoMode"),s=document.getElementById("statusBadge"),i=document.getElementById("settingsForm"),c=document.getElementById("ruleStripGreetings"),d=document.getElementById("ruleSimplifyPhrases"),u=document.getElementById("ruleAbbreviate"),m=document.getElementById("ruleStripArticles"),v=document.getElementById("rulePolishMarkdown"),g=document.getElementById("saveFeedback"),h=document.getElementById("vaultPreferences"),p=document.getElementById("vaultPrefAlwaysInject"),f=document.getElementById("vaultSmartTriggers"),E=document.getElementById("vaultDropZone"),y=document.getElementById("vaultFileInput"),S=document.getElementById("vaultBrowseLink"),k=document.getElementById("vaultFileList"),L=document.getElementById("vaultServerUrl"),b=document.getElementById("vaultTestServerBtn"),B=document.getElementById("vaultServerStatus"),I=document.getElementById("vaultServerEnabled");let x=[];const w={squeeze:"Squeeze (Max Savings)",balanced:"Balanced Conciseness",polish:"Polish & Enhance"};function C(){chrome.storage.local.get(["optimizationMode","ruleStripGreetings","ruleSimplifyPhrases","ruleAbbreviate","ruleStripArticles","rulePolishMarkdown","stats_promptsOptimized","stats_tokensSaved","stats_costSaved","vaultPreferences","vaultPrefAlwaysInject","vaultSmartTriggers","vaultFiles","vaultServerUrl","vaultServerEnabled"],e=>{const t=e.optimizationMode||"balanced",i=document.querySelector(`input[name="optimizationMode"][value="${t}"]`);i&&(i.checked=!0),c.checked=!1!==e.ruleStripGreetings,d.checked=!1!==e.ruleSimplifyPhrases,u.checked=!1!==e.ruleAbbreviate,m.checked=!1!==e.ruleStripArticles,v.checked=!1!==e.rulePolishMarkdown;const g=e.stats_promptsOptimized||0,E=e.stats_tokensSaved||0,y=e.stats_costSaved||0;n.textContent=T(g),a.textContent=T(E),r.textContent=y>0&&y<.01?`$${y.toFixed(4)}`:`$${y.toFixed(2)}`,l.textContent="Local Heuristics",o.textContent=w[t].split(" ")[0],s.classList.remove("warning"),s.querySelector(".text").textContent="Ready (Offline)",h.value=e.vaultPreferences||"",p.checked=!1!==e.vaultPrefAlwaysInject,f.checked=!1!==e.vaultSmartTriggers,x=e.vaultFiles||[],A(),L.value=e.vaultServerUrl||"",I.checked=!!e.vaultServerEnabled,F(e.vaultServerEnabled?"Online":"Offline")})}function T(e){return e>=1e6?(e/1e6).toFixed(1)+"M":e>=1e3?(e/1e3).toFixed(1)+"K":e.toString()}function M(e){const t=Array.from(e).map(e=>new Promise(t=>{const n=e.name.split(".").pop().toLowerCase();if(!["txt","md","json"].includes(n))return void t(null);const a=new FileReader;a.onload=n=>{t({name:e.name,content:n.target.result,size:e.size})},a.onerror=()=>t(null),a.readAsText(e)}));Promise.all(t).then(e=>{const t=e.filter(e=>null!==e);if(0===t.length)return;const n=new Map;x.forEach(e=>n.set(e.name,e)),t.forEach(e=>n.set(e.name,e)),x=Array.from(n.values()),chrome.storage.local.set({vaultFiles:x},()=>{A()})})}function A(){if(k.innerHTML="",0===x.length){const e=document.createElement("li");return e.className="empty-list-msg",e.textContent="No files uploaded to the vault yet.",void k.appendChild(e)}x.forEach((e,t)=>{const n=document.createElement("li");n.className="vault-file-item";const a=function(e){if(0===e)return"0 B";const t=1024,n=["B","KB","MB"],a=Math.floor(Math.log(e)/Math.log(t));return parseFloat((e/Math.pow(t,a)).toFixed(1))+" "+n[a]}(e.size);n.innerHTML=`\n        <div class="file-item-info">\n          <span class="file-item-name" title="${P(e.name)}">${P(e.name)}</span>\n          <span class="file-item-size">${a}</span>\n        </div>\n        <button class="file-delete-btn" data-index="${t}" title="Remove file">\n          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n            <polyline points="3 6 5 6 21 6"></polyline>\n            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>\n            <line x1="10" y1="11" x2="10" y2="17"></line>\n            <line x1="14" y1="11" x2="14" y2="17"></line>\n          </svg>\n        </button>\n      `,n.querySelector(".file-delete-btn").addEventListener("click",e=>{!function(e){x.splice(e,1),chrome.storage.local.set({vaultFiles:x},()=>{A()})}(parseInt(e.currentTarget.getAttribute("data-index")))}),k.appendChild(n)})}function P(e){return e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}function F(e){B.className="connector-status","Online"===e?(B.classList.add("status-online"),B.textContent="Connected"):"Testing..."===e?(B.classList.add("status-offline"),B.textContent="Connecting..."):"Error"===e?(B.classList.add("status-error"),B.textContent="Failed"):(B.classList.add("status-offline"),B.textContent="Offline")}e.forEach(n=>{n.addEventListener("click",()=>{const a=n.getAttribute("data-tab");e.forEach(e=>e.classList.remove("active")),n.classList.add("active"),t.forEach(e=>e.classList.remove("active")),document.getElementById(`${a}Tab`).classList.add("active")})}),i.addEventListener("submit",e=>{e.preventDefault();const t=document.querySelector('input[name="optimizationMode"]:checked').value;chrome.storage.local.set({optimizationMode:t,ruleStripGreetings:c.checked,ruleSimplifyPhrases:d.checked,ruleAbbreviate:u.checked,ruleStripArticles:m.checked,rulePolishMarkdown:v.checked},()=>{C(),g.classList.add("show"),setTimeout(()=>{g.classList.remove("show")},2500)})}),h.addEventListener("input",()=>{chrome.storage.local.set({vaultPreferences:h.value})}),p.addEventListener("change",()=>{chrome.storage.local.set({vaultPrefAlwaysInject:p.checked})}),f.addEventListener("change",()=>{chrome.storage.local.set({vaultSmartTriggers:f.checked})}),S.addEventListener("click",e=>{e.preventDefault(),y.click()}),y.addEventListener("change",e=>{M(e.target.files)}),E.addEventListener("dragover",e=>{e.preventDefault(),E.classList.add("dragover")}),E.addEventListener("dragleave",()=>{E.classList.remove("dragover")}),E.addEventListener("drop",e=>{e.preventDefault(),E.classList.remove("dragover"),M(e.dataTransfer.files)}),L.addEventListener("input",()=>{chrome.storage.local.set({vaultServerUrl:L.value.trim()})}),I.addEventListener("change",()=>{chrome.storage.local.set({vaultServerEnabled:I.checked})}),b.addEventListener("click",()=>{const e=L.value.trim();if(!e)return void F("Offline");F("Testing...");const t=new AbortController,n=setTimeout(()=>t.abort(),3500);fetch(e,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:"Squeeze connection verification probe."}),signal:t.signal}).then(e=>{clearTimeout(n),e.ok?F("Online"):F("Error")}).catch(t=>{clearTimeout(n),console.warn("Server connection check failed:",t),function(e){const t=new AbortController,n=setTimeout(()=>t.abort(),2e3);fetch(e,{signal:t.signal}).then(e=>{clearTimeout(n),F("Online")}).catch(()=>{clearTimeout(n),F("Error")})}(e)})}),C()});
+/**
+ * Squeeze AI - Popup Dashboard Script (Manifest V3)
+ * Handles popup stats display, quick Side Panel launching,
+ * optimization mode selection, rule configuration, and Context Vault.
+ */
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Navigation elements
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  const tabPanes = document.querySelectorAll(".tab-pane");
+
+  // Dashboard elements
+  const statPrompts = document.getElementById("statPrompts");
+  const statTokens = document.getElementById("statTokens");
+  const statCost = document.getElementById("statCost");
+  const statusBadge = document.getElementById("statusBadge");
+
+  // Side Panel triggers
+  const openSidePanelTopBtn = document.getElementById("openSidePanelTopBtn");
+  const openSidePanelActionBtn = document.getElementById("openSidePanelActionBtn");
+  const footerStudioLink = document.getElementById("footerStudioLink");
+
+  // Settings form elements
+  const settingsForm = document.getElementById("settingsForm");
+  const ruleSecretShield = document.getElementById("ruleSecretShield");
+  const ruleStripGreetings = document.getElementById("ruleStripGreetings");
+  const ruleSimplifyPhrases = document.getElementById("ruleSimplifyPhrases");
+  const ruleAbbreviate = document.getElementById("ruleAbbreviate");
+  const ruleStripArticles = document.getElementById("ruleStripArticles");
+  const rulePolishMarkdown = document.getElementById("rulePolishMarkdown");
+  const saveFeedback = document.getElementById("saveFeedback");
+
+  // Vault elements
+  const vaultPreferences = document.getElementById("vaultPreferences");
+  const vaultPrefAlwaysInject = document.getElementById("vaultPrefAlwaysInject");
+  const vaultSmartTriggers = document.getElementById("vaultSmartTriggers");
+  const vaultDropZone = document.getElementById("vaultDropZone");
+  const vaultFileInput = document.getElementById("vaultFileInput");
+  const vaultBrowseLink = document.getElementById("vaultBrowseLink");
+  const vaultFileList = document.getElementById("vaultFileList");
+
+  let localVaultFiles = [];
+
+  // --- TAB NAVIGATION ---
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const tabId = btn.getAttribute("data-tab");
+      tabButtons.forEach(b => b.classList.remove("active"));
+      tabPanes.forEach(p => p.classList.remove("active"));
+
+      btn.classList.add("active");
+      const target = document.getElementById(`${tabId}Tab`);
+      if (target) target.classList.add("active");
+    });
+  });
+
+  // --- LAUNCH SIDE PANEL ---
+  function launchSidePanel() {
+    chrome.runtime.sendMessage({ action: "openSidePanel" }, () => {
+      window.close();
+    });
+  }
+
+  if (openSidePanelTopBtn) openSidePanelTopBtn.addEventListener("click", launchSidePanel);
+  if (openSidePanelActionBtn) openSidePanelActionBtn.addEventListener("click", launchSidePanel);
+  if (footerStudioLink) {
+    footerStudioLink.addEventListener("click", e => {
+      e.preventDefault();
+      launchSidePanel();
+    });
+  }
+
+  // --- NUMBER FORMATTER ---
+  function formatNumber(num) {
+    if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
+    if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
+    return num.toString();
+  }
+
+  function formatBytes(bytes) {
+    if (bytes === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+  }
+
+  function escapeHtml(str) {
+    return (str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // --- LOAD SETTINGS & STATS ---
+  function loadDashboardData() {
+    chrome.storage.local.get(
+      [
+        "optimizationMode",
+        "ruleSecretShield",
+        "ruleStripGreetings",
+        "ruleSimplifyPhrases",
+        "ruleAbbreviate",
+        "ruleStripArticles",
+        "rulePolishMarkdown",
+        "stats_promptsOptimized",
+        "stats_tokensSaved",
+        "stats_costSaved",
+        "vaultPreferences",
+        "vaultPrefAlwaysInject",
+        "vaultSmartTriggers",
+        "vaultFiles"
+      ],
+      data => {
+        // Mode
+        const mode = data.optimizationMode || "balanced";
+        const modeRadio = document.querySelector(`input[name="optimizationMode"][value="${mode}"]`);
+        if (modeRadio) modeRadio.checked = true;
+
+        // Rules
+        if (ruleSecretShield) ruleSecretShield.checked = data.ruleSecretShield !== false;
+        if (ruleStripGreetings) ruleStripGreetings.checked = data.ruleStripGreetings !== false;
+        if (ruleSimplifyPhrases) ruleSimplifyPhrases.checked = data.ruleSimplifyPhrases !== false;
+        if (ruleAbbreviate) ruleAbbreviate.checked = data.ruleAbbreviate !== false;
+        if (ruleStripArticles) ruleStripArticles.checked = data.ruleStripArticles !== false;
+        if (rulePolishMarkdown) rulePolishMarkdown.checked = data.rulePolishMarkdown !== false;
+
+        // Stats
+        const prompts = data.stats_promptsOptimized || 0;
+        const tokens = data.stats_tokensSaved || 0;
+        const cost = data.stats_costSaved || 0;
+
+        statPrompts.textContent = formatNumber(prompts);
+        statTokens.textContent = formatNumber(tokens);
+        statCost.textContent = cost > 0 && cost < 0.01 ? `$${cost.toFixed(4)}` : `$${cost.toFixed(2)}`;
+
+        // Vault
+        vaultPreferences.value = data.vaultPreferences || "";
+        vaultPrefAlwaysInject.checked = data.vaultPrefAlwaysInject !== false;
+        vaultSmartTriggers.checked = data.vaultSmartTriggers !== false;
+        localVaultFiles = data.vaultFiles || [];
+        renderVaultFiles();
+      }
+    );
+  }
+
+  // --- SAVE SETTINGS ---
+  settingsForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const mode = document.querySelector('input[name="optimizationMode"]:checked')?.value || "balanced";
+
+    chrome.storage.local.set(
+      {
+        optimizationMode: mode,
+        ruleSecretShield: ruleSecretShield ? ruleSecretShield.checked : true,
+        ruleStripGreetings: ruleStripGreetings ? ruleStripGreetings.checked : true,
+        ruleSimplifyPhrases: ruleSimplifyPhrases ? ruleSimplifyPhrases.checked : true,
+        ruleAbbreviate: ruleAbbreviate ? ruleAbbreviate.checked : true,
+        ruleStripArticles: ruleStripArticles ? ruleStripArticles.checked : true,
+        rulePolishMarkdown: rulePolishMarkdown ? rulePolishMarkdown.checked : true
+      },
+      () => {
+        saveFeedback.classList.add("show");
+        setTimeout(() => {
+          saveFeedback.classList.remove("show");
+        }, 2500);
+      }
+    );
+  });
+
+  // --- VAULT PREFERENCES AUTO-SAVE ---
+  vaultPreferences.addEventListener("input", () => {
+    chrome.storage.local.set({ vaultPreferences: vaultPreferences.value });
+  });
+
+  vaultPrefAlwaysInject.addEventListener("change", () => {
+    chrome.storage.local.set({ vaultPrefAlwaysInject: vaultPrefAlwaysInject.checked });
+  });
+
+  vaultSmartTriggers.addEventListener("change", () => {
+    chrome.storage.local.set({ vaultSmartTriggers: vaultSmartTriggers.checked });
+  });
+
+  // --- VAULT FILES UPLOAD ---
+  vaultBrowseLink.addEventListener("click", e => {
+    e.preventDefault();
+    vaultFileInput.click();
+  });
+
+  vaultFileInput.addEventListener("change", e => {
+    processUploadedFiles(e.target.files);
+  });
+
+  vaultDropZone.addEventListener("dragover", e => {
+    e.preventDefault();
+    vaultDropZone.classList.add("dragover");
+  });
+
+  vaultDropZone.addEventListener("dragleave", () => {
+    vaultDropZone.classList.remove("dragover");
+  });
+
+  vaultDropZone.addEventListener("drop", e => {
+    e.preventDefault();
+    vaultDropZone.classList.remove("dragover");
+    processUploadedFiles(e.dataTransfer.files);
+  });
+
+  function processUploadedFiles(files) {
+    const promises = Array.from(files).map(f => {
+      return new Promise(resolve => {
+        const ext = f.name.split(".").pop().toLowerCase();
+        if (!["txt", "md", "json"].includes(ext)) return resolve(null);
+        const reader = new FileReader();
+        reader.onload = ev => resolve({ name: f.name, content: ev.target.result, size: f.size });
+        reader.onerror = () => resolve(null);
+        reader.readAsText(f);
+      });
+    });
+
+    Promise.all(promises).then(results => {
+      const valid = results.filter(r => r !== null);
+      if (valid.length === 0) return;
+
+      const map = new Map();
+      localVaultFiles.forEach(f => map.set(f.name, f));
+      valid.forEach(f => map.set(f.name, f));
+      localVaultFiles = Array.from(map.values());
+
+      chrome.storage.local.set({ vaultFiles: localVaultFiles }, () => {
+        renderVaultFiles();
+      });
+    });
+  }
+
+  function renderVaultFiles() {
+    vaultFileList.innerHTML = "";
+    if (localVaultFiles.length === 0) {
+      const empty = document.createElement("li");
+      empty.className = "empty-list-msg";
+      empty.textContent = "No files uploaded to the vault yet.";
+      vaultFileList.appendChild(empty);
+      return;
+    }
+
+    localVaultFiles.forEach((file, index) => {
+      const li = document.createElement("li");
+      li.className = "vault-file-item";
+      li.innerHTML = `
+        <div class="file-item-info">
+          <span class="file-item-name" title="${escapeHtml(file.name)}">📄 ${escapeHtml(file.name)}</span>
+          <span class="file-item-size">${formatBytes(file.size)}</span>
+        </div>
+        <button class="file-delete-btn" data-index="${index}" title="Remove file">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </button>
+      `;
+
+      li.querySelector(".file-delete-btn").addEventListener("click", () => {
+        localVaultFiles.splice(index, 1);
+        chrome.storage.local.set({ vaultFiles: localVaultFiles }, renderVaultFiles);
+      });
+
+      vaultFileList.appendChild(li);
+    });
+  }
+
+  loadDashboardData();
+});

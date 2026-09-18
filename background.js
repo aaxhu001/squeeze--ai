@@ -1,1 +1,719 @@
-function estimateTokens(e){if(!e)return 0;const t=e.trim().split(/\s+/).length,s=e.length,i=Math.ceil(s/4),r=Math.ceil(1.3*t);return Math.max(i,r)}function removeDuplicateSentences(e,t){if(!e)return"";const s=e.match(/[^.!?]+(?:[.!?]+|\s*$)/g)||[e],i=new Set,r=[];let a=!1;for(let e of s){const t=e.trim();if(!t)continue;const s=t.toLowerCase().replace(/[^a-z0-9]/g,"");i.has(s)?a=!0:(i.add(s),r.push(e))}return a&&t&&!t.includes("Duplicate sentence removal")&&t.push("Duplicate sentence removal"),r.join(" ").replace(/\s{2,}/g," ").trim()}function optimizeLocally(e,t,s){if(!e)return{optimized:"",rulesApplied:[]};const i=[],r=[];let a=0;let o=e.replace(/(```[\s\S]*?```|`[^`\n]+`|<[^>]+>|!\[.*?\]\(.*?\)|\[.*?\]\(.*?\))/g,e=>{const t=`__SQUEEZE_PLACEHOLDER_${a}__`;return r.push({placeholder:t,original:e}),a++,t});if(s.ruleSimplifyPhrases&&(o=removeDuplicateSentences(o,i)),s.ruleStripGreetings){let e=!1;[/\b(?:just\s+to\s+clarify|as\s+stated\s+previously|mind\s+you|bear\s+in\s+mind\s+that|it's\s+worth\s+noting\s+that|to\s+be\s+clear|note\s+that)\b[.,!?]*\s*/gi,/\b(?:so\s+)?as\s+i\s+(?:mentioned|stated)(?:\s+(?:above|earlier|previously|before))?\b[.,!?]*\s*/gi,/\b(?:as\s+we\s+discussed|just\s+to\s+recap\s+our\s+discussion|recap\s+our\s+discussion)\b(?:\s+(?:earlier\s+in\s+the\s+thread|above|previously|before))?[.,!?]*\s*/gi].forEach(t=>{t.test(o)&&(o=o.replace(t,""),e=!0)}),e&&i.push("Meta-commentary removal")}if(s.ruleSimplifyPhrases){let e=!1;[{regex:/\b(?:please\s+)?make\s+sure\s+that\s+you\b\s*/gi,label:"Redundant qualifier stripping"},{regex:/\bi\s+need\s+you\s+to\b\s*/gi,label:"Redundant qualifier stripping"},{regex:/\bi\s+want\s+you\s+to\b\s*/gi,label:"Redundant qualifier stripping"},{regex:/\bit\s+is\s+important\s+(?:that|to)\s+you\b\s*/gi,label:"Redundant qualifier stripping"},{regex:/\bbe\s+sure\s+to\b\s*/gi,label:"Redundant qualifier stripping"},{regex:/\bensure\s+that\s+you\b\s*/gi,label:"Redundant qualifier stripping"},{regex:/\bgo\s+ahead\s+and\b\s*/gi,label:"Redundant qualifier stripping"}].forEach(t=>{t.regex.test(o)&&(o=o.replace(t.regex,""),e=!0)}),e&&i.push("Redundant qualifier stripping")}if(s.ruleStripGreetings){const e=/\bact\s+as\s+(?:if\s+you\s+were\s+)?(?:though\s+you\s+were\s+)?(?:a\s+|an\s+)?(?:the\s+)?(?:expert\s+|professional\s+|senior\s+|experienced\s+)?([\w\s-]+?)(?:\s+with\s+\d+\s+years\s+of\s+experience|\s+with\s+experience)?\s*([.,!?]|$)/gi;e.test(o)&&(o=o.replace(e,(e,t,s)=>`Act as ${t.trim()}${s||"."}`),i.push("Role-play preamble compaction"))}if(s.ruleStripGreetings){let e=!1;[{regex:/\b(?:thank\s+you|thanks)(?:\s+for\s+[^.!?]+)?(?:\s*,\s*it\s+was\s+[^.!?]+)?[.!?]+\s*/gi,label:"Politeness padding removal"},{regex:/\b(?:thank\s+you|thanks)\s*,\s*(?:that\s+worked|that\s+works\s+(?:great|well)?)[.!?]+\s*/gi,label:"Politeness padding removal"},{regex:/\b(?:awesome|great|cool|perfect)\s*,\s*that\s+works\s+(?:great|well|perfectly)?[.!?]+\s*/gi,label:"Politeness padding removal"},{regex:/\bthanks\s+in\s+advance[.,!?]*\s*/gi,label:"Politeness padding removal"},{regex:/\bi\s+would\s+(?:really\s+)?appreciate\s+it\s+if\s+you\s+could\b\s*/gi,label:"Politeness padding removal"},{regex:/\blet\s+me\s+know\s+if\s+you\s+have\s+(?:any\s+)?questions[.,!?]*\s*/gi,label:"Politeness padding removal"},{regex:/\blet\s+me\s+know\s+what\s+you\s+think[.,!?]*\s*/gi,label:"Politeness padding removal"},{regex:/\bhope\s+you\s+are\s+doing\s+well[.,!?]*\s*/gi,label:"Politeness padding removal"},{regex:/\bhope\s+this\s+helps[.,!?]*\s*/gi,label:"Politeness padding removal"},{regex:/\bbest\s+regards|regards|sincerely|yours\s+truly\b[.,!?]*\s*/gi,label:"Politeness padding removal"},{regex:/(?:hello|hi|hey|greetings|dear|good\s+(?:morning|afternoon|evening))\s+(?:claude|assistant|ai|there|sir|madam|team|friend|buddy)\b[.,!?]*\s*/gi,label:"Politeness padding removal"},{regex:/\b(?:could|can|would)\s+you\s+please\s+(?:help\s+me\s+(?:to\s+)?)?/gi,label:"Politeness padding removal"},{regex:/\b(?:could|can|would)\s+you\s+(?:help\s+me\s+(?:to\s+)?)?/gi,label:"Politeness padding removal"},{regex:/\b(?:i\s+would\s+like\s+you\s+to|i\s+want\s+you\s+to|i\s+need\s+you\s+to|i'm\s+looking\s+for\s+a|i\s+was\s+wondering\s+if\s+you\s+could)\b\s*/gi,label:"Politeness padding removal"},{regex:/(?:^|([.!?]\s+))please\b\s*/gi,replaceWith:"$1",label:"Politeness padding removal"},{regex:/\bplease\s+(?:write|create|generate|make|help|explain|do|find|check|tell|give|show|list|analyze|sort)\b/gi,label:"Politeness padding removal"},{regex:/,\s*please[.,!?]*(?=\s|$)/gi,label:"Politeness padding removal"},{regex:/\bthank\s+you\b[.,!?]*\s*/gi,label:"Politeness padding removal"},{regex:/\bthanks\b[.,!?]*\s*/gi,label:"Politeness padding removal"}].forEach(t=>{t.regex.test(o)&&(o=void 0!==t.replaceWith?o.replace(t.regex,t.replaceWith):o.replace(t.regex,""),e=!0)}),e&&i.push("Politeness padding removal")}if(s.ruleSimplifyPhrases){const e={"in order to":"to","due to the fact that":"because","at this point in time":"now","for the purpose of":"to","has the ability to":"can","take into consideration":"consider","make a decision":"decide",utilize:"use",utilizes:"uses",utilizing:"using","as well as":"and","a number of":"several","along the lines of":"like","referred to as":"called","in the event that":"if","on a daily basis":"daily","with respect to":"regarding","in addition to":"and","so as to":"to","is responsible for":"does","by means of":"by","in close proximity to":"near","make use of":"use","perform an analysis of":"analyze","provide an explanation of":"explain","conduct an investigation into":"investigate","has a requirement for":"needs","it is important to note that":"note that","bearing in mind that":"considering","for the reason that":"because","in the near future":"soon","in the course of":"during","with the exception of":"except","are in agreement":"agree","make adjustments to":"adjust","give rise to":"cause","draw attention to":"highlight","at the present time":"currently","subsequent to":"after","prior to":"before","take steps to":"try to","despite the fact that":"although"};let t=!1;for(const[s,i]of Object.entries(e)){const e=new RegExp(`\\b${s}\\b`,"gi");e.test(o)&&(o=o.replace(e,i),t=!0)}t&&i.push("Verbosity simplification")}if(s.ruleAbbreviate){let e={information:"info",database:"DB",function:"fn",parameter:"param",parameters:"params",configuration:"config",administrator:"admin",development:"dev",application:"app",applications:"apps","for example":"e.g.","that is":"i.e.",versus:"vs",approximately:"~",without:"w/o",with:"w/",number:"num",numbers:"nums",between:"betw",through:"thru",standard:"std",environment:"env",temporary:"temp",documentation:"docs",different:"diff",difference:"diff",developer:"dev",developers:"devs",repository:"repo",repositories:"repos",directory:"dir",directories:"dirs",implementation:"impl",implementations:"impls"};"balanced"!==t&&"polish"!==t||(e={"for example":"e.g.","that is":"i.e.",versus:"vs",approximately:"~"});let s=!1;for(const[t,i]of Object.entries(e)){const e=new RegExp(`\\b${t}\\b`,"gi");e.test(o)&&(o=o.replace(e,i),s=!0)}s&&i.push("Abbreviation substitution")}if(s.ruleStripArticles&&"squeeze"===t){const e={"should make a request to":"request","should make a request":"request","should make request to":"request","should make request":"request","make a request to":"request","make request to":"request","is going to be":"will be","should be":"be","ought to":"should","will be able to":"can","it is necessary that":"must","you can":"can","we can":"can",should:""};let t=!1;for(const[s,i]of Object.entries(e)){const e=new RegExp(`\\b${s}\\b`,"gi");e.test(o)&&(o=o.replace(e,i),t=!0)}const s=/\b(?:the|a|an)\b\s+/gi;let r=!1;s.test(o)&&(o=o.replace(s,""),r=!0),(t||r)&&i.push("Article & auxiliary stripping")}if(s.rulePolishMarkdown){const e=/!{2,}/g,t=/\?{2,}/g;let s=!1;e.test(o)&&(o=o.replace(e,"!"),s=!0),t.test(o)&&(o=o.replace(t,"?"),s=!0),s&&i.push("Punctuation cleanup")}s.rulePolishMarkdown&&(o=o.replace(/(^|\n)(#{1,6})([^\s#])([^\n]+)/g,"$1$2 $3$4"),o=o.replace(/(^|\n)[*+]\s+/g,"$1- "),o=o.replace(/[ \t]{2,}/g," "),o=o.replace(/^[ \t]+/gm,"").replace(/[ \t]+$/gm,""),o=o.replace(/\n{3,}/g,"\n\n")),o=o.trim(),s.ruleSimplifyPhrases&&(o=removeDuplicateSentences(o,i));for(let e=0;e<r.length;e++){const t=r[e];o=o.replace(t.placeholder,t.original)}return{optimized:o,rulesApplied:i}}function maskSensitiveData(e){if(!e)return"";let t=e;return t=t.replace(/\b(api[-_]?key|secret|password|passwd|pass|token|credential|auth[-_]?key|private[-_]?key)\s*[:=]\s*["']([^"'\n]{4,})["']/gi,(e,t,s)=>`${t}: "[MASKED]"`),t=t.replace(/\b(sk-[a-zA-Z0-9_-]{20,})\b/g,"[MASKED_API_KEY]"),t=t.replace(/\b(AIzaSy[a-zA-Z0-9-_]{30,})\b/g,"[MASKED_API_KEY]"),t=t.replace(/\b(DB_PASSWORD|PASSWORD|SECRET|TOKEN|KEY)\s*=\s*([^\s\n]{3,})/gi,"$1=[MASKED]"),t}function extractContextFromResponse(e){return e?"string"==typeof e?e:e.context&&"string"==typeof e.context?e.context:e.text&&"string"==typeof e.text?e.text:Array.isArray(e)?e.map(e=>"string"==typeof e?e:e.content?e.content:e.text?e.text:JSON.stringify(e)).join("\n\n"):e.results&&Array.isArray(e.results)?e.results.map(e=>e.content||e.text||JSON.stringify(e)).join("\n\n"):JSON.stringify(e):""}async function fetchServerContext(e,t){const s=new AbortController,i=setTimeout(()=>s.abort(),4e3);try{const r=await fetch(e,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:t}),signal:s.signal});if(clearTimeout(i),!r.ok)return fetchServerContextGetFallback(e);return extractContextFromResponse(await r.json())}catch(t){return clearTimeout(i),fetchServerContextGetFallback(e)}}async function fetchServerContextGetFallback(e){const t=new AbortController,s=setTimeout(()=>t.abort(),2e3);try{const i=await fetch(e,{signal:t.signal});if(clearTimeout(s),!i.ok)return"";return extractContextFromResponse(await i.json())}catch(e){return clearTimeout(s),""}}async function processVaultContext(e,t,s){return new Promise(i=>{chrome.storage.local.get(["vaultPreferences","vaultPrefAlwaysInject","vaultSmartTriggers","vaultFiles","vaultServerUrl","vaultServerEnabled"],async r=>{const a=r.vaultPreferences||"",o=!1!==r.vaultPrefAlwaysInject,n=!1!==r.vaultSmartTriggers,l=r.vaultFiles||[],p=r.vaultServerUrl||"",c=!!r.vaultServerEnabled,u=[],d=[];let g=0;if(a.trim()&&o){g+=a.length;const e=optimizeLocally(a,"balanced",{ruleStripGreetings:!0,ruleSimplifyPhrases:!0,ruleAbbreviate:!1,ruleStripArticles:!1,rulePolishMarkdown:!0}).optimized;d.push(`[Personal Preferences]\n${e}`),u.push("Personal Preferences")}if(l.length>0){const i=e.toLowerCase();for(const e of l){let r=!1;if(n){const t=e.name.replace(/\.[a-z0-9]+$/i,"").toLowerCase().split(/[^a-z0-9]+/).filter(e=>e.length>=3||["db","js","go","py"].includes(e));for(const e of t){if(new RegExp("\\b"+e+"\\b","i").test(i)){r=!0;break}}}else r=!0;if(r&&e.content){g+=e.content.length;const i=optimizeLocally(maskSensitiveData(e.content),t,s).optimized;d.push(`[File: ${e.name}]\n${i}`),u.push(e.name)}}}if(c&&p)try{const i=await fetchServerContext(p,e);if(i){g+=i.length;const e=optimizeLocally(maskSensitiveData(i),t,s).optimized;d.push(`[Server Context]\n${e}`),u.push("Unabyss Endpoint")}}catch(e){console.warn("Unabyss server query failed:",e)}let m="";d.length>0&&(m=`=== SQUEEZED CONTEXT VAULT ===\n${d.join("\n\n")}\n==============================\n\n`),i({contextBlock:m,attachedContexts:u,rawContextTokens:Math.ceil(g/4)})})})}chrome.runtime.onInstalled.addListener(()=>{chrome.storage.local.get(["optimizationMode","ruleStripGreetings","ruleSimplifyPhrases","ruleAbbreviate","ruleStripArticles","rulePolishMarkdown","stats_promptsOptimized","stats_tokensSaved","stats_costSaved"],e=>{const t={};void 0===e.optimizationMode&&(t.optimizationMode="balanced"),void 0===e.ruleStripGreetings&&(t.ruleStripGreetings=!0),void 0===e.ruleSimplifyPhrases&&(t.ruleSimplifyPhrases=!0),void 0===e.ruleAbbreviate&&(t.ruleAbbreviate=!0),void 0===e.ruleStripArticles&&(t.ruleStripArticles=!0),void 0===e.rulePolishMarkdown&&(t.rulePolishMarkdown=!0),void 0===e.stats_promptsOptimized&&(t.stats_promptsOptimized=0),void 0===e.stats_tokensSaved&&(t.stats_tokensSaved=0),void 0===e.stats_costSaved&&(t.stats_costSaved=0),Object.keys(t).length>0&&chrome.storage.local.set(t)})}),chrome.runtime.onMessage.addListener((e,t,s)=>{if("optimizePrompt"===e.action){const{prompt:t,mode:i}=e;return chrome.storage.local.get(["optimizationMode","ruleStripGreetings","ruleSimplifyPhrases","ruleAbbreviate","ruleStripArticles","rulePolishMarkdown"],async e=>{const r=i||e.optimizationMode||"balanced",a={ruleStripGreetings:!1!==e.ruleStripGreetings,ruleSimplifyPhrases:!1!==e.ruleSimplifyPhrases,ruleAbbreviate:!1!==e.ruleAbbreviate,ruleStripArticles:!1!==e.ruleStripArticles,rulePolishMarkdown:!1!==e.rulePolishMarkdown};try{const{contextBlock:e,attachedContexts:i,rawContextTokens:o}=await processVaultContext(t,r,a),{optimized:n,rulesApplied:l}=optimizeLocally(t,r,a),p=e+n,c=estimateTokens(t)+o,u=estimateTokens(p),d=Math.max(0,c-u),g=3e-6*d;chrome.storage.local.get(["stats_promptsOptimized","stats_tokensSaved","stats_costSaved"],e=>{const t={stats_promptsOptimized:(e.stats_promptsOptimized||0)+1,stats_tokensSaved:(e.stats_tokensSaved||0)+d,stats_costSaved:(e.stats_costSaved||0)+g};chrome.storage.local.set(t)}),s({success:!0,original:t,optimized:p,originalTokens:c,optimizedTokens:u,tokensSaved:d,percentageSaved:c>0?Math.round(d/c*100):0,mode:r,rulesApplied:l,attachedContexts:i})}catch(e){console.error("Local optimization failed:",e),s({success:!1,error:e.message})}}),!0}});
+/**
+ * Squeeze AI - Background Service Worker (Manifest V3)
+ * High-performance local token optimizer, DLP secret scanner,
+ * multi-model cost analytics, and Context Vault engine.
+ */
+
+// --- MODEL PRICING (USD per 1M input tokens) ---
+const MODEL_RATES = {
+  sonnet: { name: "Claude 3.5 Sonnet", ratePerMillion: 3.00 },
+  opus: { name: "Claude 3 Opus", ratePerMillion: 15.00 },
+  gpt4o: { name: "GPT-4o", ratePerMillion: 2.50 },
+  geminiPro: { name: "Gemini 1.5 Pro", ratePerMillion: 1.25 },
+  deepseek: { name: "DeepSeek V3", ratePerMillion: 0.14 }
+};
+
+// --- INITIALIZE EXTENSION DEFAULTS ---
+chrome.runtime.onInstalled.addListener(async (details) => {
+  const defaults = {
+    optimizationMode: "balanced",
+    ruleStripGreetings: true,
+    ruleSimplifyPhrases: true,
+    ruleAbbreviate: true,
+    ruleStripArticles: true,
+    rulePolishMarkdown: true,
+    ruleSecretShield: true,
+    stats_promptsOptimized: 0,
+    stats_tokensSaved: 0,
+    stats_costSaved: 0,
+    stats_history: [],
+    vaultPreferences: "",
+    vaultPrefAlwaysInject: true,
+    vaultSmartTriggers: true,
+    vaultFiles: []
+  };
+
+  const current = await chrome.storage.local.get(Object.keys(defaults));
+  const toSet = {};
+  for (const [k, v] of Object.entries(defaults)) {
+    if (current[k] === undefined) toSet[k] = v;
+  }
+  if (Object.keys(toSet).length > 0) {
+    await chrome.storage.local.set(toSet);
+  }
+
+  // Set side panel behavior if supported
+  if (chrome.sidePanel?.setPanelBehavior) {
+    try {
+      await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
+    } catch (e) {
+      console.warn("Side panel behavior setup:", e);
+    }
+  }
+});
+
+// --- TOKEN ESTIMATION ENGINE ---
+function estimateTokens(text) {
+  if (!text || typeof text !== "string") return 0;
+  const trimmed = text.trim();
+  if (!trimmed) return 0;
+
+  // Words count
+  const words = trimmed.split(/\s+/).length;
+  const chars = trimmed.length;
+
+  // Code / Symbol intensity factor
+  const specialChars = (trimmed.match(/[{}\[\]()<>=:;,.!?"'`\/\\|#*&^%$@~+-]/g) || []).length;
+  const codeRatio = specialChars / Math.max(1, chars);
+
+  // Heuristic: standard prose ~4 chars/token, code-heavy ~3 chars/token
+  const charEstimate = Math.ceil(chars / (codeRatio > 0.15 ? 3.2 : 4.0));
+  const wordEstimate = Math.ceil(words * 1.35);
+
+  return Math.max(charEstimate, wordEstimate);
+}
+
+// --- DATA LOSS PREVENTION (DLP) & SECRET REDACTION ENGINE ---
+function maskSensitiveData(text) {
+  if (!text) return { sanitized: "", secretsFound: [] };
+
+  let sanitized = text;
+  const secretsFound = [];
+
+  const patterns = [
+    {
+      type: "OpenAI API Key",
+      regex: /\b(sk-(?:proj-|live-)?[a-zA-Z0-9_-]{20,})\b/g,
+      replacement: "[MASKED_OPENAI_KEY]"
+    },
+    {
+      type: "Google AI / Gemini Key",
+      regex: /\b(AIzaSy[a-zA-Z0-9_-]{30,})\b/g,
+      replacement: "[MASKED_GOOGLE_KEY]"
+    },
+    {
+      type: "Anthropic Claude Key",
+      regex: /\b(sk-ant-[a-zA-Z0-9_-]{20,})\b/g,
+      replacement: "[MASKED_ANTHROPIC_KEY]"
+    },
+    {
+      type: "AWS Access Key",
+      regex: /\b(AKIA[0-9A-Z]{16})\b/g,
+      replacement: "[MASKED_AWS_KEY]"
+    },
+    {
+      type: "GitHub Token",
+      regex: /\b(gh[pousr]_[A-Za-z0-9_]{36,})\b/g,
+      replacement: "[MASKED_GITHUB_TOKEN]"
+    },
+    {
+      type: "JWT / Bearer Token",
+      regex: /\b(eyJ[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,})\b/g,
+      replacement: "[MASKED_JWT_TOKEN]"
+    },
+    {
+      type: "Database Password / URI",
+      regex: /((?:mongodb(?:\+srv)?|postgres(?:ql)?|mysql):\/\/[^:\s]+:)([^@\s]+)(@)/gi,
+      customReplace: (match, prefix, pass, suffix) => `${prefix}[MASKED_DB_PASS]${suffix}`
+    },
+    {
+      type: "Secret in Config",
+      regex: /\b((?:API_KEY|SECRET|PASSWORD|PASSWD|AUTH_TOKEN|PRIVATE_KEY)\s*[:=]\s*["'])([^"'\n]{4,})(["'])/gi,
+      customReplace: (match, prefix, val, suffix) => `${prefix}[MASKED_SECRET]${suffix}`
+    }
+  ];
+
+  for (const item of patterns) {
+    if (item.customReplace) {
+      if (item.regex.test(sanitized)) {
+        sanitized = sanitized.replace(item.regex, (match, p1, p2, p3) => {
+          secretsFound.push({ type: item.type, snippet: match.substring(0, 15) + "..." });
+          return item.customReplace(match, p1, p2, p3);
+        });
+      }
+    } else {
+      const matches = sanitized.match(item.regex);
+      if (matches && matches.length > 0) {
+        matches.forEach(m => {
+          secretsFound.push({ type: item.type, snippet: m.substring(0, 8) + "..." });
+        });
+        sanitized = sanitized.replace(item.regex, item.replacement);
+      }
+    }
+  }
+
+  return { sanitized, secretsFound };
+}
+
+// --- DUPLICATE SENTENCE & PARAGRAPH DETECTOR ---
+function removeDuplicateSentences(text, rulesApplied) {
+  if (!text) return "";
+  const sentences = text.match(/[^.!?]+(?:[.!?]+|\s*$)/g) || [text];
+  const seen = new Set();
+  const result = [];
+  let hasDupes = false;
+
+  for (const s of sentences) {
+    const trimmed = s.trim();
+    if (!trimmed) continue;
+    // Normalized key
+    const key = trimmed.toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (key.length > 15 && seen.has(key)) {
+      hasDupes = true;
+    } else {
+      if (key.length > 15) seen.add(key);
+      result.push(s);
+    }
+  }
+
+  if (hasDupes && rulesApplied && !rulesApplied.includes("Duplicate sentence removal")) {
+    rulesApplied.push("Duplicate sentence removal");
+  }
+
+  return result.join(" ").replace(/\s{2,}/g, " ").trim();
+}
+
+// --- LOCAL HEURISTIC OPTIMIZATION ENGINE ---
+function optimizeLocally(text, mode = "balanced", rules = {}) {
+  if (!text) return { optimized: "", rulesApplied: [] };
+
+  const rulesApplied = [];
+  const placeholders = [];
+  let counter = 0;
+
+  // Protect code blocks, inline code, URLs, and HTML tags from regex corruption
+  let processed = text.replace(
+    /(```[\s\S]*?```|`[^`\n]+`|<[^>]+>|!\[.*?\]\(.*?\)|\[.*?\]\(.*?\)|https?:\/\/[^\s]+)/g,
+    (match) => {
+      const ph = `__SQUEEZE_PLACEHOLDER_${counter}__`;
+      placeholders.push({ placeholder: ph, original: match });
+      counter++;
+      return ph;
+    }
+  );
+
+  // 1. Remove duplicate sentences
+  if (rules.ruleSimplifyPhrases) {
+    processed = removeDuplicateSentences(processed, rulesApplied);
+  }
+
+  // 2. Meta-commentary & Preamble Removal
+  if (rules.ruleStripGreetings) {
+    let changed = false;
+    const metaPatterns = [
+      /\b(?:just\s+to\s+clarify|as\s+stated\s+previously|mind\s+you|bear\s+in\s+mind\s+that|it's\s+worth\s+noting\s+that|to\s+be\s+clear|note\s+that|needless\s+to\s+say)\b[.,!?]*\s*/gi,
+      /\b(?:so\s+)?as\s+i\s+(?:mentioned|stated)(?:\s+(?:above|earlier|previously|before))?\b[.,!?]*\s*/gi,
+      /\b(?:as\s+we\s+discussed|just\s+to\s+recap\s+our\s+discussion|recap\s+our\s+discussion)\b(?:\s+(?:earlier\s+in\s+the\s+thread|above|previously|before))?[.,!?]*\s*/gi
+    ];
+    metaPatterns.forEach(p => {
+      if (p.test(processed)) {
+        processed = processed.replace(p, "");
+        changed = true;
+      }
+    });
+    if (changed) rulesApplied.push("Meta-commentary removal");
+  }
+
+  // 3. Redundant Qualifiers Stripping
+  if (rules.ruleSimplifyPhrases) {
+    let changed = false;
+    const qualifiers = [
+      /\b(?:please\s+)?make\s+sure\s+that\s+you\b\s*/gi,
+      /\bi\s+need\s+you\s+to\b\s*/gi,
+      /\bi\s+want\s+you\s+to\b\s*/gi,
+      /\bit\s+is\s+important\s+(?:that|to)\s+you\b\s*/gi,
+      /\bbe\s+sure\s+to\b\s*/gi,
+      /\bensure\s+that\s+you\b\s*/gi,
+      /\bgo\s+ahead\s+and\b\s*/gi,
+      /\bkindly\s+(?:provide|generate|give|write)\b\s*/gi,
+      /\bi\s+was\s+hoping\s+you\s+could\b\s*/gi
+    ];
+    qualifiers.forEach(regex => {
+      if (regex.test(processed)) {
+        processed = processed.replace(regex, "");
+        changed = true;
+      }
+    });
+    if (changed) rulesApplied.push("Redundant qualifier stripping");
+  }
+
+  // 4. Role-play Preamble Compaction
+  if (rules.ruleStripGreetings) {
+    const roleRegex = /\bact\s+as\s+(?:if\s+you\s+were\s+)?(?:though\s+you\s+were\s+)?(?:a\s+|an\s+)?(?:the\s+)?(?:expert\s+|professional\s+|senior\s+|experienced\s+)?([\w\s-]+?)(?:\s+with\s+\d+\s+years\s+of\s+experience|\s+with\s+experience)?\s*([.,!?]|$)/gi;
+    if (roleRegex.test(processed)) {
+      processed = processed.replace(roleRegex, (m, role, punct) => `Act as ${role.trim()}${punct || "."}`);
+      rulesApplied.push("Role-play preamble compaction");
+    }
+  }
+
+  // 5. Politeness & Greetings Removal
+  if (rules.ruleStripGreetings) {
+    let changed = false;
+    const politenessPatterns = [
+      { regex: /\b(?:thank\s+you|thanks)(?:\s+for\s+[^.!?]+)?(?:\s*,\s*it\s+was\s+[^.!?]+)?[.!?]+\s*/gi },
+      { regex: /\b(?:thank\s+you|thanks)\s*,\s*(?:that\s+worked|that\s+works\s+(?:great|well)?)[.!?]+\s*/gi },
+      { regex: /\b(?:awesome|great|cool|perfect)\s*,\s*that\s+works\s+(?:great|well|perfectly)?[.!?]+\s*/gi },
+      { regex: /\bthanks\s+in\s+advance[.,!?]*\s*/gi },
+      { regex: /\bi\s+would\s+(?:really\s+)?appreciate\s+it\s+if\s+you\s+could\b\s*/gi },
+      { regex: /\blet\s+me\s+know\s+if\s+you\s+have\s+(?:any\s+)?questions[.,!?]*\s*/gi },
+      { regex: /\blet\s+me\s+know\s+what\s+you\s+think[.,!?]*\s*/gi },
+      { regex: /\bhope\s+you\s+are\s+doing\s+well[.,!?]*\s*/gi },
+      { regex: /\bhope\s+this\s+helps[.,!?]*\s*/gi },
+      { regex: /\bbest\s+regards|regards|sincerely|yours\s+truly\b[.,!?]*\s*/gi },
+      { regex: /(?:hello|hi|hey|greetings|dear|good\s+(?:morning|afternoon|evening))\s+(?:claude|chatgpt|assistant|ai|there|sir|madam|team|friend|buddy)\b[.,!?]*\s*/gi },
+      { regex: /\b(?:could|can|would)\s+you\s+please\s+(?:help\s+me\s+(?:to\s+)?)?/gi },
+      { regex: /\b(?:could|can|would)\s+you\s+(?:help\s+me\s+(?:to\s+)?)?/gi },
+      { regex: /\b(?:i\s+would\s+like\s+you\s+to|i\s+want\s+you\s+to|i\s+need\s+you\s+to|i'm\s+looking\s+for\s+a|i\s+was\s+wondering\s+if\s+you\s+could)\b\s*/gi },
+      { regex: /(?:^|([.!?]\s+))please\b\s*/gi, replaceWith: "$1" },
+      { regex: /\bplease\s+(?:write|create|generate|make|help|explain|do|find|check|tell|give|show|list|analyze|sort|provide)\b/gi },
+      { regex: /,\s*please[.,!?]*(?=\s|$)/gi },
+      { regex: /\bthank\s+you\b[.,!?]*\s*/gi },
+      { regex: /\bthanks\b[.,!?]*\s*/gi }
+    ];
+
+    politenessPatterns.forEach(item => {
+      if (item.regex.test(processed)) {
+        processed = item.replaceWith !== undefined
+          ? processed.replace(item.regex, item.replaceWith)
+          : processed.replace(item.regex, "");
+        changed = true;
+      }
+    });
+    if (changed) rulesApplied.push("Politeness padding removal");
+  }
+
+  // 6. Verbosity Simplification (Comprehensive dictionary)
+  if (rules.ruleSimplifyPhrases) {
+    const dictionary = {
+      "in order to": "to",
+      "due to the fact that": "because",
+      "at this point in time": "now",
+      "for the purpose of": "to",
+      "has the ability to": "can",
+      "take into consideration": "consider",
+      "make a decision": "decide",
+      "utilize": "use",
+      "utilizes": "uses",
+      "utilizing": "using",
+      "as well as": "and",
+      "a number of": "several",
+      "along the lines of": "like",
+      "referred to as": "called",
+      "in the event that": "if",
+      "on a daily basis": "daily",
+      "with respect to": "regarding",
+      "in addition to": "and",
+      "so as to": "to",
+      "is responsible for": "does",
+      "by means of": "by",
+      "in close proximity to": "near",
+      "make use of": "use",
+      "perform an analysis of": "analyze",
+      "provide an explanation of": "explain",
+      "conduct an investigation into": "investigate",
+      "has a requirement for": "needs",
+      "it is important to note that": "note that",
+      "bearing in mind that": "considering",
+      "for the reason that": "because",
+      "in the near future": "soon",
+      "in the course of": "during",
+      "with the exception of": "except",
+      "are in agreement": "agree",
+      "make adjustments to": "adjust",
+      "give rise to": "cause",
+      "draw attention to": "highlight",
+      "at the present time": "currently",
+      "subsequent to": "after",
+      "prior to": "before",
+      "take steps to": "try to",
+      "despite the fact that": "although",
+      "as a consequence of": "because of",
+      "at an early date": "soon",
+      "by virtue of": "because of",
+      "give consideration to": "consider",
+      "in spite of": "despite"
+    };
+
+    let changed = false;
+    for (const [verbose, concise] of Object.entries(dictionary)) {
+      const reg = new RegExp(`\\b${verbose}\\b`, "gi");
+      if (reg.test(processed)) {
+        processed = processed.replace(reg, concise);
+        changed = true;
+      }
+    }
+    if (changed) rulesApplied.push("Verbosity simplification");
+  }
+
+  // 7. Technical Abbreviation Substitution
+  if (rules.ruleAbbreviate) {
+    let abbrevs = {
+      "information": "info",
+      "database": "DB",
+      "function": "fn",
+      "parameter": "param",
+      "parameters": "params",
+      "configuration": "config",
+      "administrator": "admin",
+      "development": "dev",
+      "application": "app",
+      "applications": "apps",
+      "for example": "e.g.",
+      "that is": "i.e.",
+      "versus": "vs",
+      "approximately": "~",
+      "without": "w/o",
+      "with": "w/",
+      "number": "num",
+      "numbers": "nums",
+      "between": "betw",
+      "through": "thru",
+      "standard": "std",
+      "environment": "env",
+      "temporary": "temp",
+      "documentation": "docs",
+      "difference": "diff",
+      "developer": "dev",
+      "developers": "devs",
+      "repository": "repo",
+      "repositories": "repos",
+      "directory": "dir",
+      "directories": "dirs",
+      "implementation": "impl",
+      "implementations": "impls"
+    };
+
+    // Conservative abbreviation in balanced/polish mode
+    if (mode === "balanced" || mode === "polish") {
+      abbrevs = {
+        "for example": "e.g.",
+        "that is": "i.e.",
+        "versus": "vs",
+        "approximately": "~",
+        "documentation": "docs",
+        "configuration": "config",
+        "repository": "repo"
+      };
+    }
+
+    let changed = false;
+    for (const [full, abbr] of Object.entries(abbrevs)) {
+      const reg = new RegExp(`\\b${full}\\b`, "gi");
+      if (reg.test(processed)) {
+        processed = processed.replace(reg, abbr);
+        changed = true;
+      }
+    }
+    if (changed) rulesApplied.push("Abbreviation substitution");
+  }
+
+  // 8. Article & Auxiliary Stripping (Squeeze / Extreme Mode)
+  if (rules.ruleStripArticles && mode === "squeeze") {
+    const auxiliaries = {
+      "should make a request to": "request",
+      "should make a request": "request",
+      "make a request to": "request",
+      "is going to be": "will be",
+      "should be": "be",
+      "ought to": "should",
+      "will be able to": "can",
+      "it is necessary that": "must",
+      "you can": "can",
+      "we can": "can"
+    };
+
+    let changed = false;
+    for (const [k, v] of Object.entries(auxiliaries)) {
+      const reg = new RegExp(`\\b${k}\\b`, "gi");
+      if (reg.test(processed)) {
+        processed = processed.replace(reg, v);
+        changed = true;
+      }
+    }
+
+    const articles = /\b(?:the|a|an)\b\s+/gi;
+    if (articles.test(processed)) {
+      processed = processed.replace(articles, "");
+      changed = true;
+    }
+
+    if (changed) rulesApplied.push("Article & auxiliary stripping");
+  }
+
+  // 9. Markdown & Whitespace Polish
+  if (rules.rulePolishMarkdown) {
+    let changed = false;
+    // Clean excessive punctuation
+    if (/!{2,}/.test(processed)) {
+      processed = processed.replace(/!{2,}/g, "!");
+      changed = true;
+    }
+    if (/\?{2,}/.test(processed)) {
+      processed = processed.replace(/\?{2,}/g, "?");
+      changed = true;
+    }
+    // Fix markdown headings: '#Heading' -> '# Heading'
+    processed = processed.replace(/(^|\n)(#{1,6})([^\s#])([^\n]+)/g, "$1$2 $3$4");
+    // Normalize bullet points to '- '
+    processed = processed.replace(/(^|\n)[*+]\s+/g, "$1- ");
+    // Remove multi-spaces and trailing spaces
+    processed = processed.replace(/[ \t]{2,}/g, " ");
+    processed = processed.replace(/^[ \t]+/gm, "").replace(/[ \t]+$/gm, "");
+    // Collapse excessive blank lines (max 2)
+    processed = processed.replace(/\n{3,}/g, "\n\n");
+
+    if (changed) rulesApplied.push("Punctuation & spacing cleanup");
+  }
+
+  processed = processed.trim();
+
+  // Restore protected blocks
+  for (let i = 0; i < placeholders.length; i++) {
+    const item = placeholders[i];
+    processed = processed.replace(item.placeholder, item.original);
+  }
+
+  return { optimized: processed, rulesApplied };
+}
+
+// --- CONTEXT VAULT INJECTION ---
+async function processVaultContext(prompt, mode, rules) {
+  return new Promise(resolve => {
+    chrome.storage.local.get(
+      ["vaultPreferences", "vaultPrefAlwaysInject", "vaultSmartTriggers", "vaultFiles", "vaultServerUrl", "vaultServerEnabled"],
+      async data => {
+        const prefs = data.vaultPreferences || "";
+        const alwaysInject = data.vaultPrefAlwaysInject !== false;
+        const smartTriggers = data.vaultSmartTriggers !== false;
+        const files = data.vaultFiles || [];
+        const attachedContexts = [];
+        const contextParts = [];
+        let rawTokens = 0;
+
+        // 1. Personal Profile / Preferences
+        if (prefs.trim() && alwaysInject) {
+          rawTokens += estimateTokens(prefs);
+          const optPrefs = optimizeLocally(prefs, "balanced", {
+            ruleStripGreetings: true,
+            ruleSimplifyPhrases: true,
+            ruleAbbreviate: false,
+            ruleStripArticles: false,
+            rulePolishMarkdown: true
+          }).optimized;
+          contextParts.push(`[Developer Profile]\n${optPrefs}`);
+          attachedContexts.push("Developer Profile");
+        }
+
+        // 2. Local Files matching keywords
+        if (files.length > 0) {
+          const lowerPrompt = prompt.toLowerCase();
+          for (const f of files) {
+            let matches = false;
+            if (smartTriggers) {
+              const baseTokens = f.name
+                .replace(/\.[a-z0-9]+$/i, "")
+                .toLowerCase()
+                .split(/[^a-z0-9]+/)
+                .filter(w => w.length >= 3 || ["db", "js", "ts", "go", "py", "sql", "api", "auth"].includes(w));
+
+              for (const tok of baseTokens) {
+                if (new RegExp("\\b" + tok + "\\b", "i").test(lowerPrompt)) {
+                  matches = true;
+                  break;
+                }
+              }
+            } else {
+              matches = true;
+            }
+
+            if (matches && f.content) {
+              rawTokens += estimateTokens(f.content);
+              const optFile = optimizeLocally(maskSensitiveData(f.content).sanitized, mode, rules).optimized;
+              contextParts.push(`[Context: ${f.name}]\n${optFile}`);
+              attachedContexts.push(f.name);
+            }
+          }
+        }
+
+        let contextBlock = "";
+        if (contextParts.length > 0) {
+          contextBlock = `=== SQUEEZED CONTEXT VAULT ===\n${contextParts.join("\n\n")}\n==============================\n\n`;
+        }
+
+        resolve({
+          contextBlock,
+          attachedContexts,
+          rawContextTokens: rawTokens
+        });
+      }
+    );
+  });
+}
+
+// --- MESSAGE DISPATCHER ---
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "optimizePrompt") {
+    (async () => {
+      const { prompt, mode: requestedMode } = request;
+      const settings = await chrome.storage.local.get([
+        "optimizationMode",
+        "ruleStripGreetings",
+        "ruleSimplifyPhrases",
+        "ruleAbbreviate",
+        "ruleStripArticles",
+        "rulePolishMarkdown",
+        "ruleSecretShield"
+      ]);
+
+      const mode = requestedMode || settings.optimizationMode || "balanced";
+      const rules = {
+        ruleStripGreetings: settings.ruleStripGreetings !== false,
+        ruleSimplifyPhrases: settings.ruleSimplifyPhrases !== false,
+        ruleAbbreviate: settings.ruleAbbreviate !== false,
+        ruleStripArticles: settings.ruleStripArticles !== false,
+        rulePolishMarkdown: settings.rulePolishMarkdown !== false
+      };
+
+      try {
+        // 1. DLP Secret Scan & Redaction
+        let workingPrompt = prompt;
+        let secretsDetected = [];
+        if (settings.ruleSecretShield !== false) {
+          const dlp = maskSensitiveData(prompt);
+          workingPrompt = dlp.sanitized;
+          secretsDetected = dlp.secretsFound;
+        }
+
+        // 2. Vault Context Attachment
+        const { contextBlock, attachedContexts, rawContextTokens } = await processVaultContext(
+          workingPrompt,
+          mode,
+          rules
+        );
+
+        // 3. Local Compression
+        const { optimized, rulesApplied } = optimizeLocally(workingPrompt, mode, rules);
+        const finalOptimized = contextBlock + optimized;
+
+        // 4. Token & Cost Accounting
+        const originalTokens = estimateTokens(prompt) + rawContextTokens;
+        const optimizedTokens = estimateTokens(finalOptimized);
+        const tokensSaved = Math.max(0, originalTokens - optimizedTokens);
+        const percentageSaved = originalTokens > 0 ? Math.round((tokensSaved / originalTokens) * 100) : 0;
+
+        // Multi-model savings calculation
+        const costSavings = {};
+        for (const [key, model] of Object.entries(MODEL_RATES)) {
+          costSavings[key] = {
+            name: model.name,
+            savedDollars: (tokensSaved / 1_000_000) * model.ratePerMillion
+          };
+        }
+
+        const sonnetSavings = costSavings.sonnet.savedDollars;
+
+        // 5. Update Cumulative Stats & History
+        const currentStats = await chrome.storage.local.get([
+          "stats_promptsOptimized",
+          "stats_tokensSaved",
+          "stats_costSaved",
+          "stats_history"
+        ]);
+
+        const history = currentStats.stats_history || [];
+        history.unshift({
+          timestamp: Date.now(),
+          originalLength: prompt.length,
+          tokensSaved,
+          percentageSaved,
+          mode,
+          snippet: prompt.substring(0, 60).replace(/\n/g, " ") + (prompt.length > 60 ? "..." : "")
+        });
+
+        // Keep last 15 history entries
+        if (history.length > 15) history.pop();
+
+        await chrome.storage.local.set({
+          stats_promptsOptimized: (currentStats.stats_promptsOptimized || 0) + 1,
+          stats_tokensSaved: (currentStats.stats_tokensSaved || 0) + tokensSaved,
+          stats_costSaved: (currentStats.stats_costSaved || 0) + sonnetSavings,
+          stats_history: history
+        });
+
+        sendResponse({
+          success: true,
+          original: prompt,
+          optimized: finalOptimized,
+          originalTokens,
+          optimizedTokens,
+          tokensSaved,
+          percentageSaved,
+          mode,
+          rulesApplied,
+          attachedContexts,
+          secretsDetected,
+          costSavings
+        });
+      } catch (err) {
+        console.error("Optimization error:", err);
+        sendResponse({ success: false, error: err.message });
+      }
+    })();
+    return true; // Keep message channel open for async response
+  }
+
+  if (request.action === "openSidePanel") {
+    (async () => {
+      try {
+        let windowId = sender.tab?.windowId;
+        if (!windowId) {
+          const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+          windowId = activeTab?.windowId;
+        }
+        if (chrome.sidePanel?.open && windowId) {
+          await chrome.sidePanel.open({ windowId });
+          sendResponse({ success: true });
+        } else {
+          sendResponse({ success: false, error: "Side Panel API unavailable" });
+        }
+      } catch (err) {
+        sendResponse({ success: false, error: err.message });
+      }
+    })();
+    return true;
+  }
+
+  if (request.action === "getStats") {
+    (async () => {
+      const stats = await chrome.storage.local.get([
+        "stats_promptsOptimized",
+        "stats_tokensSaved",
+        "stats_costSaved",
+        "stats_history"
+      ]);
+      sendResponse({ success: true, stats });
+    })();
+    return true;
+  }
+
+  if (request.action === "resetStats") {
+    (async () => {
+      await chrome.storage.local.set({
+        stats_promptsOptimized: 0,
+        stats_tokensSaved: 0,
+        stats_costSaved: 0,
+        stats_history: []
+      });
+      sendResponse({ success: true });
+    })();
+    return true;
+  }
+
+  if (request.action === "checkBuiltInAI") {
+    (async () => {
+      const hasAI = typeof globalThis.ai !== "undefined" && typeof globalThis.ai.languageModel !== "undefined";
+      sendResponse({ success: true, hasBuiltInAI: hasAI });
+    })();
+    return true;
+  }
+});

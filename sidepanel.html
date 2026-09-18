@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Squeeze AI Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="sp-app">
+    <!-- Header -->
+    <header class="sp-header">
+      <div class="sp-logo-group">
+        <div class="sp-logo-icon">
+          <img src="icons/icon48.png" width="26" height="26" alt="Squeeze Logo">
+        </div>
+        <div class="sp-title-area">
+          <span class="sp-title">Squeeze <span class="highlight">AI</span></span>
+          <span class="sp-subtitle">Prompt & Context Optimizer</span>
+        </div>
+      </div>
+      <div class="sp-header-actions">
+        <button id="spDemoPitchBtn" class="sp-pitch-btn" title="Load live hackathon demo prompt">
+          <span class="pulse-dot"></span>
+          <span>Judge Demo</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="sp-nav">
+      <button class="sp-nav-btn active" data-tab="studio">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Studio
+      </button>
+      <button class="sp-nav-btn" data-tab="frameworks">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Frameworks
+      </button>
+      <button class="sp-nav-btn" data-tab="dlp">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        DLP Shield
+      </button>
+      <button class="sp-nav-btn" data-tab="vault">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        Vault
+      </button>
+      <button class="sp-nav-btn" data-tab="analytics">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Analytics
+      </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="sp-content">
+      
+      <!-- TAB 1: STUDIO -->
+      <section id="pane-studio" class="sp-pane active">
+        <!-- Preset Demos Banner -->
+        <div class="sp-demo-presets">
+          <span class="sp-preset-label">Quick Test:</span>
+          <button class="sp-preset-chip" id="demoPresetDev">🐛 Bug + API Key</button>
+          <button class="sp-preset-chip" id="demoPresetEmail">✉️ Fluffy Email</button>
+          <button class="sp-preset-chip" id="demoPresetCode">📜 Bloated Spec</button>
+        </div>
+
+        <!-- Input Box -->
+        <div class="sp-card input-card">
+          <div class="sp-card-header">
+            <span class="sp-card-title">Input Prompt</span>
+            <div class="sp-token-badge" id="spInputTokenBadge">0 tokens</div>
+          </div>
+          <textarea id="spInputPrompt" class="sp-textarea" placeholder="Paste or type any prompt, instructions, code, or context here..."></textarea>
+          <div class="sp-input-footer">
+            <div class="sp-char-count" id="spCharCount">0 chars · 0 words</div>
+            <button class="sp-link-btn" id="spClearInputBtn">Clear</button>
+          </div>
+        </div>
+
+        <!-- Controls Bar -->
+        <div class="sp-controls-card">
+          <div class="sp-control-row">
+            <label class="sp-control-label">Compression Mode</label>
+            <div class="sp-mode-selector">
+              <button class="sp-mode-btn" data-mode="squeeze">
+                <strong>Squeeze</strong>
+                <span>Max (50-70%)</span>
+              </button>
+              <button class="sp-mode-btn active" data-mode="balanced">
+                <strong>Balanced</strong>
+                <span>Concise (30-50%)</span>
+              </button>
+              <button class="sp-mode-btn" data-mode="polish">
+                <strong>Polish</strong>
+                <span>Clarity (15-30%)</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="sp-control-toggles">
+            <label class="sp-toggle-pill">
+              <input type="checkbox" id="spToggleDlp" checked>
+              <span class="sp-toggle-indicator"></span>
+              <span class="sp-toggle-text">DLP Secret Shield</span>
+            </label>
+            <label class="sp-toggle-pill">
+              <input type="checkbox" id="spToggleVault" checked>
+              <span class="sp-toggle-indicator"></span>
+              <span class="sp-toggle-text">Auto-Inject Vault</span>
+            </label>
+          </div>
+
+          <button id="spSqueezeActionBtn" class="sp-squeeze-btn">
+            <span class="btn-icon">⚡</span>
+            <span class="btn-text">Squeeze Prompt</span>
+            <span class="btn-sparkle"></span>
+          </button>
+        </div>
+
+        <!-- Output Card (Visible after squeeze) -->
+        <div id="spOutputSection" class="sp-output-section" style="display: none;">
+          <!-- Security Alert if secrets found -->
+          <div id="spSecretAlertBanner" class="sp-alert-banner" style="display: none;">
+            <div class="sp-alert-icon">🛡️</div>
+            <div class="sp-alert-content">
+              <strong>Security Shield Triggered!</strong>
+              <span id="spSecretAlertCount">Sensitive keys were safely redacted before sending.</span>
+            </div>
+          </div>
+
+          <div class="sp-card output-card">
+            <div class="sp-card-header">
+              <div class="sp-output-meta">
+                <span class="sp-card-title">Squeezed Result</span>
+                <span class="sp-quality-pill" id="spQualityPill">⚡ 98% Intent Kept</span>
+              </div>
+              <div class="sp-view-toggle">
+                <button class="sp-view-btn active" id="spViewDiffBtn">Diff</button>
+                <button class="sp-view-btn" id="spViewCleanBtn">Clean</button>
+              </div>
+            </div>
+
+            <!-- Savings Banner -->
+            <div class="sp-savings-meter">
+              <div class="sp-meter-stat">
+                <span class="sp-meter-val" id="spTokensSavedVal">0</span>
+                <span class="sp-meter-lbl">Tokens Cut</span>
+              </div>
+              <div class="sp-meter-divider"></div>
+              <div class="sp-meter-stat">
+                <span class="sp-meter-val highlight" id="spPercentSavedVal">0%</span>
+                <span class="sp-meter-lbl">Reduction</span>
+              </div>
+              <div class="sp-meter-divider"></div>
+              <div class="sp-meter-stat">
+                <span class="sp-meter-val" id="spFinalTokenCount">0</span>
+                <span class="sp-meter-lbl">Final Tokens</span>
+              </div>
+            </div>
+
+            <!-- Diff or Clean Content -->
+            <div id="spDiffViewContainer" class="sp-diff-container"></div>
+            <textarea id="spCleanViewTextarea" class="sp-textarea sp-output-textarea" style="display: none;"></textarea>
+
+            <!-- Applied Rules Chips -->
+            <div class="sp-rules-applied" id="spRulesChips"></div>
+
+            <!-- Multi-Model Dollar Savings Breakdown -->
+            <div class="sp-model-savings-card">
+              <span class="sp-savings-subhead">Estimated Cost Savings (Per 100 Queries)</span>
+              <div class="sp-model-grid">
+                <div class="sp-model-item">
+                  <span class="sp-model-name">Claude 3.5 Sonnet</span>
+                  <span class="sp-model-cost" id="spCostSonnet">$0.00</span>
+                </div>
+                <div class="sp-model-item">
+                  <span class="sp-model-name">GPT-4o</span>
+                  <span class="sp-model-cost" id="spCostGpt4o">$0.00</span>
+                </div>
+                <div class="sp-model-item">
+                  <span class="sp-model-name">Gemini 1.5 Pro</span>
+                  <span class="sp-model-cost" id="spCostGemini">$0.00</span>
+                </div>
+                <div class="sp-model-item">
+                  <span class="sp-model-name">DeepSeek V3</span>
+                  <span class="sp-model-cost" id="spCostDeepseek">$0.00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Output Actions -->
+            <div class="sp-actions-bar">
+              <button id="spCopyResultBtn" class="sp-action-btn secondary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy Prompt
+              </button>
+              <button id="spSendToActiveTabBtn" class="sp-action-btn primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Insert into Active Chat Tab
+              </button>
+            </div>
+            <div id="spFeedbackMsg" class="sp-feedback-toast">Copied to clipboard!</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: FRAMEWORKS -->
+      <section id="pane-frameworks" class="sp-pane">
+        <div class="sp-pane-header">
+          <h3>Prompt Engineering Frameworks</h3>
+          <p>Structure high-converting prompts, then squeeze them to zero fluff.</p>
+        </div>
+
+        <div class="sp-framework-cards">
+          <!-- CO-STAR Framework -->
+          <div class="sp-framework-card" data-framework="costar">
+            <div class="sp-fw-header">
+              <span class="sp-fw-badge">Top Framework</span>
+              <h4>CO-STAR Optimizer</h4>
+            </div>
+            <p>Context, Objective, Style, Tone, Audience, Response structure condensed into high-signal tokens.</p>
+            <button class="sp-fw-apply-btn" id="fwApplyCostar">Load Template</button>
+          </div>
+
+          <!-- Few-Shot Optimizer -->
+          <div class="sp-framework-card" data-framework="fewshot">
+            <div class="sp-fw-header">
+              <span class="sp-fw-badge">Few-Shot</span>
+              <h4>Few-Shot Token Condenser</h4>
+            </div>
+            <p>Formats compact input/output exemplars without conversational filler or bloated delimiters.</p>
+            <button class="sp-fw-apply-btn" id="fwApplyFewshot">Load Template</button>
+          </div>
+
+          <!-- Code Debugger / Refactor -->
+          <div class="sp-framework-card" data-framework="code">
+            <div class="sp-fw-header">
+              <span class="sp-fw-badge">Developer</span>
+              <h4>Code Refactor & Bug Hunter</h4>
+            </div>
+            <p>Pinpoints runtime constraints, stack traces, and snippets with minimal token footprint.</p>
+            <button class="sp-fw-apply-btn" id="fwApplyCode">Load Template</button>
+          </div>
+
+          <!-- Executive Summary -->
+          <div class="sp-framework-card" data-framework="exec">
+            <div class="sp-fw-header">
+              <span class="sp-fw-badge">Productivity</span>
+              <h4>Executive Briefing</h4>
+            </div>
+            <p>Extracts bullet points, action items, and quantitative metrics from documents.</p>
+            <button class="sp-fw-apply-btn" id="fwApplyExec">Load Template</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: DLP SHIELD -->
+      <section id="pane-dlp" class="sp-pane">
+        <div class="sp-pane-header">
+          <div class="sp-pane-title-row">
+            <h3>DLP Secret & Privacy Shield</h3>
+            <span class="sp-status-chip online">100% Local</span>
+          </div>
+          <p>Squeeze AI scans prompts locally in real-time. Secrets never leave your browser unmasked.</p>
+        </div>
+
+        <div class="sp-card">
+          <h4 class="sp-card-subhead">Live Secret Redaction Tester</h4>
+          <textarea id="spDlpTestInput" class="sp-textarea" rows="3" placeholder="Paste a sample string containing an API key or password to test live masking..."></textarea>
+          <div class="sp-dlp-result-box" id="spDlpResultBox">
+            <span class="sp-placeholder-text">Sanitized output will appear here in real time...</span>
+          </div>
+        </div>
+
+        <div class="sp-card">
+          <h4 class="sp-card-subhead">Protected Credential Signatures</h4>
+          <ul class="sp-dlp-rules-list">
+            <li>
+              <span class="dlp-rule-icon">🔑</span>
+              <div class="dlp-rule-info">
+                <strong>OpenAI & Anthropic Keys</strong>
+                <span>Detects <code>sk-...</code>, <code>sk-ant-...</code> tokens</span>
+              </div>
+              <span class="dlp-status-tag">Active</span>
+            </li>
+            <li>
+              <span class="dlp-rule-icon">⚡</span>
+              <div class="dlp-rule-info">
+                <strong>Google AI & Gemini Keys</strong>
+                <span>Detects <code>AIzaSy...</code> credential strings</span>
+              </div>
+              <span class="dlp-status-tag">Active</span>
+            </li>
+            <li>
+              <span class="dlp-rule-icon">☁️</span>
+              <div class="dlp-rule-info">
+                <strong>AWS Access Keys</strong>
+                <span>Detects <code>AKIA...</code> access credentials</span>
+              </div>
+              <span class="dlp-status-tag">Active</span>
+            </li>
+            <li>
+              <span class="dlp-rule-icon">🐙</span>
+              <div class="dlp-rule-info">
+                <strong>GitHub Tokens</strong>
+                <span>Detects <code>ghp_...</code> personal access tokens</span>
+              </div>
+              <span class="dlp-status-tag">Active</span>
+            </li>
+            <li>
+              <span class="dlp-rule-icon">🗄️</span>
+              <div class="dlp-rule-info">
+                <strong>Database URIs & Passwords</strong>
+                <span>Masks MongoDB, Postgres, MySQL authentication strings</span>
+              </div>
+              <span class="dlp-status-tag">Active</span>
+            </li>
+            <li>
+              <span class="dlp-rule-icon">🛡️</span>
+              <div class="dlp-rule-info">
+                <strong>JWT & Bearer Tokens</strong>
+                <span>Detects <code>eyJ...</code> authorization payloads</span>
+              </div>
+              <span class="dlp-status-tag">Active</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- TAB 4: CONTEXT VAULT -->
+      <section id="pane-vault" class="sp-pane">
+        <div class="sp-pane-header">
+          <h3>Context Vault</h3>
+          <p>Global guidelines and reference files automatically compressed and attached when relevant.</p>
+        </div>
+
+        <div class="sp-card">
+          <h4 class="sp-card-subhead">Global Developer Profile</h4>
+          <textarea id="spVaultPrefs" class="sp-textarea" rows="3" placeholder="e.g., Senior Full-Stack Dev. Prefer TypeScript, ES2022, React, Tailwind CSS. Avoid unneeded dependencies."></textarea>
+          <label class="sp-toggle-pill" style="margin-top: 8px;">
+            <input type="checkbox" id="spVaultAlwaysInject" checked>
+            <span class="sp-toggle-indicator"></span>
+            <span class="sp-toggle-text">Always Inject into Squeezed Prompts</span>
+          </label>
+        </div>
+
+        <div class="sp-card">
+          <h4 class="sp-card-subhead">Local Reference Files (.txt, .md, .json)</h4>
+          <div class="sp-dropzone" id="spVaultDropzone">
+            <input type="file" id="spVaultFileInput" accept=".txt,.md,.json" multiple style="display: none;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span>Drag & drop files or <span class="browse-link" id="spVaultBrowseLink">browse</span></span>
+          </div>
+          <ul class="sp-vault-list" id="spVaultList">
+            <li class="empty-list-msg">No reference files in vault yet.</li>
+          </ul>
+          <label class="sp-toggle-pill" style="margin-top: 8px;">
+            <input type="checkbox" id="spVaultSmartTriggers" checked>
+            <span class="sp-toggle-indicator"></span>
+            <span class="sp-toggle-text">Smart Keyword Auto-Trigger</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- TAB 5: ANALYTICS -->
+      <section id="pane-analytics" class="sp-pane">
+        <div class="sp-pane-header">
+          <h3>Token & Cost Analytics</h3>
+          <p>Cumulative savings across all your browser tabs.</p>
+        </div>
+
+        <div class="sp-stats-grid">
+          <div class="sp-stat-card">
+            <span class="sp-stat-num" id="spAnalyticsPrompts">0</span>
+            <span class="sp-stat-title">Prompts Squeezed</span>
+          </div>
+          <div class="sp-stat-card">
+            <span class="sp-stat-num cyan" id="spAnalyticsTokens">0</span>
+            <span class="sp-stat-title">Tokens Saved</span>
+          </div>
+          <div class="sp-stat-card">
+            <span class="sp-stat-num gold" id="spAnalyticsCost">$0.00</span>
+            <span class="sp-stat-title">Cash Saved</span>
+          </div>
+        </div>
+
+        <!-- Environmental & Eco Impact Card -->
+        <div class="sp-card eco-card">
+          <div class="eco-header">
+            <span class="eco-icon">🌱</span>
+            <h4>Eco & GPU Compute Impact</h4>
+          </div>
+          <p class="eco-desc">By cutting redundant token inference across LLM clusters, you reduce GPU wattage and data center carbon footprint.</p>
+          <div class="eco-metrics">
+            <div class="eco-metric">
+              <span class="eco-val" id="spEcoEnergy">0.0 Wh</span>
+              <span class="eco-lbl">Compute Saved</span>
+            </div>
+            <div class="eco-metric">
+              <span class="eco-val" id="spEcoCo2">0.0 g</span>
+              <span class="eco-lbl">CO₂ Reduced</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Optimization History -->
+        <div class="sp-card">
+          <div class="sp-card-header">
+            <h4 class="sp-card-subhead">Recent Squeezes</h4>
+            <button class="sp-link-btn danger" id="spResetStatsBtn">Reset Stats</button>
+          </div>
+          <ul class="sp-history-list" id="spHistoryList">
+            <li class="empty-list-msg">No history entries yet.</li>
+          </ul>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="sp-footer">
+      <span>Squeeze AI · Manifest V3 Production</span>
+      <span class="sp-engine-tag">Local Heuristics + DLP Engine</span>
+    </footer>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>

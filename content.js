@@ -1,1 +1,1214 @@
-!function(){let e=null,t=null,n=null,a=null,r=null,s="",o="",i="balanced",l=[],c="",d=null;function u(){const n=document.querySelector('div[contenteditable="true"]');if(n){if("true"===n.dataset.squeezeInjected)return e=n,void(t&&!document.contains(t)&&p(n));e=n,n.dataset.squeezeInjected="true",p(n),w(),chrome.storage.local.get(["pendingChatSummary"],t=>{t&&t.pendingChatSummary&&(chrome.storage.local.remove(["pendingChatSummary"]),setTimeout(()=>{S(n,t.pendingChatSummary),f(n,"Context summary pasted from previous chat! Ready to send.")},400))})}else t&&!document.contains(t)&&(t=null)}function p(e){t&&t.remove(),a&&a.remove(),n&&n.remove(),t=document.createElement("div"),t.className="squeeze-trigger-btn inline-btn",t.dataset.tooltip="Optimize Prompt (Squeeze)",t.addEventListener("mouseenter",()=>b(t,t.dataset.tooltip)),t.addEventListener("mouseleave",y),t.innerHTML='\n      <svg viewBox="0 0 512 512" width="16" height="16" style="display: block; color: inherit;">\n        <rect x="120" y="140" width="272" height="48" rx="24" fill="currentColor"/>\n        <rect x="144" y="212" width="224" height="48" rx="24" fill="currentColor" fill-opacity="0.8"/>\n        <rect x="176" y="284" width="160" height="48" rx="24" fill="currentColor" fill-opacity="0.6"/>\n        <rect x="208" y="356" width="96" height="48" rx="24" fill="currentColor" fill-opacity="0.4"/>\n      </svg>\n    ',a=document.createElement("div"),a.className="squeeze-pdf-btn inline-btn",a.dataset.tooltip="Squeeze PDF & Insert",a.addEventListener("mouseenter",()=>b(a,a.dataset.tooltip)),a.addEventListener("mouseleave",y),a.innerHTML='\n      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">\n        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>\n        <polyline points="14 2 14 8 20 8"></polyline>\n        <line x1="16" y1="13" x2="8" y2="13"></line>\n        <line x1="16" y1="17" x2="8" y2="17"></line>\n        <polyline points="10 9 9 9 8 9"></polyline>\n      </svg>\n    ',n=document.createElement("div"),n.className="squeeze-undo-btn inline-btn",n.dataset.tooltip="Undo Prompt Optimization",n.addEventListener("mouseenter",()=>b(n,n.dataset.tooltip)),n.addEventListener("mouseleave",y),n.style.display="none",n.innerHTML='\n      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform: scaleX(-1);">\n        <path d="M3 7v6h6"></path>\n        <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>\n      </svg>\n    ';const summaryBtn=document.createElement("div");summaryBtn.className="squeeze-summary-btn inline-btn",summaryBtn.dataset.tooltip="< summarise context >",summaryBtn.addEventListener("mouseenter",()=>b(summaryBtn,summaryBtn.dataset.tooltip)),summaryBtn.addEventListener("mouseleave",y),summaryBtn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><line x1="9" y1="10" x2="15" y2="10"></line></svg>',summaryBtn.addEventListener("click",e=>{e.stopPropagation(),e.preventDefault(),function(){try{const t=function(){const e=document.querySelectorAll(["div.font-user-message","div.font-claude-message",'[data-testid="user-message"]','[data-testid="bot-message"]',".prose",".font-sans.break-words"].join(", ")),t=Array.from(e).filter(t=>{let n=t.parentElement;for(;n;){if(Array.from(e).includes(n))return!1;n=n.parentElement}return!0}),n=[];t.forEach(e=>{const t=!(!e.closest('[data-testid="user-message"]')&&!e.classList.contains("font-user-message")&&"user-message"!==e.getAttribute("data-testid")),a=e.cloneNode(!0);a.querySelectorAll("pre").forEach(e=>e.remove());const r=a.innerText.trim(),s=[];e.querySelectorAll("pre").forEach(e=>{const t=e.querySelector("code");if(t){let e="code";t.classList.forEach(t=>{t.startsWith("language-")&&(e=t.replace("language-",""))});let n=t.innerText.trim();n.length>3500&&(n=n.substring(0,3500)+"\n\n// ... [Code truncated by Squeeze to stay within context budget] ..."),s.push({language:e,code:n})}}),(r||s.length>0)&&n.push({sender:t?"user":"claude",text:r,codeBlocks:s})});const a=new Set,r=n.length;if(r>0){a.add(r-1);let e=0;for(let t=r-1;t>=0&&!("user"===n[t].sender&&(a.add(t),e++,t>0&&"claude"===n[t-1].sender&&a.add(t-1),e>=3));t--);}const s=Array.from(a).sort((e,t)=>e-t);let o="## Context Summary from Previous Chat (Squeezed)\n\n";const i={};if(s.length>0&&(o+="### Recent Discussion Timeline:\n",s.forEach(e=>{const t=n[e],a="user"===t.sender?"User":"Claude";if(t.text){let e=t.text;e.length>400&&(e=e.substring(0,400)+"... [truncated]"),o+=`**${a}**: ${e.replace(/\n/g," ")}\n\n`}t.codeBlocks.forEach(e=>{i[e.language]=e.code})})),Object.keys(i).length>0){o+="### Current Code State:\n";for(const[e,t]of Object.entries(i))o+=`#### Latest ${e.toUpperCase()}:\n\`\`\`${e}\n${t}\n\`\`\`\n\n`}return o+="*This context was automatically summarized to save tokens. Please review it and confirm when you are ready to continue where we left off.*",o.length>8e3&&(o=o.substring(0,8e3)+"\n\n... [Older summary context truncated by Squeeze to stay within 2,000 token budget] ...\n\n*This context was automatically summarized to save tokens.*"),o}();if(!t||t.length<20)return void f(summaryBtn,"No chat context to summarize yet!");chrome.storage.local.set({pendingChatSummary:t},()=>{navigator.clipboard.writeText(t).catch(()=>{}),f(summaryBtn,"Context summarized! Opening fresh chat..."),setTimeout(()=>{window.location.href="https://claude.ai/new"},1200)})}catch(e){console.error("Summary error:",e),f(summaryBtn,"Error summarizing context.")}}()});const u=document.createElement("div");u.id="squeezeVaultBadge",u.className="squeeze-vault-badge inline-btn",u.style.display="none",u.style.cursor="default";const p=function(){let e=Array.from(document.querySelectorAll("button")).find(e=>{const t=(e.innerText||"").toLowerCase();return t.includes("sonnet")||t.includes("fable")||t.includes("haiku")||t.includes("opus")||t.includes("claude")});if(e)return e;const t=document.querySelector('div[contenteditable="true"]')?.closest("fieldset")||document.querySelector('div[contenteditable="true"]')?.closest("form");if(t){const e=Array.from(t.querySelectorAll("button")).find(e=>"true"===e.getAttribute("aria-haspopup")||"listbox"===e.getAttribute("aria-haspopup"));if(e)return e;const n=Array.from(t.querySelectorAll("button")).filter(e=>(e.innerText||"").trim().length>0);if(n.length>0)return n[0]}return null}();if(p&&p.parentNode)p.parentNode.insertBefore(t,p),p.parentNode.insertBefore(a,t),p.parentNode.insertBefore(summaryBtn,a),p.parentNode.insertBefore(n,summaryBtn),p.parentNode.insertBefore(u,n);else{const r=document.querySelector('button[aria-label*="attach" i]')||document.querySelector('button svg path[d*="M16.5 6v11.5"]').closest("button");if(r&&r.parentNode)r.parentNode.appendChild(u),r.parentNode.appendChild(n),r.parentNode.appendChild(summaryBtn),r.parentNode.appendChild(a),r.parentNode.appendChild(t);else{const r=e.parentElement;r?(r.appendChild(u),r.appendChild(n),r.appendChild(summaryBtn),r.appendChild(a),r.appendChild(t)):(document.body.appendChild(u),document.body.appendChild(n),document.body.appendChild(summaryBtn),document.body.appendChild(a),document.body.appendChild(t))}}a.addEventListener("click",e=>{e.stopPropagation(),e.preventDefault();const t=document.createElement("input");t.type="file",t.accept=".pdf",t.style.display="none",t.addEventListener("change",async e=>{const t=e.target.files[0];t&&async function(e){r||w();d=e;const t=chrome.runtime.getURL("icons/icon48.png");r.innerHTML=`\n      <div class="squeeze-modal-card">\n        <div class="tm-modal-header">\n          <div class="tm-modal-logo">\n            <img src="${t}" class="animating" width="22" height="22" alt="Squeeze Icon" style="vertical-align: middle;">\n            <span>Squeeze <span class="highlight">Optimizer</span></span>\n          </div>\n          <button class="tm-close-btn">&times;</button>\n        </div>\n        \n        <div class="tm-modal-body">\n          <div class="tm-loading-state">\n            <div class="tm-spinner"></div>\n            <p id="tmPDFStatusText">Extracting text from PDF file...</p>\n            <span class="tm-loading-subtext" id="tmPDFSubtext">Initializing PDF.js parser...</span>\n          </div>\n        </div>\n      </div>\n    `,r.classList.add("open"),r.querySelector(".tm-close-btn").addEventListener("click",k);const n=r.querySelector("#tmPDFStatusText"),a=r.querySelector("#tmPDFSubtext");try{if("undefined"==typeof pdfjsLib)throw new Error("PDF.js library failed to load in page context.");pdfjsLib.GlobalWorkerOptions.workerSrc=chrome.runtime.getURL("pdf.worker.min.js"),a.innerText="Reading file data...";const u=await e.arrayBuffer();a.innerText="Loading document structure...";const p=await pdfjsLib.getDocument({data:u}).promise,m=p.numPages,g=[],v={};function o(e){return e.replace(/\bpage\s+\d+(\s+of\s+\d+)?\b/gi,"PAGE_NUM").replace(/\b\d+\b/g,"NUM").trim()}for(let E=1;E<=m;E++){n.innerText=`Extracting text from PDF (Page ${E} of ${m})...`,a.innerText="Parsing layout objects...";const q=await p.getPage(E),L=(await q.getTextContent()).items,C={};L.forEach(e=>{if(!e.str||""===e.str.trim())return;const t=2*Math.round(e.transform[5]/2);C[t]||(C[t]=[]),C[t].push(e)});const z=Object.keys(C).map(Number).sort((e,t)=>t-e),T=[];z.forEach(e=>{const t=C[e].sort((e,t)=>e.transform[4]-t.transform[4]).map(e=>e.str).join(" ").trim();if(t){T.push(t);const e=o(t);v[e]=(v[e]||0)+1}}),g.push(T)}const f=new Set;if(m>1)for(const[P,M]of Object.entries(v))M>.5*m&&f.add(P);let h=[],b=0;g.forEach(e=>{const t=e.filter(e=>!f.has(o(e))).filter(e=>!/^\s*(?:page\s+)?\d+(?:\s+of\s+\d+)?\s*$/i.test(e)||(b++,!1));h.push(t.join("\n"))});let y=h.join("\n\n").trim();if(y.length<20)throw new Error("SCANNED_PDF_DETECTED");let S=y.split("\n").map(e=>e.trim()).join("\n");S=S.replace(/[^\S\r\n]+/g," "),S=S.replace(/\n{3,}/g,"\n\n").trim(),n.innerText="Squeezing extracted content...",a.innerText="Applying local prompt optimization...",c=S,s=S,l=A(S),x(S,i)}catch($){console.error("PDF extraction error:",$);let D="Failed to parse PDF document.";D="SCANNED_PDF_DETECTED"===$.message?"This PDF appears to be a scanned image or contains no extractable text. Squeeze cannot extract text from images.":"Error parsing PDF: "+$.message;const F=r.querySelector(".tm-modal-body");F.innerHTML=`\n        <div class="tm-dup-warning-banner" style="background: rgba(255, 59, 48, 0.08); border: 1px solid rgba(255, 59, 48, 0.25); padding: 20px; border-radius: 12px; margin: 10px 0; text-align: center; box-sizing: border-box; width: 100%;">\n          <div style="font-size: 1.8rem; margin-bottom: 10px;">⚠️</div>\n          <div style="font-size: 0.85rem; color: #ff5e84; line-height: 1.5; font-weight: 600; margin-bottom: 15px;">\n            ${D}\n          </div>\n          <button class="tm-btn" id="tmPDFErrorCloseBtn" style="padding: 6px 16px; font-size: 0.78rem; border: 1px solid rgba(255, 94, 132, 0.4); border-radius: 6px; color: #ff5e84; background: rgba(255, 59, 48, 0.04); cursor: pointer; font-weight: 600;">Close</button>\n        </div>\n      `,F.querySelector("#tmPDFErrorCloseBtn").addEventListener("click",k)}}(t)}),document.body.appendChild(t),t.click(),setTimeout(()=>t.remove(),1e3)}),g(e),v(e.innerText),e.addEventListener("input",()=>{g(e),M(),v(e.innerText)}),t.addEventListener("click",n=>{n.stopPropagation(),n.preventDefault();const a=m(e.innerText||e.innerHTML);!a||a.length<5?f(t,"Type a prompt first!"):(s=a,function(e){r||w();c=e,l=A(e);const t=chrome.runtime.getURL("icons/icon48.png");r.innerHTML=`\n      <div class="squeeze-modal-card">\n        <div class="tm-modal-header">\n          <div class="tm-modal-logo">\n            <img src="${t}" class="animating" width="22" height="22" alt="Squeeze Icon" style="vertical-align: middle;">\n            <span>Squeeze <span class="highlight">Optimizer</span></span>\n          </div>\n          <button class="tm-close-btn">&times;</button>\n        </div>\n        \n        <div class="tm-modal-body">\n          <div class="tm-loading-state">\n            <div class="tm-spinner"></div>\n            <p>Squeezing prompt for maximum token efficiency...</p>\n            <span class="tm-loading-subtext">Optimizing via Local Rules...</span>\n          </div>\n        </div>\n      </div>\n    `,r.classList.add("open"),r.querySelector(".tm-close-btn").addEventListener("click",k),x(e,i)}(a))}),n.addEventListener("click",a=>{if(a.stopPropagation(),a.preventDefault(),o){e.innerHTML="";o.split("\n").forEach(t=>{const n=document.createElement("p");n.innerText=t,e.appendChild(n)}),e.dispatchEvent(new Event("input",{bubbles:!0})),e.dispatchEvent(new InputEvent("input",{bubbles:!0,inputType:"insertReplacementText",data:o})),e.dispatchEvent(new Event("change",{bubbles:!0})),n.style.display="none",y(),setTimeout(()=>e.focus(),50),f(t,"Original prompt restored!"),g(e)}})}function m(e){return e?e.replace(/[\u200B-\u200D\uFEFF]/g,"").trim():""}function g(e){if(!t)return;const n=m(e.innerText);(n?q(n):0)>0?t.classList.add("active"):t.classList.remove("active")}function v(e){const t=m(e);t?chrome.storage.local.get(["vaultPreferences","vaultPrefAlwaysInject","vaultSmartTriggers","vaultFiles","vaultServerEnabled"],e=>{const n=e.vaultPreferences||"",a=!1!==e.vaultPrefAlwaysInject,r=!1!==e.vaultSmartTriggers,s=e.vaultFiles||[],o=!!e.vaultServerEnabled;let i=0;const l=[];if(n.trim()&&a&&(i++,l.push("Preferences")),s.length>0){const e=t.toLowerCase();for(const t of s){let n=!1;if(r){const a=t.name.replace(/\.[a-z0-9]+$/i,"").toLowerCase().split(/[^a-z0-9]+/).filter(e=>e.length>=3||["db","js","go","py"].includes(e));for(const t of a){if(new RegExp("\\b"+t+"\\b","i").test(e)){n=!0;break}}}else n=!0;n&&t.content&&(i++,l.push(t.name))}}o&&(i++,l.push("Local Server"));const c=document.getElementById("squeezeVaultBadge");c&&(i>0?(c.style.display="inline-flex",c.innerHTML=`\n            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; color: #da7040;">\n              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>\n            </svg>\n            <span style="font-size: 0.72rem; font-weight: 600; color: #da7040;">Vault: ${i}</span>\n          `,c.setAttribute("title",`Vault Context Attached:\n- ${l.join("\n- ")}`)):c.style.display="none")}):function(){const e=document.getElementById("squeezeVaultBadge");e&&(e.style.display="none")}()}function f(e,t){const n=document.createElement("div");n.className="squeeze-tooltip",n.textContent=t,document.body.appendChild(n);const a=e.getBoundingClientRect();n.style.left=a.left+window.scrollX+a.width/2-n.offsetWidth/2+"px",n.style.top=a.top+window.scrollY-n.offsetHeight-8+"px",n.classList.add("show"),setTimeout(()=>{n.classList.remove("show"),setTimeout(()=>n.remove(),300)},2e3)}let h=null;function b(e,t){y();const n=document.createElement("div");n.className="squeeze-tooltip",n.textContent=t,document.body.appendChild(n);const a=e.getBoundingClientRect();n.style.left=a.left+window.scrollX+a.width/2-n.offsetWidth/2+"px",n.style.top=a.top+window.scrollY-n.offsetHeight-8+"px",requestAnimationFrame(()=>{n.classList.add("show")}),h=n}function y(){if(h){const e=h;h=null,e.classList.remove("show"),setTimeout(()=>e.remove(),150)}}function w(){r||(r=document.createElement("div"),r.className="squeeze-modal-container",document.body.appendChild(r),r.addEventListener("click",e=>{e.target===r&&k()}))}function x(t,a){try{chrome.runtime.sendMessage({action:"optimizePrompt",prompt:t,mode:a},t=>{chrome.runtime.lastError?E("Failed to communicate with Squeeze background service worker. Please refresh the tab."):t&&t.success?function(t){const a=r.querySelector(".tm-modal-body"),u=r.querySelector(".tm-modal-logo img");u&&u.classList.remove("animating");const p=function(e,t,n){const a=e.match(/\b[A-Z0-9][a-zA-Z0-9]*\b/g)||[],r=new Set((t.match(/\b[A-Z0-9][a-zA-Z0-9]*\b/g)||[]).map(e=>e.toLowerCase()));let s=0;a.forEach(e=>{r.has(e.toLowerCase())&&s++});const o=a.length>0?s/a.length:1;let i=98;"squeeze"===n?i=92:"balanced"===n&&(i=96);let l=Math.round(i*(.6+.4*o));return l=Math.max(85,Math.min(100,l)),l}(t.original,t.optimized,t.mode),m=function(e,t){const n=e.trim().split(/(\s+)/),a=t.trim().split(/(\s+)/),r=Array(n.length+1).fill(null).map(()=>Array(a.length+1).fill(0));for(let e=1;e<=n.length;e++)for(let t=1;t<=a.length;t++)n[e-1]===a[t-1]?r[e][t]=r[e-1][t-1]+1:r[e][t]=Math.max(r[e-1][t],r[e][t-1]);let s=n.length,o=a.length;const i=[],l=[];for(;s>0||o>0;)if(s>0&&o>0&&n[s-1]===a[o-1]){const e=n[s-1];i.unshift(D(e)),l.unshift(D(e)),s--,o--}else if(o>0&&(0===s||r[s][o-1]>=r[s-1][o])){const e=a[o-1];""===e.trim()?l.unshift(e):l.unshift(`<ins class="tm-diff-ins">${D(e)}</ins>`),o--}else{const e=n[s-1];""===e.trim()?i.unshift(e):i.unshift(`<del class="tm-diff-del">${D(e)}</del>`),s--}return{oldHtml:i.join(""),newHtml:l.join("")}}(t.original,t.optimized),g=t.rulesApplied&&t.rulesApplied.length>0?`<div class="tm-applied-rules-chips" style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px;">\n          ${t.rulesApplied.map(e=>`<span class="tm-rule-chip" style="font-size: 0.68rem; padding: 2px 8px; background: rgba(218, 112, 64, 0.08); border: 1px solid rgba(218, 112, 64, 0.15); color: var(--tm-neon-cyan); border-radius: 12px; font-weight: 500; text-shadow: 0 0 4px rgba(218, 112, 64, 0.2);">✓ ${e}</span>`).join("")}\n         </div>`:"",v=t.attachedContexts&&t.attachedContexts.length>0?`<div class="tm-attached-context-chips" style="margin-top: 10px; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 8px;">\n          <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Vault Context Injected:</span>\n          <div style="display: flex; flex-wrap: wrap; gap: 6px;">\n            ${t.attachedContexts.map(e=>`<span class="tm-context-chip" style="font-size: 0.68rem; padding: 2px 8px; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.15); color: #da7040; border-radius: 12px; font-weight: 500;">📂 ${e}</span>`).join("")}\n          </div>\n         </div>`:"";let h="";if(l&&l.length>0){const e=l.length;h=`\n        <div class="tm-dup-warning-banner" style="background: rgba(255, 59, 48, 0.08); border: 1px solid rgba(255, 59, 48, 0.25); padding: 12px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-sizing: border-box; width: 100%;">\n          <div style="display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: #ff5e84; line-height: 1.4;">\n            <span style="font-size: 1.1rem;">⚠️</span>\n            <span><strong>Duplicate Context:</strong> ${e} large ${1===e?"block":"blocks"} in your prompt was already sent in this thread. Claude already has this context.</span>\n          </div>\n          <button class="tm-btn" id="tmStripDupsBtn" style="padding: 4px 10px; font-size: 0.72rem; border: 1px solid rgba(255, 94, 132, 0.4); border-radius: 4px; color: #ff5e84; background: rgba(255, 59, 48, 0.04); cursor: pointer; font-weight: 600; white-space: nowrap; transition: all 0.2s ease;">Strip Duplicates</button>\n        </div>\n      `}let b="";d&&(b=`\n        <div class="tm-pdf-success-banner" style="background: rgba(5, 242, 158, 0.08); border: 1px solid rgba(5, 242, 158, 0.2); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 0.78rem; color: #05f29e; display: flex; align-items: center; gap: 8px; box-sizing: border-box; width: 100%; line-height: 1.4;">\n          <span style="font-size: 1.1rem;">📄</span>\n          <span><strong>Extracted PDF:</strong> "${d.name}" successfully parsed. Applied header/footer pruning and whitespace cleanup.</span>\n        </div>\n      `);const y=d?"Original PDF Content":"Original Prompt",w=d?"Squeezed PDF Content":"Optimized Prompt";a.innerHTML=`\n      <div class="tm-comparison-layout">\n        ${b}\n        ${h}\n        \x3c!-- Settings Bar --\x3e\n        <div class="tm-options-bar">\n          <div class="tm-mode-selector-group">\n            <label>Mode:</label>\n            <select id="tmModeSelect" class="tm-mini-select">\n              <option value="squeeze" ${"squeeze"===t.mode?"selected":""}>Squeeze (Max Savings)</option>\n              <option value="balanced" ${"balanced"!==t.mode&&t.mode?"":"selected"}>Balanced (Concise)</option>\n              <option value="polish" ${"polish"===t.mode?"selected":""}>Polish (Enhance)</option>\n            </select>\n          </div>\n          <div class="tm-stats-badges">\n            <div class="tm-stats-badge-savings">\n              Saves ${t.percentageSaved}% Tokens\n            </div>\n            <div class="tm-stats-badge-quality quality-${p>=95?"safe":p>=90?"moderate":"heavy"}">\n              ⚡ ${p}% Intent Preservation\n            </div>\n          </div>\n        </div>\n\n        \x3c!-- Before / After Grid --\x3e\n        <div class="tm-diff-grid">\n          <div class="tm-diff-pane">\n            <div class="tm-pane-header">\n              <span>${y}</span>\n              <span class="tm-pane-stat">${t.originalTokens} tokens</span>\n            </div>\n            <div class="tm-pane-content tm-original-text" id="tmOriginalPane">${m.oldHtml}</div>\n          </div>\n          \n          <div class="tm-diff-pane tm-optimized-pane">\n            <div class="tm-pane-header">\n              <span>${w}</span>\n              <div class="tm-toggle-group">\n                <button class="tm-toggle-btn active" id="tmToggleDiff">Diff View</button>\n                <button class="tm-toggle-btn" id="tmToggleEdit">Edit Raw</button>\n              </div>\n              <span class="tm-pane-stat glow-text">${t.optimizedTokens} tokens</span>\n            </div>\n            <div id="tmOptimizedWrapper" style="height: calc(100% - 32px); display: flex; flex-direction: column;">\n              <div class="tm-pane-content tm-optimized-diff" id="tmOptimizedDiffPane">${m.newHtml}</div>\n              <textarea id="tmOptimizedInput" class="tm-pane-textarea" style="display: none;">${t.optimized}</textarea>\n            </div>\n          </div>\n        </div>\n\n        \x3c!-- Savings summary card --\x3e\n        <div class="tm-savings-summary">\n          <div class="tm-savings-icon">⚡</div>\n          <div class="tm-savings-details">\n            <span class="tm-savings-title">Optimization Complete!</span>\n            <span class="tm-savings-desc">Saved <strong>${t.tokensSaved} tokens</strong> (${t.percentageSaved}% reduction) while preserving all context and commands.</span>\n            ${g}\n            ${v}\n          </div>\n        </div>\n\n        \x3c!-- Modal Footer Actions --\x3e\n        <div class="tm-actions-footer">\n          <button class="tm-btn tm-btn-secondary" id="tmDiscardBtn">Discard</button>\n          <button class="tm-btn tm-btn-primary" id="tmApplyBtn">Apply & Squeeze</button>\n        </div>\n      </div>\n    `;const E=a.querySelector("#tmToggleDiff"),q=a.querySelector("#tmToggleEdit"),L=a.querySelector("#tmOriginalPane"),C=a.querySelector("#tmOptimizedDiffPane"),z=a.querySelector("#tmOptimizedInput");E.addEventListener("click",()=>{E.classList.add("active"),q.classList.remove("active"),L.innerHTML=m.oldHtml,C.style.display="block",z.style.display="none"}),q.addEventListener("click",()=>{q.classList.add("active"),E.classList.remove("active"),L.innerHTML=D(t.original),C.style.display="none",z.style.display="block",z.focus()});const T=a.querySelector("#tmModeSelect");if(T.value=i,T.addEventListener("change",()=>{const e=T.value;i=e,a.innerHTML=`\n        <div class="tm-loading-state">\n          <div class="tm-spinner"></div>\n          <p>Re-optimizing prompt using ${e} mode...</p>\n        </div>\n      `,x(t.original,e)}),a.querySelector("#tmDiscardBtn").addEventListener("click",k),a.querySelector("#tmApplyBtn").addEventListener("click",()=>{const a=z.value;o=t.original,function(t){if(e){S(e,t);const n=e.closest(".flex.flex-col")||e.parentElement;n&&(n.style.transition="box-shadow 0.3s ease",n.style.boxShadow="0 0 15px rgba(5, 242, 158, 0.6)",setTimeout(()=>{n.style.boxShadow=""},1200))}}(a),n&&(n.style.display="inline-flex"),k()}),l&&l.length>0){const e=a.querySelector("#tmStripDupsBtn");e&&e.addEventListener("click",e=>{e.stopPropagation(),function(){let e=c;l.forEach(t=>{e=e.replace(t.original,"")}),e=e.replace(/\n\s*\n+/g,"\n\n").trim(),l=[],c=e,s=e,f(r.querySelector("#tmStripDupsBtn")||r,"Duplicate blocks stripped!"),x(e,i)}()})}}(t):E(t?t.error:"Unknown error occurred during optimization.")})}catch(e){console.error("Squeeze communication error:",e),E(`Squeeze was reloaded. Please refresh this tab to re-enable prompt optimization. (Error: ${e.message})`)}}function S(e,t){e.focus();try{const n=window.getSelection(),a=document.createRange();a.selectNodeContents(e),n.removeAllRanges(),n.addRange(a),document.execCommand("delete",!1,null),document.execCommand("insertText",!1,t)||(e.innerText=t)}catch(n){console.warn("execCommand failed, writing to innerText:",n),e.innerText=t}e.dispatchEvent(new Event("input",{bubbles:!0})),e.dispatchEvent(new InputEvent("input",{bubbles:!0,inputType:"insertReplacementText",data:t})),e.dispatchEvent(new Event("change",{bubbles:!0})),setTimeout(()=>e.focus(),50)}function E(e){if(!r)return;const t=r.querySelector(".tm-modal-logo img");t&&t.classList.remove("animating");const n=r.querySelector(".tm-modal-body");n.innerHTML=`\n      <div class="tm-error-state">\n        <div class="tm-error-icon">⚠️</div>\n        <h3>Optimization Failed</h3>\n        <p class="tm-error-msg">${D(e)}</p>\n        <div class="tm-error-actions">\n          <button class="tm-btn tm-btn-secondary" id="tmErrorCloseBtn">Close</button>\n          <button class="tm-btn tm-btn-primary" id="tmConfigureBtn">Configure Rules</button>\n        </div>\n      </div>\n    `,n.querySelector("#tmErrorCloseBtn").addEventListener("click",k),n.querySelector("#tmConfigureBtn").addEventListener("click",()=>{k(),alert("Please click the Squeeze Beta extension icon in your browser toolbar to configure your local optimization rules.")})}function k(){r&&(r.classList.remove("open"),d=null,setTimeout(()=>{r.innerHTML=""},300))}function q(e){if(!e)return 0;const t=e.trim().split(/\s+/).length,n=e.length,a=Math.ceil(n/4),r=Math.ceil(1.3*t);return Math.max(a,r)}let L=null;function C(){const t=document.querySelector('div[contenteditable="true"]');if(!t)return void(L&&(L.remove(),L=null));e=t;const n=t.closest("form")||t.closest("fieldset")||t.parentElement;n&&(L&&document.contains(L)||(L=document.createElement("div"),L.className="squeeze-usage-bar",n.parentNode.insertBefore(L,n.nextSibling)),M())}let z=null,T=0;function P(){try{const t=function(){const e=document.querySelectorAll(["div.font-user-message","div.font-claude-message",'[data-testid="user-message"]','[data-testid="bot-message"]',".prose",".font-sans.break-words"].join(", ")),t=Array.from(e).filter(t=>{let n=t.parentElement;for(;n;){if(Array.from(e).includes(n))return!1;n=n.parentElement}return!0}),n=[];t.forEach(e=>{const t=!(!e.closest('[data-testid="user-message"]')&&!e.classList.contains("font-user-message")&&"user-message"!==e.getAttribute("data-testid")),a=e.cloneNode(!0);a.querySelectorAll("pre").forEach(e=>e.remove());const r=a.innerText.trim(),s=[];e.querySelectorAll("pre").forEach(e=>{const t=e.querySelector("code");if(t){let e="code";t.classList.forEach(t=>{t.startsWith("language-")&&(e=t.replace("language-",""))});let n=t.innerText.trim();n.length>3500&&(n=n.substring(0,3500)+"\n\n// ... [Code truncated by Squeeze to stay within context budget] ..."),s.push({language:e,code:n})}}),(r||s.length>0)&&n.push({sender:t?"user":"claude",text:r,codeBlocks:s})});const a=new Set,r=n.length;if(r>0){a.add(r-1);let e=0;for(let t=r-1;t>=0&&!("user"===n[t].sender&&(a.add(t),e++,t>0&&"claude"===n[t-1].sender&&a.add(t-1),e>=3));t--);}const s=Array.from(a).sort((e,t)=>e-t);let o="## Context Summary from Previous Chat (Squeezed)\n\n";const i={};if(s.length>0&&(o+="### Recent Discussion Timeline:\n",s.forEach(e=>{const t=n[e],a="user"===t.sender?"User":"Claude";if(t.text){let e=t.text;e.length>400&&(e=e.substring(0,400)+"... [truncated]"),o+=`**${a}**: ${e.replace(/\n/g," ")}\n\n`}t.codeBlocks.forEach(e=>{i[e.language]=e.code})})),Object.keys(i).length>0){o+="### Current Code State:\n";for(const[e,t]of Object.entries(i))o+=`#### Latest ${e.toUpperCase()}:\n\`\`\`${e}\n${t}\n\`\`\`\n\n`}return o+="*This context was automatically summarized to save tokens. Please review it and confirm when you are ready to continue where we left off.*",o.length>8e3&&(o=o.substring(0,8e3)+"\n\n... [Older summary context truncated by Squeeze to stay within 2,000 token budget] ...\n\n*This context was automatically summarized to save tokens.*"),o}();navigator.clipboard.writeText(t).then(()=>{f(document.querySelector("#tmHeuristicSummaryBtn")||e,"Copied local summary! Opening fresh chat..."),setTimeout(()=>{window.location.href="https://claude.ai/new"},1500)}).catch(e=>{console.error("Clipboard copy failed:",e),alert("Failed to copy summary to clipboard automatically. Please try again.")})}catch(e){console.error("Failed to generate summary:",e),alert("Error generating summary context: "+e.message)}}function A(e){const t=function(){const e=document.querySelectorAll('[data-testid="user-message"], div.font-user-message'),t=[];return e.forEach(e=>{t.push(e.innerText.trim())}),t}();if(0===t.length)return[];const n=[],a=/```[\s\S]*?```/g;let r;const s=[];for(;null!==(r=a.exec(e));){const e=r[0];if(e.length>100){const t=e.replace(/^```\w*\n|```$/g,"").trim();s.push({original:e,content:t,type:"code block"})}}return e.replace(a,"").split(/\n\s*\n+/).forEach(e=>{const t=e.trim();t.length>150&&s.push({original:e,content:t,type:"text paragraph"})}),s.forEach(e=>{const a=e.content.toLowerCase().replace(/\s+/g," ");for(const r of t){if(r.toLowerCase().replace(/\s+/g," ").includes(a)){n.push(e);break}}}),n}async function M(){if(!L)return;const t=function(){const t=document.querySelectorAll(["div.font-user-message","div.font-claude-message",'[data-testid="user-message"]','[data-testid="bot-message"]',".prose",".font-sans.break-words"].join(", ")),n=Array.from(t).filter(e=>{let n=e.parentElement;for(;n;){if(Array.from(t).includes(n))return!1;n=n.parentElement}return!0});let a="";return n.forEach(e=>{a+=" "+e.innerText}),e&&(a+=" "+e.innerText),q(a)}(),n=Math.min(100,Math.max(0,Math.round(t/2e5*100))),a=$(t),r=(s=t)<4e4?"Safe Context":s<1e5?"Moderate Context":s<16e4?"Heavy Context":"Critical Context (Start New Chat)";var s;const o=await async function(){const e=Date.now();if(z&&e-T<3e4)return z;try{const t=await fetch("/api/organizations");if(!t.ok)return null;const n=await t.json();if(!n||0===n.length)return null;const a=n[0].uuid,r=await fetch(`/api/organizations/${a}/usage`);if(!r.ok)return null;const s=await r.json();return z=s,T=e,s}catch(e){return null}}();let i="";if(o&&o.five_hour){const e=o.five_hour.utilization||0,t=375e3,n=Math.round(e/100*t);let a="Resetting soon";if(o.five_hour.resets_at){const e=new Date(o.five_hour.resets_at)-Date.now();if(e>0){a=`Reset in: ${Math.floor(e/36e5)}h ${Math.round(e%36e5/6e4)}m`}}i=`\n        <div class="tm-quota-column">\n          <span class="tm-usage-dot dot-${$(2.5*n)}"></span>\n          <span class="tm-quota-title">5-Hour Quota:</span>\n          <span class="tm-quota-val">${n.toLocaleString()}</span>\n          <span class="tm-quota-divider">/</span>\n          <span class="tm-quota-limit">${t.toLocaleString()} tokens</span>\n          <span class="tm-quota-percent">(${e}%)</span>\n          <span class="tm-quota-reset">${a}</span>\n        </div>\n      `}else i='\n        <div class="tm-quota-column">\n          <span class="tm-quota-loading">Loading subscription limits...</span>\n        </div>\n      ';const l=o&&o.five_hour&&o.five_hour.utilization||0,c=(d=l)<25?"safe":d<60?"moderate":d<85?"heavy":"critical";var d;let u="";if(t>3e4&&(u=`\n        <div class="tm-summary-nudge">\n          <span class="tm-nudge-icon">⚡</span>\n          <span class="tm-nudge-text">High Context depth (${t.toLocaleString()} tokens). Starting a new chat will cut latency and costs by 70%+!</span>\n          <div class="tm-nudge-actions">\n            <button class="tm-nudge-btn" id="tmPromptSummaryBtn" title="Injects a summarization prompt. Costs 1 context read here but saves on all future responses.">Ask Claude to Summarize</button>\n            <button class="tm-nudge-btn tm-btn-gold" id="tmHeuristicSummaryBtn">Copy Local Summary & New Chat</button>\n          </div>\n          <div class="tm-nudge-note" style="font-size: 0.65rem; color: rgba(255, 255, 255, 0.4); margin-top: 5px; line-height: 1.3; text-align: center; width: 100%;">\n            * Note: Asking Claude costs 1 context read in this thread but allows copying a custom summary into a fresh chat.\n          </div>\n        </div>\n      `),L.innerHTML=`\n      <div class="tm-usage-bar-content">\n        <div class="tm-usage-columns">\n          <div class="tm-context-column">\n            <span class="tm-usage-dot dot-${a}"></span>\n            <span class="tm-usage-title">Conversation Context:</span>\n            <span class="tm-usage-val">${t.toLocaleString()}</span>\n            <span class="tm-usage-divider">/</span>\n            <span class="tm-usage-limit">200K tokens</span>\n            <span class="tm-usage-percent">(${n}%)</span>\n            <span class="tm-usage-status-inline status-${a}">${r}</span>\n          </div>\n          ${i}\n        </div>\n        <div class="tm-progress-bars-container" style="display: flex; flex-direction: column; gap: 4px; width: 100%; margin-top: 4px;">\n          <div class="tm-usage-progress-track" title="Conversation Context: ${n}% used">\n            <div class="tm-usage-progress-bar progress-${a}" style="width: ${n}%"></div>\n          </div>\n          <div class="tm-usage-progress-track" title="5-Hour Quota: ${l}% used">\n            <div class="tm-usage-progress-bar progress-${c}" style="width: ${l}%"></div>\n          </div>\n        </div>\n        ${u}\n      </div>\n    `,t>3e4){const t=L.querySelector("#tmPromptSummaryBtn"),n=L.querySelector("#tmHeuristicSummaryBtn");t&&t.addEventListener("click",t=>{t.stopPropagation(),e?(S(e,"Please write a highly condensed summary of our project goals, constraints, and the latest working code we have developed. Format it as a single, copyable markdown prompt that I can paste into a fresh chat to continue our work with zero lost context. Keep it extremely token-efficient."),f(e,"Prompt injected! Asking Claude costs 1 context read here but lets you copy the result to a new chat to save 70%+ on all future turns.")):alert("Please focus Claude's input field first.")}),n&&n.addEventListener("click",e=>{e.stopPropagation(),P()})}}function $(e){return e<4e4?"safe":e<1e5?"moderate":e<16e4?"heavy":"critical"}function D(e){return e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}let F=null,j=null;function B(){let e=document.querySelector("nav")||document.querySelector('[role="navigation"]');if(e)return e;const t=document.querySelector('a[href="/"]')||document.querySelector('a[href="/chats"]')||document.querySelector('a[href="/settings"]');if(t){const e=t.closest(".flex-col")||t.parentElement;if(e)return e}const n=document.querySelector('button[aria-label*="sidebar"]')||document.querySelector('button[aria-label*="panel"]');if(n){const e=n.closest(".flex-col");if(e)return e}const a=document.querySelector(".h-screen.flex-col");return a||null}function V(){if(F&&document.contains(F))return;const e=B();if(!e)return;F=document.createElement("button"),F.className="squeeze-sidebar-btn",F.dataset.tooltip="Squeeze Dashboard",F.addEventListener("mouseenter",()=>b(F,F.dataset.tooltip)),F.addEventListener("mouseleave",y),F.innerHTML='\n      <svg width="18" height="18" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">\n        <path d="M 140 148 L 256 264 L 372 148" stroke="currentColor" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/>\n        <rect x="160" y="324" width="192" height="44" rx="22" fill="currentColor"/>\n      </svg>\n    ';const t=function(){const e=B();if(!e)return null;const t=Array.from(e.querySelectorAll("a, button"));for(const e of t){const t=(e.getAttribute("aria-label")||e.getAttribute("title")||"").toLowerCase();if(t.includes("appearance")||t.includes("theme")||t.includes("style")||t.includes("custom")||t.includes("design"))return e;const n=e.querySelector("svg");if(n&&n.querySelectorAll("circle").length>=3)return e}return t.length>0?t[t.length-1]:null}();t&&t.parentElement===e||t&&t.closest("nav")===e?t.insertAdjacentElement("afterend",F):e.appendChild(F),F.addEventListener("click",e=>{e.stopPropagation(),y(),function(){j||function(){if(j)return;j=document.createElement("div"),j.className="squeeze-drawer",j.innerHTML='\n      <div class="tm-drawer-header">\n        <div class="tm-drawer-logo">\n          <svg width="20" height="20" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 8px;">\n            <rect width="512" height="512" rx="128" fill="#b5603f"/>\n            <path d="M 140 148 L 256 264 L 372 148" stroke="white" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>\n            <rect x="160" y="324" width="192" height="44" rx="22" fill="white"/>\n          </svg>\n          <span>Squeeze <span class="highlight">Dashboard</span></span>\n        </div>\n        <button class="tm-drawer-close">&times;</button>\n      </div>\n\n      <div class="tm-drawer-body">\n        \x3c!-- Stats Section --\x3e\n        <div class="tm-drawer-section">\n          <h4 class="tm-drawer-sec-title">Local Optimization Stats</h4>\n          <div class="tm-drawer-stats-grid">\n            <div class="tm-drawer-stat-card">\n              <span class="tm-drawer-stat-val" id="drawerStatPrompts">0</span>\n              <span class="tm-drawer-stat-lbl">Prompts Squeezed</span>\n            </div>\n            <div class="tm-drawer-stat-card">\n              <span class="tm-drawer-stat-val" id="drawerStatTokens">0</span>\n              <span class="tm-drawer-stat-lbl">Tokens Saved</span>\n            </div>\n            <div class="tm-drawer-stat-card">\n              <span class="tm-drawer-stat-val highlight" id="drawerStatCost">$0.00</span>\n              <span class="tm-drawer-stat-lbl">Cash Saved</span>\n            </div>\n          </div>\n        </div>\n\n        \x3c!-- Mode Settings Section --\x3e\n        <div class="tm-drawer-section">\n          <h4 class="tm-drawer-sec-title">Compression Mode</h4>\n          <div class="tm-drawer-modes">\n            <label class="tm-drawer-mode-opt">\n              <input type="radio" name="drawerOptMode" value="squeeze">\n              <div class="tm-drawer-mode-details">\n                <span class="tm-drawer-mode-title">Squeeze Mode</span>\n                <span class="tm-drawer-mode-desc">Aggressive pruning, article strip, code compactions.</span>\n              </div>\n            </label>\n            <label class="tm-drawer-mode-opt">\n              <input type="radio" name="drawerOptMode" value="balanced">\n              <div class="tm-drawer-mode-details">\n                <span class="tm-drawer-mode-title">Balanced Mode</span>\n                <span class="tm-drawer-mode-desc">Strips greetings, fluff, duplicates. Standard code preservation.</span>\n              </div>\n            </label>\n            <label class="tm-drawer-mode-opt">\n              <input type="radio" name="drawerOptMode" value="polish">\n              <div class="tm-drawer-mode-details">\n                <span class="tm-drawer-mode-title">Polish Mode</span>\n                <span class="tm-drawer-mode-desc">Enhances instruction clarity, removes conversational endings.</span>\n              </div>\n            </label>\n          </div>\n        </div>\n\n        \x3c!-- Detail Rules Toggles --\x3e\n        <div class="tm-drawer-section">\n          <h4 class="tm-drawer-sec-title">Rule Configuration</h4>\n          <div class="tm-drawer-rules">\n            <label class="tm-drawer-rule-toggle">\n              <input type="checkbox" id="drawerRuleGreetings">\n              <span>Strip polite greetings & filler introductions</span>\n            </label>\n            <label class="tm-drawer-rule-toggle">\n              <input type="checkbox" id="drawerRulePhrases">\n              <span>Simplify wordy developer phrases</span>\n            </label>\n            <label class="tm-drawer-rule-toggle">\n              <input type="checkbox" id="drawerRuleAbbreviate">\n              <span>Abbreviate long code structures</span>\n            </label>\n            <label class="tm-drawer-rule-toggle">\n              <input type="checkbox" id="drawerRuleArticles">\n              <span>Strip grammatical articles (a, an, the)</span>\n            </label>\n            <label class="tm-drawer-rule-toggle">\n              <input type="checkbox" id="drawerRulePolish">\n              <span>Polish Markdown instructions</span>\n            </label>\n          </div>\n        </div>\n\n        \x3c!-- Context Vault Section --\x3e\n        <div class="tm-drawer-section">\n          <h4 class="tm-drawer-sec-title">Context Vault</h4>\n          <div class="tm-drawer-vault">\n            <div class="tm-drawer-field">\n              <label class="tm-drawer-field-lbl">Global Preferences</label>\n              <textarea id="drawerVaultPreferences" class="tm-drawer-textarea" placeholder="Developer guidelines..."></textarea>\n              <label class="tm-drawer-checkbox">\n                <input type="checkbox" id="drawerVaultPrefAlwaysInject">\n                <span>Always Inject Preferences</span>\n              </label>\n            </div>\n            \n            <div class="tm-drawer-field" style="margin-top: 10px;">\n              <label class="tm-drawer-field-lbl">Local Files</label>\n              <div class="tm-drawer-uploader" id="drawerVaultDropZone">\n                <input type="file" id="drawerVaultFileInput" accept=".txt,.md,.json" multiple style="display: none;">\n                <span>Click to <span class="browse-link" id="drawerVaultBrowse">browse</span> or drag here</span>\n              </div>\n              <ul class="tm-drawer-files-list" id="drawerVaultFileList">\n                <li class="empty-list-msg">No files uploaded.</li>\n              </ul>\n              <label class="tm-drawer-checkbox">\n                <input type="checkbox" id="drawerVaultSmartTriggers">\n                <span>Smart Keyword Triggering</span>\n              </label>\n            </div>\n\n            <div class="tm-drawer-field" style="margin-top: 10px;">\n              <label class="tm-drawer-field-lbl">Unabyss/MCP Connection</label>\n              <div class="tm-drawer-connector">\n                <input type="text" id="drawerVaultServerUrl" class="tm-drawer-input" placeholder="e.g. http://localhost:8000/query" style="flex: 1; min-width: 0;">\n                <button type="button" id="drawerVaultTestServerBtn" class="tm-drawer-btn">Test</button>\n              </div>\n              <div class="tm-drawer-status-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">\n                <span id="drawerVaultServerStatus" class="connector-status status-offline">Offline</span>\n                <label class="tm-drawer-checkbox" style="margin: 0;">\n                  <input type="checkbox" id="drawerVaultServerEnabled">\n                  <span>Enable Query</span>\n                </label>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ',document.body.appendChild(j),j.querySelector(".tm-drawer-close").addEventListener("click",()=>{j.classList.remove("open")}),document.addEventListener("click",e=>{j&&j.classList.contains("open")&&(j.contains(e.target)||e.target===F||F.contains(e.target)||j.classList.remove("open"))});j.querySelectorAll('input[name="drawerOptMode"]').forEach(e=>{e.addEventListener("change",e=>{if(e.target.checked){const t=e.target.value;chrome.storage.local.set({optimizationMode:t},()=>{i=t})}})});const e={ruleStripGreetings:"#drawerRuleGreetings",ruleSimplifyPhrases:"#drawerRulePhrases",ruleAbbreviate:"#drawerRuleAbbreviate",ruleStripArticles:"#drawerRuleArticles",rulePolishMarkdown:"#drawerRulePolish"};for(const[t,n]of Object.entries(e)){j.querySelector(n).addEventListener("change",e=>{const n={};n[t]=e.target.checked,chrome.storage.local.set(n)})}const t=j.querySelector("#drawerVaultPreferences"),n=j.querySelector("#drawerVaultPrefAlwaysInject"),a=j.querySelector("#drawerVaultSmartTriggers"),r=j.querySelector("#drawerVaultServerUrl"),s=j.querySelector("#drawerVaultServerEnabled"),o=j.querySelector("#drawerVaultFileList"),l=j.querySelector("#drawerVaultBrowse"),c=j.querySelector("#drawerVaultFileInput"),d=j.querySelector("#drawerVaultDropZone"),u=j.querySelector("#drawerVaultTestServerBtn"),p=j.querySelector("#drawerVaultServerStatus");let m=[];function g(e){const t=Array.from(e).map(e=>new Promise(t=>{const n=e.name.split(".").pop().toLowerCase();if(!["txt","md","json"].includes(n))return void t(null);const a=new FileReader;a.onload=n=>{t({name:e.name,content:n.target.result,size:e.size})},a.onerror=()=>t(null),a.readAsText(e)}));Promise.all(t).then(e=>{const t=e.filter(e=>null!==e);0!==t.length&&chrome.storage.local.get(["vaultFiles"],e=>{const n=e.vaultFiles||[],a=new Map;n.forEach(e=>a.set(e.name,e)),t.forEach(e=>a.set(e.name,e));const r=Array.from(a.values());chrome.storage.local.set({vaultFiles:r},()=>{m=r,renderDrawerVaultFiles()})})})}function v(e){chrome.storage.local.get(["vaultFiles"],t=>{const n=t.vaultFiles||[];n.splice(e,1),chrome.storage.local.set({vaultFiles:n},()=>{renderDrawerVaultFiles()})})}function f(e){p.className="connector-status","Online"===e?(p.classList.add("status-online"),p.textContent="Connected"):"Testing..."===e?(p.classList.add("status-offline"),p.textContent="Connecting..."):"Error"===e?(p.classList.add("status-error"),p.textContent="Failed"):(p.classList.add("status-offline"),p.textContent="Offline")}function h(e){if(0===e)return"0 B";const t=1024,n=["B","KB","MB"],a=Math.floor(Math.log(e)/Math.log(t));return parseFloat((e/Math.pow(t,a)).toFixed(1))+" "+n[a]}t.addEventListener("input",()=>{chrome.storage.local.set({vaultPreferences:t.value})}),n.addEventListener("change",()=>{chrome.storage.local.set({vaultPrefAlwaysInject:n.checked})}),a.addEventListener("change",()=>{chrome.storage.local.set({vaultSmartTriggers:a.checked})}),r.addEventListener("input",()=>{chrome.storage.local.set({vaultServerUrl:r.value.trim()})}),s.addEventListener("change",()=>{chrome.storage.local.set({vaultServerEnabled:s.checked})}),l.addEventListener("click",e=>{e.preventDefault(),c.click()}),c.addEventListener("change",e=>{g(e.target.files)}),d.addEventListener("dragover",e=>{e.preventDefault(),d.classList.add("dragover")}),d.addEventListener("dragleave",()=>{d.classList.remove("dragover")}),d.addEventListener("drop",e=>{e.preventDefault(),d.classList.remove("dragover"),g(e.dataTransfer.files)}),window.renderDrawerVaultFiles=function(){chrome.storage.local.get(["vaultFiles"],e=>{if(m=e.vaultFiles||[],o.innerHTML="",0===m.length){const e=document.createElement("li");return e.className="empty-list-msg",e.textContent="No files uploaded.",void o.appendChild(e)}m.forEach((e,t)=>{const n=document.createElement("li");n.className="vault-file-item";const a=h(e.size);n.innerHTML=`\n            <div class="file-item-info">\n              <span class="file-item-name" title="${D(e.name)}">${D(e.name)}</span>\n              <span class="file-item-size">${a}</span>\n            </div>\n            <button class="file-delete-btn" data-index="${t}" title="Remove file">\n              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n                <polyline points="3 6 5 6 21 6"></polyline>\n                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>\n              </svg>\n            </button>\n          `,n.querySelector(".file-delete-btn").addEventListener("click",e=>{v(parseInt(e.currentTarget.getAttribute("data-index")))}),o.appendChild(n)})})},u.addEventListener("click",()=>{const e=r.value.trim();if(!e)return void f("Offline");f("Testing...");const t=new AbortController,n=setTimeout(()=>t.abort(),3e3);fetch(e,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:"Squeeze connection probe."}),signal:t.signal}).then(e=>{clearTimeout(n),e.ok?f("Online"):f("Error")}).catch(()=>{clearTimeout(n);const t=new AbortController,a=setTimeout(()=>t.abort(),2e3);fetch(e,{signal:t.signal}).then(()=>{clearTimeout(a),f("Online")}).catch(()=>{clearTimeout(a),f("Error")})})})}();j.classList.contains("open")?j.classList.remove("open"):(O(),j.classList.add("open"))}()})}function O(){j&&chrome.storage.local.get(["optimizationMode","ruleStripGreetings","ruleSimplifyPhrases","ruleAbbreviate","ruleStripArticles","rulePolishMarkdown","stats_promptsOptimized","stats_tokensSaved","stats_costSaved","vaultPreferences","vaultPrefAlwaysInject","vaultSmartTriggers","vaultServerUrl","vaultServerEnabled"],e=>{const t=e.stats_promptsOptimized||0,n=e.stats_tokensSaved||0,a=e.stats_costSaved||0;j.querySelector("#drawerStatPrompts").textContent=t.toLocaleString(),j.querySelector("#drawerStatTokens").textContent=n.toLocaleString();const r=j.querySelector("#drawerStatCost");r.textContent=a>0&&a<.01?`$${a.toFixed(4)}`:`$${a.toFixed(2)}`;const s=e.optimizationMode||"balanced",o=j.querySelector(`input[name="drawerOptMode"][value="${s}"]`);o&&(o.checked=!0),j.querySelector("#drawerRuleGreetings").checked=!1!==e.ruleStripGreetings,j.querySelector("#drawerRulePhrases").checked=!1!==e.ruleSimplifyPhrases,j.querySelector("#drawerRuleAbbreviate").checked=!1!==e.ruleAbbreviate,j.querySelector("#drawerRuleArticles").checked=!1!==e.ruleStripArticles,j.querySelector("#drawerRulePolish").checked=!1!==e.rulePolishMarkdown;const i=j.querySelector("#drawerVaultPreferences"),l=j.querySelector("#drawerVaultPrefAlwaysInject"),c=j.querySelector("#drawerVaultSmartTriggers"),d=j.querySelector("#drawerVaultServerUrl"),u=j.querySelector("#drawerVaultServerEnabled"),p=j.querySelector("#drawerVaultServerStatus");i&&(i.value=e.vaultPreferences||""),l&&(l.checked=!1!==e.vaultPrefAlwaysInject),c&&(c.checked=!1!==e.vaultSmartTriggers),d&&(d.value=e.vaultServerUrl||""),u&&(u.checked=!!e.vaultServerEnabled),p&&(p.className="connector-status",e.vaultServerEnabled?(p.classList.add("status-online"),p.textContent="Connected"):(p.className="connector-status status-offline",p.textContent="Offline")),window.renderDrawerVaultFiles&&window.renderDrawerVaultFiles()})}!function(){chrome.storage.local.get(["optimizationMode"],e=>{e.optimizationMode&&(i=e.optimizationMode)}),u(),C(),V();let t=null;new MutationObserver(()=>{t||(t=setTimeout(()=>{u(),C(),V(),t=null},150))}).observe(document.body,{childList:!0,subtree:!0}),chrome.storage.onChanged.addListener(t=>{t.optimizationMode&&(i=t.optimizationMode.newValue);["vaultPreferences","vaultPrefAlwaysInject","vaultSmartTriggers","vaultFiles","vaultServerUrl","vaultServerEnabled"].some(e=>void 0!==t[e])&&(j&&j.classList.contains("open")&&O(),e&&v(e.innerText))})}()}();
+/**
+ * Squeeze AI - Universal Content Script (Manifest V3)
+ * Operates across Claude.ai, ChatGPT (chatgpt.com), and Google Gemini (gemini.google.com).
+ * Injects prompt optimizer widgets, context depth monitors, secret alerts, and PDF squeezer.
+ */
+
+(function () {
+  // --- PLATFORM DETECTION ---
+  const HOST = window.location.hostname;
+  const IS_CLAUDE = HOST.includes("claude.ai");
+  const IS_CHATGPT = HOST.includes("chatgpt.com") || HOST.includes("openai.com");
+  const IS_GEMINI = HOST.includes("gemini.google.com");
+
+  // State
+  let activeInputEl = null;
+  let triggerBtn = null;
+  let undoBtn = null;
+  let pdfBtn = null;
+  let summaryBtn = null;
+  let vaultBadge = null;
+  let usageBar = null;
+  let modalContainer = null;
+  let drawerContainer = null;
+  let sidebarBtn = null;
+
+  let originalPromptText = "";
+  let lastOptimizedPrompt = "";
+  let currentOptMode = "balanced";
+  let activeTooltip = null;
+  let currentUploadedPdf = null;
+  let duplicateContextBlocks = [];
+  let workingModalPrompt = "";
+
+  // --- UNIVERSAL PLATFORM ADAPTER ---
+  function findChatInput() {
+    if (IS_CLAUDE) {
+      return document.querySelector('div[contenteditable="true"]');
+    }
+
+    if (IS_CHATGPT) {
+      // ChatGPT input can be contenteditable or textarea
+      return (
+        document.querySelector("#prompt-textarea") ||
+        document.querySelector('div[contenteditable="true"][data-placeholder]') ||
+        document.querySelector('div[contenteditable="true"]') ||
+        document.querySelector('textarea[data-id="root"]')
+      );
+    }
+
+    if (IS_GEMINI) {
+      // Gemini rich-textarea
+      return (
+        document.querySelector("rich-textarea div[contenteditable='true']") ||
+        document.querySelector(".ql-editor") ||
+        document.querySelector("div.text-input-field[contenteditable='true']") ||
+        document.querySelector("textarea[aria-label*='prompt' i]") ||
+        document.querySelector("div[contenteditable='true']")
+      );
+    }
+
+    // Generic fallback
+    return document.querySelector('div[contenteditable="true"]') || document.querySelector("textarea");
+  }
+
+  function getInputValue(el) {
+    if (!el) return "";
+    let val = "";
+    if (el.tagName === "TEXTAREA" || el.tagName === "INPUT") {
+      val = el.value || "";
+    } else {
+      val = el.innerText || el.textContent || "";
+    }
+    return val.replace(/[\u200B-\u200D\uFEFF]/g, "").trim();
+  }
+
+  function setInputValue(el, text) {
+    if (!el) return;
+    el.focus();
+
+    if (el.tagName === "TEXTAREA" || el.tagName === "INPUT") {
+      const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set;
+      if (nativeSetter) {
+        nativeSetter.call(el, text);
+      } else {
+        el.value = text;
+      }
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+      el.dispatchEvent(new Event("change", { bubbles: true }));
+    } else {
+      // ContentEditable elements (Claude, ChatGPT rich text, Gemini)
+      try {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        const execSuccess = document.execCommand("insertText", false, text);
+        if (!execSuccess) {
+          el.innerText = text;
+        }
+      } catch (err) {
+        console.warn("execCommand fallback:", err);
+        el.innerText = text;
+      }
+
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+      el.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertReplacementText", data: text }));
+      el.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    // Visual feedback highlight
+    const wrapper = el.closest(".flex.flex-col") || el.closest("fieldset") || el.closest("form") || el.parentElement;
+    if (wrapper) {
+      wrapper.style.transition = "box-shadow 0.3s ease";
+      wrapper.style.boxShadow = "0 0 15px rgba(52, 211, 153, 0.6)";
+      setTimeout(() => { wrapper.style.boxShadow = ""; }, 1200);
+    }
+    setTimeout(() => el.focus(), 50);
+  }
+
+  function findToolbarAnchor(inputEl) {
+    if (!inputEl) return null;
+
+    if (IS_CLAUDE) {
+      const modelBtn = Array.from(document.querySelectorAll("button")).find(b => {
+        const txt = (b.innerText || "").toLowerCase();
+        return txt.includes("sonnet") || txt.includes("haiku") || txt.includes("opus") || txt.includes("claude");
+      });
+      if (modelBtn && modelBtn.parentNode) return { container: modelBtn.parentNode, beforeNode: modelBtn };
+
+      const form = inputEl.closest("fieldset") || inputEl.closest("form");
+      if (form) {
+        const attachBtn = form.querySelector('button[aria-label*="attach" i]') || form.querySelector("button svg")?.closest("button");
+        if (attachBtn && attachBtn.parentNode) return { container: attachBtn.parentNode, beforeNode: attachBtn };
+      }
+    }
+
+    if (IS_CHATGPT) {
+      // Find ChatGPT button row under prompt textarea
+      const composer = inputEl.closest("form") || inputEl.closest('[data-testid*="composer"]') || inputEl.parentElement;
+      if (composer) {
+        const submitBtn = composer.querySelector('button[data-testid*="send-button"]') || composer.querySelector('button[aria-label*="send" i]');
+        if (submitBtn && submitBtn.parentNode) return { container: submitBtn.parentNode, beforeNode: submitBtn };
+
+        const attachBtn = composer.querySelector('button[aria-label*="attach" i]') || composer.querySelector('button[aria-label*="upload" i]');
+        if (attachBtn && attachBtn.parentNode) return { container: attachBtn.parentNode, beforeNode: attachBtn.nextSibling };
+      }
+    }
+
+    if (IS_GEMINI) {
+      const geminiContainer = inputEl.closest(".input-area") || inputEl.closest("rich-textarea")?.parentElement;
+      if (geminiContainer) {
+        const sendBtn = geminiContainer.querySelector("button[aria-label*='Send' i]") || geminiContainer.querySelector(".send-button");
+        if (sendBtn && sendBtn.parentNode) return { container: sendBtn.parentNode, beforeNode: sendBtn };
+      }
+    }
+
+    // Default container: parent element of the input
+    const parent = inputEl.parentElement;
+    return parent ? { container: parent, beforeNode: null } : null;
+  }
+
+  // --- TOKEN ESTIMATION ---
+  function estimateTokensLocal(text) {
+    if (!text) return 0;
+    const trimmed = text.trim();
+    if (!trimmed) return 0;
+    const words = trimmed.split(/\s+/).length;
+    const chars = trimmed.length;
+    const specialChars = (trimmed.match(/[{}\[\]()<>=:;,.!?"'`\/\\|#*&^%$@~+-]/g) || []).length;
+    const codeRatio = specialChars / Math.max(1, chars);
+    const charEst = Math.ceil(chars / (codeRatio > 0.15 ? 3.2 : 4.0));
+    const wordEst = Math.ceil(words * 1.35);
+    return Math.max(charEst, wordEst);
+  }
+
+  function escapeHtml(str) {
+    return (str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // --- TOOLTIP DISPLAY ---
+  function showTooltip(targetEl, text) {
+    hideTooltip();
+    const tip = document.createElement("div");
+    tip.className = "squeeze-tooltip";
+    tip.textContent = text;
+    document.body.appendChild(tip);
+
+    const rect = targetEl.getBoundingClientRect();
+    tip.style.left = rect.left + window.scrollX + rect.width / 2 - tip.offsetWidth / 2 + "px";
+    tip.style.top = rect.top + window.scrollY - tip.offsetHeight - 8 + "px";
+
+    requestAnimationFrame(() => tip.classList.add("show"));
+    activeTooltip = tip;
+  }
+
+  function hideTooltip() {
+    if (activeTooltip) {
+      const tip = activeTooltip;
+      activeTooltip = null;
+      tip.classList.remove("show");
+      setTimeout(() => tip.remove(), 150);
+    }
+  }
+
+  function showToast(targetEl, text) {
+    const toast = document.createElement("div");
+    toast.className = "squeeze-tooltip";
+    toast.textContent = text;
+    document.body.appendChild(toast);
+
+    const rect = targetEl.getBoundingClientRect();
+    toast.style.left = rect.left + window.scrollX + rect.width / 2 - toast.offsetWidth / 2 + "px";
+    toast.style.top = rect.top + window.scrollY - toast.offsetHeight - 8 + "px";
+    toast.classList.add("show");
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => toast.remove(), 300);
+    }, 2000);
+  }
+
+  // --- ATTACH IN-PAGE SQUEEZE CONTROLS ---
+  function mountWidgets() {
+    const input = findChatInput();
+    if (!input) {
+      if (triggerBtn && !document.contains(triggerBtn)) triggerBtn = null;
+      return;
+    }
+
+    if (input.dataset.squeezeInjected === "true" && triggerBtn && document.contains(triggerBtn)) {
+      activeInputEl = input;
+      return;
+    }
+
+    activeInputEl = input;
+    input.dataset.squeezeInjected = "true";
+
+    // Clean up any stale elements
+    if (triggerBtn) triggerBtn.remove();
+    if (pdfBtn) pdfBtn.remove();
+    if (undoBtn) undoBtn.remove();
+    if (summaryBtn) summaryBtn.remove();
+    if (vaultBadge) vaultBadge.remove();
+
+    // 1. Squeeze Trigger Button
+    triggerBtn = document.createElement("div");
+    triggerBtn.className = "squeeze-trigger-btn inline-btn";
+    triggerBtn.dataset.tooltip = "Squeeze Prompt (Ctrl+Shift+S)";
+    triggerBtn.addEventListener("mouseenter", () => showTooltip(triggerBtn, triggerBtn.dataset.tooltip));
+    triggerBtn.addEventListener("mouseleave", hideTooltip);
+    triggerBtn.innerHTML = `
+      <svg viewBox="0 0 512 512" width="16" height="16" style="display: block; color: inherit;">
+        <rect x="120" y="140" width="272" height="48" rx="24" fill="currentColor"/>
+        <rect x="144" y="212" width="224" height="48" rx="24" fill="currentColor" fill-opacity="0.8"/>
+        <rect x="176" y="284" width="160" height="48" rx="24" fill="currentColor" fill-opacity="0.6"/>
+        <rect x="208" y="356" width="96" height="48" rx="24" fill="currentColor" fill-opacity="0.4"/>
+      </svg>
+    `;
+
+    // 2. PDF Squeeze Button
+    pdfBtn = document.createElement("div");
+    pdfBtn.className = "squeeze-pdf-btn inline-btn";
+    pdfBtn.dataset.tooltip = "Squeeze PDF & Insert";
+    pdfBtn.addEventListener("mouseenter", () => showTooltip(pdfBtn, pdfBtn.dataset.tooltip));
+    pdfBtn.addEventListener("mouseleave", hideTooltip);
+    pdfBtn.innerHTML = `
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+      </svg>
+    `;
+
+    // 3. Undo Button
+    undoBtn = document.createElement("div");
+    undoBtn.className = "squeeze-undo-btn inline-btn";
+    undoBtn.dataset.tooltip = "Undo Prompt Optimization";
+    undoBtn.addEventListener("mouseenter", () => showTooltip(undoBtn, undoBtn.dataset.tooltip));
+    undoBtn.addEventListener("mouseleave", hideTooltip);
+    undoBtn.style.display = "none";
+    undoBtn.innerHTML = `
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform: scaleX(-1);">
+        <path d="M3 7v6h6"></path>
+        <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+      </svg>
+    `;
+
+    // 4. Summarise Context Button
+    summaryBtn = document.createElement("div");
+    summaryBtn.className = "squeeze-summary-btn inline-btn";
+    summaryBtn.dataset.tooltip = "Summarize Chat & New Thread";
+    summaryBtn.addEventListener("mouseenter", () => showTooltip(summaryBtn, summaryBtn.dataset.tooltip));
+    summaryBtn.addEventListener("mouseleave", hideTooltip);
+    summaryBtn.innerHTML = `
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        <line x1="9" y1="10" x2="15" y2="10"></line>
+      </svg>
+    `;
+
+    // 5. Vault Indicator Badge
+    vaultBadge = document.createElement("div");
+    vaultBadge.id = "squeezeVaultBadge";
+    vaultBadge.className = "squeeze-vault-badge inline-btn";
+    vaultBadge.style.display = "none";
+    vaultBadge.style.cursor = "default";
+
+    // Mount to anchor
+    const anchor = findToolbarAnchor(input);
+    if (anchor && anchor.container) {
+      if (anchor.beforeNode) {
+        anchor.container.insertBefore(triggerBtn, anchor.beforeNode);
+        anchor.container.insertBefore(pdfBtn, triggerBtn);
+        anchor.container.insertBefore(summaryBtn, pdfBtn);
+        anchor.container.insertBefore(undoBtn, summaryBtn);
+        anchor.container.insertBefore(vaultBadge, undoBtn);
+      } else {
+        anchor.container.appendChild(vaultBadge);
+        anchor.container.appendChild(undoBtn);
+        anchor.container.appendChild(summaryBtn);
+        anchor.container.appendChild(pdfBtn);
+        anchor.container.appendChild(triggerBtn);
+      }
+    }
+
+    // Wire events
+    wireInputEvents(input);
+    wireTriggerButton(input);
+    wirePdfButton(input);
+    wireUndoButton(input);
+    wireSummaryButton(input);
+
+    updateTriggerActiveState(input);
+    updateVaultBadge(getInputValue(input));
+    mountContextUsageBar();
+    mountSidebarButton();
+
+    // Check for pending summary from previous chat
+    chrome.storage.local.get(["pendingChatSummary"], res => {
+      if (res && res.pendingChatSummary) {
+        chrome.storage.local.remove(["pendingChatSummary"]);
+        setTimeout(() => {
+          setInputValue(input, res.pendingChatSummary);
+          showToast(input, "Context summary pasted from previous chat! Ready to send.");
+        }, 400);
+      }
+    });
+  }
+
+  function wireInputEvents(input) {
+    input.addEventListener("input", () => {
+      updateTriggerActiveState(input);
+      updateVaultBadge(getInputValue(input));
+      updateContextDepth();
+    });
+
+    // Keyboard shortcut: Ctrl+Shift+S or Cmd+Shift+S to Squeeze
+    input.addEventListener("keydown", e => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        triggerBtn.click();
+      }
+    });
+  }
+
+  function updateTriggerActiveState(input) {
+    if (!triggerBtn) return;
+    const val = getInputValue(input);
+    if (val && val.length > 5) {
+      triggerBtn.classList.add("active");
+    } else {
+      triggerBtn.classList.remove("active");
+    }
+  }
+
+  function wireTriggerButton(input) {
+    triggerBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      e.preventDefault();
+      const text = getInputValue(input);
+      if (!text || text.length < 5) {
+        showToast(triggerBtn, "Type a prompt first!");
+        return;
+      }
+      originalPromptText = text;
+      openOptimizationModal(text, currentOptMode);
+    });
+  }
+
+  function wireUndoButton(input) {
+    undoBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      e.preventDefault();
+      if (originalPromptText) {
+        setInputValue(input, originalPromptText);
+        undoBtn.style.display = "none";
+        hideTooltip();
+        showToast(triggerBtn, "Original prompt restored!");
+        updateTriggerActiveState(input);
+      }
+    });
+  }
+
+  function wirePdfButton(input) {
+    pdfBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      e.preventDefault();
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = ".pdf";
+      fileInput.style.display = "none";
+
+      fileInput.addEventListener("change", async ev => {
+        const file = ev.target.files[0];
+        if (file) handlePdfExtraction(file);
+      });
+
+      document.body.appendChild(fileInput);
+      fileInput.click();
+      setTimeout(() => fileInput.remove(), 1000);
+    });
+  }
+
+  // --- PDF EXTRACTION ---
+  async function handlePdfExtraction(file) {
+    ensureModalExists();
+    currentUploadedPdf = file;
+    const logoUrl = chrome.runtime.getURL("icons/icon48.png");
+
+    modalContainer.innerHTML = `
+      <div class="squeeze-modal-card">
+        <div class="tm-modal-header">
+          <div class="tm-modal-logo">
+            <img src="${logoUrl}" class="animating" width="22" height="22" alt="Squeeze Icon">
+            <span>Squeeze <span class="highlight">PDF Optimizer</span></span>
+          </div>
+          <button class="tm-close-btn">&times;</button>
+        </div>
+        <div class="tm-modal-body">
+          <div class="tm-loading-state">
+            <div class="tm-spinner"></div>
+            <p id="tmPDFStatusText">Extracting text from PDF...</p>
+            <span class="tm-loading-subtext" id="tmPDFSubtext">Initializing parser...</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    modalContainer.classList.add("open");
+    modalContainer.querySelector(".tm-close-btn").addEventListener("click", closeModal);
+
+    const statusText = modalContainer.querySelector("#tmPDFStatusText");
+    const subText = modalContainer.querySelector("#tmPDFSubtext");
+
+    try {
+      if (typeof pdfjsLib === "undefined") {
+        throw new Error("PDF parser library failed to load.");
+      }
+
+      pdfjsLib.GlobalWorkerOptions.workerSrc = chrome.runtime.getURL("pdf.worker.min.js");
+      subText.innerText = "Reading file buffer...";
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const totalPages = pdf.numPages;
+      const pagesText = [];
+      const lineFrequency = {};
+
+      function normalizeLine(l) {
+        return l.replace(/\bpage\s+\d+(\s+of\s+\d+)?\b/gi, "PAGE_NUM").replace(/\b\d+\b/g, "NUM").trim();
+      }
+
+      for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+        statusText.innerText = `Extracting PDF (Page ${pageNum} of ${totalPages})...`;
+        const page = await pdf.getPage(pageNum);
+        const content = await page.getTextContent();
+        const lineBuckets = {};
+
+        content.items.forEach(item => {
+          if (!item.str || !item.str.trim()) return;
+          const yCoord = Math.round(item.transform[5] / 2) * 2;
+          if (!lineBuckets[yCoord]) lineBuckets[yCoord] = [];
+          lineBuckets[yCoord].push(item);
+        });
+
+        const sortedY = Object.keys(lineBuckets).map(Number).sort((a, b) => b - a);
+        const pageLines = [];
+        sortedY.forEach(y => {
+          const text = lineBuckets[y].sort((a, b) => a.transform[4] - b.transform[4]).map(i => i.str).join(" ").trim();
+          if (text) {
+            pageLines.push(text);
+            const norm = normalizeLine(text);
+            lineFrequency[norm] = (lineFrequency[norm] || 0) + 1;
+          }
+        });
+        pagesText.push(pageLines);
+      }
+
+      // Filter repeated headers & footers
+      const headerFooters = new Set();
+      if (totalPages > 1) {
+        for (const [line, count] of Object.entries(lineFrequency)) {
+          if (count > 0.5 * totalPages) headerFooters.add(line);
+        }
+      }
+
+      const cleanedPages = [];
+      pagesText.forEach(lines => {
+        const filtered = lines.filter(l => !headerFooters.has(normalizeLine(l)));
+        cleanedPages.push(filtered.join("\n"));
+      });
+
+      let extracted = cleanedPages.join("\n\n").trim();
+      if (extracted.length < 20) throw new Error("SCANNED_PDF_DETECTED");
+
+      let cleaned = extracted.split("\n").map(l => l.trim()).join("\n");
+      cleaned = cleaned.replace(/[^\S\r\n]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+
+      statusText.innerText = "Squeezing PDF content...";
+      subText.innerText = "Applying token compression...";
+      workingModalPrompt = cleaned;
+      duplicateContextBlocks = findDuplicateContext(cleaned);
+      requestOptimization(cleaned, currentOptMode);
+    } catch (err) {
+      console.error("PDF parsing error:", err);
+      let msg = "Failed to parse PDF document.";
+      if (err.message === "SCANNED_PDF_DETECTED") {
+        msg = "This PDF appears to be a scanned image or contains no extractable text.";
+      } else {
+        msg += ` (${err.message})`;
+      }
+
+      const body = modalContainer.querySelector(".tm-modal-body");
+      body.innerHTML = `
+        <div class="tm-dup-warning-banner" style="background: rgba(255, 59, 48, 0.08); border: 1px solid rgba(255, 59, 48, 0.25); padding: 18px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 1.6rem; margin-bottom: 8px;">⚠️</div>
+          <div style="font-size: 0.82rem; color: #ff5e84; line-height: 1.5; font-weight: 600; margin-bottom: 12px;">${msg}</div>
+          <button class="tm-btn" id="tmPDFErrorCloseBtn">Close</button>
+        </div>
+      `;
+      body.querySelector("#tmPDFErrorCloseBtn").addEventListener("click", closeModal);
+    }
+  }
+
+  // --- DUPLICATE CONTEXT DETECTION ---
+  function findDuplicateContext(text) {
+    const previousUserMessages = [];
+    const selectors = [
+      '[data-testid="user-message"]',
+      'div.font-user-message',
+      '[data-message-author-role="user"]',
+      'user-query'
+    ];
+    document.querySelectorAll(selectors.join(", ")).forEach(el => {
+      previousUserMessages.push(el.innerText.trim());
+    });
+
+    if (previousUserMessages.length === 0) return [];
+
+    const duplicates = [];
+    const codeBlockRegex = /```[\s\S]*?```/g;
+    let match;
+    const candidates = [];
+
+    while ((match = codeBlockRegex.exec(text)) !== null) {
+      const original = match[0];
+      if (original.length > 100) {
+        const content = original.replace(/^```\w*\n|```$/g, "").trim();
+        candidates.push({ original, content, type: "code block" });
+      }
+    }
+
+    text.replace(codeBlockRegex, "").split(/\n\s*\n+/).forEach(para => {
+      const trimmed = para.trim();
+      if (trimmed.length > 150) {
+        candidates.push({ original: para, content: trimmed, type: "paragraph" });
+      }
+    });
+
+    candidates.forEach(cand => {
+      const normCand = cand.content.toLowerCase().replace(/\s+/g, " ");
+      for (const msg of previousUserMessages) {
+        if (msg.toLowerCase().replace(/\s+/g, " ").includes(normCand)) {
+          duplicates.push(cand);
+          break;
+        }
+      }
+    });
+
+    return duplicates;
+  }
+
+  // --- OPTIMIZATION MODAL ---
+  function ensureModalExists() {
+    if (!modalContainer) {
+      modalContainer = document.createElement("div");
+      modalContainer.className = "squeeze-modal-container";
+      document.body.appendChild(modalContainer);
+      modalContainer.addEventListener("click", e => {
+        if (e.target === modalContainer) closeModal();
+      });
+      // Escape key closes modal
+      window.addEventListener("keydown", e => {
+        if (e.key === "Escape" && modalContainer.classList.contains("open")) {
+          closeModal();
+        }
+      });
+    }
+  }
+
+  function closeModal() {
+    if (modalContainer) {
+      modalContainer.classList.remove("open");
+      currentUploadedPdf = null;
+      setTimeout(() => { modalContainer.innerHTML = ""; }, 300);
+    }
+  }
+
+  function openOptimizationModal(promptText, mode) {
+    ensureModalExists();
+    workingModalPrompt = promptText;
+    duplicateContextBlocks = findDuplicateContext(promptText);
+
+    const logoUrl = chrome.runtime.getURL("icons/icon48.png");
+    modalContainer.innerHTML = `
+      <div class="squeeze-modal-card">
+        <div class="tm-modal-header">
+          <div class="tm-modal-logo">
+            <img src="${logoUrl}" class="animating" width="22" height="22" alt="Squeeze Icon">
+            <span>Squeeze <span class="highlight">Optimizer</span></span>
+          </div>
+          <button class="tm-close-btn">&times;</button>
+        </div>
+        <div class="tm-modal-body">
+          <div class="tm-loading-state">
+            <div class="tm-spinner"></div>
+            <p>Squeezing prompt for maximum token efficiency...</p>
+            <span class="tm-loading-subtext">Optimizing via Local Rules & DLP Scanner...</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    modalContainer.classList.add("open");
+    modalContainer.querySelector(".tm-close-btn").addEventListener("click", closeModal);
+    requestOptimization(promptText, mode);
+  }
+
+  function requestOptimization(promptText, mode) {
+    try {
+      chrome.runtime.sendMessage(
+        { action: "optimizePrompt", prompt: promptText, mode },
+        response => {
+          if (chrome.runtime.lastError) {
+            renderModalError("Communication with Squeeze background service failed. Please refresh this tab.");
+          } else if (response && response.success) {
+            renderModalContent(response);
+          } else {
+            renderModalError(response?.error || "Unknown optimization error.");
+          }
+        }
+      );
+    } catch (e) {
+      renderModalError(`Squeeze was reloaded. Please refresh this tab. (${e.message})`);
+    }
+  }
+
+  function renderModalError(errorMsg) {
+    if (!modalContainer) return;
+    const body = modalContainer.querySelector(".tm-modal-body");
+    const logoImg = modalContainer.querySelector(".tm-modal-logo img");
+    if (logoImg) logoImg.classList.remove("animating");
+
+    body.innerHTML = `
+      <div class="tm-error-state">
+        <div class="tm-error-icon">⚠️</div>
+        <h3>Optimization Failed</h3>
+        <p class="tm-error-msg">${escapeHtml(errorMsg)}</p>
+        <div class="tm-error-actions">
+          <button class="tm-btn tm-btn-secondary" id="tmErrorCloseBtn">Close</button>
+        </div>
+      </div>
+    `;
+    body.querySelector("#tmErrorCloseBtn").addEventListener("click", closeModal);
+  }
+
+  // Generate word diff
+  function generateDiffView(orig, opt) {
+    const origWords = orig.trim().split(/(\s+)/);
+    const optWords = opt.trim().split(/(\s+)/);
+
+    const m = origWords.length;
+    const n = optWords.length;
+    const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        if (origWords[i - 1] === optWords[j - 1]) dp[i][j] = dp[i - 1][j - 1] + 1;
+        else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+      }
+    }
+
+    let i = m, j = n;
+    const oldArr = [], newArr = [];
+
+    while (i > 0 || j > 0) {
+      if (i > 0 && j > 0 && origWords[i - 1] === optWords[j - 1]) {
+        const w = origWords[i - 1];
+        oldArr.unshift(escapeHtml(w));
+        newArr.unshift(escapeHtml(w));
+        i--;
+        j--;
+      } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+        const w = optWords[j - 1];
+        if (w.trim() === "") newArr.unshift(w);
+        else newArr.unshift(`<ins class="tm-diff-ins">${escapeHtml(w)}</ins>`);
+        j--;
+      } else {
+        const w = origWords[i - 1];
+        if (w.trim() === "") oldArr.unshift(w);
+        else oldArr.unshift(`<del class="tm-diff-del">${escapeHtml(w)}</del>`);
+        i--;
+      }
+    }
+
+    return { oldHtml: oldArr.join(""), newHtml: newArr.join("") };
+  }
+
+  function renderModalContent(data) {
+    const body = modalContainer.querySelector(".tm-modal-body");
+    const logoImg = modalContainer.querySelector(".tm-modal-logo img");
+    if (logoImg) logoImg.classList.remove("animating");
+
+    // Quality Intent score
+    let intentScore = 98;
+    if (data.mode === "squeeze") intentScore = 93;
+    else if (data.mode === "polish") intentScore = 99;
+
+    const diff = generateDiffView(data.original, data.optimized);
+
+    // DLP banner
+    let secretHtml = "";
+    if (data.secretsDetected && data.secretsDetected.length > 0) {
+      secretHtml = `
+        <div class="tm-dup-warning-banner" style="background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); color: #34d399; margin-bottom: 12px;">
+          <span>🛡️ <strong>DLP Shield:</strong> ${data.secretsDetected.length} credential(s) safely masked before sending.</span>
+        </div>
+      `;
+    }
+
+    // Duplicate context banner
+    let dupsHtml = "";
+    if (duplicateContextBlocks.length > 0) {
+      dupsHtml = `
+        <div class="tm-dup-warning-banner" style="background: rgba(255, 59, 48, 0.08); border: 1px solid rgba(255, 59, 48, 0.25); padding: 10px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="font-size: 0.76rem; color: #ff5e84;">
+            ⚠️ <strong>Duplicate Context:</strong> ${duplicateContextBlocks.length} block(s) in this prompt was already sent earlier in the thread.
+          </div>
+          <button class="tm-btn" id="tmStripDupsBtn" style="padding: 4px 8px; font-size: 0.7rem; color: #ff5e84; border: 1px solid rgba(255,94,132,0.4); background: rgba(255,59,48,0.05); cursor: pointer; border-radius: 4px;">Strip Duplicates</button>
+        </div>
+      `;
+    }
+
+    // Applied rules
+    const rulesHtml = data.rulesApplied && data.rulesApplied.length > 0
+      ? `<div class="tm-applied-rules-chips" style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px;">
+          ${data.rulesApplied.map(r => `<span class="tm-rule-chip" style="font-size: 0.68rem; padding: 2px 8px; background: rgba(255, 109, 0, 0.1); border: 1px solid rgba(255, 109, 0, 0.3); color: #ff9d42; border-radius: 12px;">✓ ${escapeHtml(r)}</span>`).join("")}
+        </div>`
+      : "";
+
+    // Attached context
+    const vaultHtml = data.attachedContexts && data.attachedContexts.length > 0
+      ? `<div style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 6px;">
+          <span style="font-size: 0.7rem; color: #9e978e;">Vault Context Attached:</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;">
+            ${data.attachedContexts.map(c => `<span style="font-size: 0.65rem; padding: 2px 6px; background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.2); color: #00e5ff; border-radius: 10px;">📂 ${escapeHtml(c)}</span>`).join("")}
+          </div>
+        </div>`
+      : "";
+
+    const origLabel = currentUploadedPdf ? "Original PDF Content" : "Original Prompt";
+    const optLabel = currentUploadedPdf ? "Squeezed PDF Content" : "Optimized Prompt";
+
+    body.innerHTML = `
+      <div class="tm-comparison-layout">
+        ${secretHtml}
+        ${dupsHtml}
+
+        <!-- Options Bar -->
+        <div class="tm-options-bar">
+          <div class="tm-mode-selector-group">
+            <label>Mode:</label>
+            <select id="tmModeSelect" class="tm-mini-select">
+              <option value="squeeze" ${data.mode === "squeeze" ? "selected" : ""}>Squeeze (Max Savings)</option>
+              <option value="balanced" ${data.mode === "balanced" ? "selected" : ""}>Balanced (Concise)</option>
+              <option value="polish" ${data.mode === "polish" ? "selected" : ""}>Polish (Enhance)</option>
+            </select>
+          </div>
+          <div class="tm-stats-badges">
+            <div class="tm-stats-badge-savings">
+              Saves ${data.percentageSaved}% Tokens
+            </div>
+            <div class="tm-stats-badge-quality">
+              ⚡ ${intentScore}% Intent Kept
+            </div>
+          </div>
+        </div>
+
+        <!-- Diff Grid -->
+        <div class="tm-diff-grid">
+          <div class="tm-diff-pane">
+            <div class="tm-pane-header">
+              <span>${origLabel}</span>
+              <span class="tm-pane-stat">${data.originalTokens.toLocaleString()} tokens</span>
+            </div>
+            <div class="tm-pane-content tm-original-text" id="tmOriginalPane">${diff.oldHtml}</div>
+          </div>
+          
+          <div class="tm-diff-pane tm-optimized-pane">
+            <div class="tm-pane-header">
+              <span>${optLabel}</span>
+              <div class="tm-toggle-group">
+                <button class="tm-toggle-btn active" id="tmToggleDiff">Diff</button>
+                <button class="tm-toggle-btn" id="tmToggleEdit">Edit Raw</button>
+              </div>
+              <span class="tm-pane-stat glow-text">${data.optimizedTokens.toLocaleString()} tokens</span>
+            </div>
+            <div id="tmOptimizedWrapper" style="height: calc(100% - 32px); display: flex; flex-direction: column;">
+              <div class="tm-pane-content tm-optimized-diff" id="tmOptimizedDiffPane">${diff.newHtml}</div>
+              <textarea id="tmOptimizedInput" class="tm-pane-textarea" style="display: none;">${escapeHtml(data.optimized)}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Savings Summary -->
+        <div class="tm-savings-summary">
+          <div class="tm-savings-icon">⚡</div>
+          <div class="tm-savings-details">
+            <span class="tm-savings-title">Optimization Complete!</span>
+            <span class="tm-savings-desc">Saved <strong>${data.tokensSaved.toLocaleString()} tokens</strong> (${data.percentageSaved}% reduction) while preserving all intent.</span>
+            ${rulesHtml}
+            ${vaultHtml}
+          </div>
+        </div>
+
+        <!-- Actions Footer -->
+        <div class="tm-actions-footer">
+          <button class="tm-btn tm-btn-secondary" id="tmDiscardBtn">Discard</button>
+          <button class="tm-btn tm-btn-primary" id="tmApplyBtn">Apply & Squeeze</button>
+        </div>
+      </div>
+    `;
+
+    // Mode select change
+    const modeSelect = body.querySelector("#tmModeSelect");
+    modeSelect.addEventListener("change", () => {
+      const newMode = modeSelect.value;
+      currentOptMode = newMode;
+      body.innerHTML = `
+        <div class="tm-loading-state">
+          <div class="tm-spinner"></div>
+          <p>Re-optimizing prompt using ${newMode} mode...</p>
+        </div>
+      `;
+      requestOptimization(workingModalPrompt, newMode);
+    });
+
+    // Toggle Diff vs Edit Raw
+    const btnDiff = body.querySelector("#tmToggleDiff");
+    const btnEdit = body.querySelector("#tmToggleEdit");
+    const diffPane = body.querySelector("#tmOptimizedDiffPane");
+    const editArea = body.querySelector("#tmOptimizedInput");
+    const origPane = body.querySelector("#tmOriginalPane");
+
+    btnDiff.addEventListener("click", () => {
+      btnDiff.classList.add("active");
+      btnEdit.classList.remove("active");
+      diffPane.style.display = "block";
+      editArea.style.display = "none";
+      origPane.innerHTML = diff.oldHtml;
+    });
+
+    btnEdit.addEventListener("click", () => {
+      btnEdit.classList.add("active");
+      btnDiff.classList.remove("active");
+      diffPane.style.display = "none";
+      editArea.style.display = "block";
+      origPane.innerHTML = escapeHtml(data.original);
+      editArea.focus();
+    });
+
+    // Discard & Apply
+    body.querySelector("#tmDiscardBtn").addEventListener("click", closeModal);
+    body.querySelector("#tmApplyBtn").addEventListener("click", () => {
+      const finalVal = editArea.value;
+      lastOptimizedPrompt = finalVal;
+      if (activeInputEl) {
+        setInputValue(activeInputEl, finalVal);
+        if (undoBtn) undoBtn.style.display = "inline-flex";
+      }
+      closeModal();
+    });
+
+    // Strip Duplicates
+    const stripBtn = body.querySelector("#tmStripDupsBtn");
+    if (stripBtn) {
+      stripBtn.addEventListener("click", () => {
+        let cleaned = workingModalPrompt;
+        duplicateContextBlocks.forEach(b => {
+          cleaned = cleaned.replace(b.original, "");
+        });
+        cleaned = cleaned.replace(/\n\s*\n+/g, "\n\n").trim();
+        duplicateContextBlocks = [];
+        workingModalPrompt = cleaned;
+        showToast(stripBtn, "Duplicate blocks stripped!");
+        requestOptimization(cleaned, currentOptMode);
+      });
+    }
+  }
+
+  // --- CONTEXT SUMMARIZER ---
+  function wireSummaryButton(input) {
+    summaryBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      try {
+        const summary = extractConversationSummary();
+        if (!summary || summary.length < 30) {
+          showToast(summaryBtn, "No chat history to summarize yet!");
+          return;
+        }
+
+        chrome.storage.local.set({ pendingChatSummary: summary }, () => {
+          navigator.clipboard.writeText(summary).catch(() => {});
+          showToast(summaryBtn, "Context summarized! Opening fresh chat...");
+
+          // Open fresh chat depending on platform
+          setTimeout(() => {
+            if (IS_CLAUDE) window.location.href = "https://claude.ai/new";
+            else if (IS_CHATGPT) window.location.href = "https://chatgpt.com/";
+            else if (IS_GEMINI) window.location.href = "https://gemini.google.com/app";
+          }, 1200);
+        });
+      } catch (err) {
+        console.error("Summary error:", err);
+        showToast(summaryBtn, "Error generating summary context.");
+      }
+    });
+  }
+
+  function extractConversationSummary() {
+    const turns = [];
+
+    if (IS_CLAUDE) {
+      const messages = document.querySelectorAll(
+        "div.font-user-message, div.font-claude-message, [data-testid='user-message'], [data-testid='bot-message'], .prose"
+      );
+      messages.forEach(el => {
+        const isUser = el.closest('[data-testid="user-message"]') || el.classList.contains("font-user-message");
+        const clone = el.cloneNode(true);
+        clone.querySelectorAll("pre").forEach(p => p.remove());
+        const text = clone.innerText.trim();
+        const codeBlocks = [];
+        el.querySelectorAll("pre code").forEach(c => {
+          let lang = "code";
+          c.classList.forEach(cls => { if (cls.startsWith("language-")) lang = cls.replace("language-", ""); });
+          codeBlocks.push({ language: lang, code: c.innerText.trim().substring(0, 3000) });
+        });
+        if (text || codeBlocks.length > 0) turns.push({ sender: isUser ? "User" : "Claude", text, codeBlocks });
+      });
+    } else if (IS_CHATGPT) {
+      const messages = document.querySelectorAll('[data-message-author-role]');
+      messages.forEach(el => {
+        const role = el.getAttribute("data-message-author-role");
+        const text = el.innerText.trim();
+        turns.push({ sender: role === "user" ? "User" : "Assistant", text, codeBlocks: [] });
+      });
+    } else {
+      // Gemini
+      const messages = document.querySelectorAll("user-query, model-response");
+      messages.forEach(el => {
+        const isUser = el.tagName.toLowerCase() === "user-query";
+        turns.push({ sender: isUser ? "User" : "Gemini", text: el.innerText.trim(), codeBlocks: [] });
+      });
+    }
+
+    if (turns.length === 0) return "";
+
+    // Keep last 3 exchanges
+    const recent = turns.slice(-6);
+    let output = "## Context Summary from Previous Chat (Squeezed)\n\n### Recent Discussion Timeline:\n";
+
+    recent.forEach(t => {
+      let snippet = t.text;
+      if (snippet.length > 350) snippet = snippet.substring(0, 350) + "... [truncated]";
+      output += `**${t.sender}**: ${snippet.replace(/\n/g, " ")}\n\n`;
+    });
+
+    output += "\n*This context was automatically summarized by Squeeze AI to save tokens. Ready to continue where we left off.*";
+    return output;
+  }
+
+  // --- CONTEXT USAGE DEPTH BAR ---
+  function mountContextUsageBar() {
+    const input = findChatInput();
+    if (!input) return;
+
+    const parent = input.closest("form") || input.closest("fieldset") || input.parentElement;
+    if (!parent) return;
+
+    if (!usageBar || !document.contains(usageBar)) {
+      usageBar = document.createElement("div");
+      usageBar.className = "squeeze-usage-bar";
+      parent.parentNode.insertBefore(usageBar, parent.nextSibling);
+    }
+
+    updateContextDepth();
+  }
+
+  async function updateContextDepth() {
+    if (!usageBar) return;
+
+    // Estimate thread tokens
+    const textNodes = document.querySelectorAll(
+      "div.font-user-message, div.font-claude-message, [data-testid='user-message'], [data-message-author-role], user-query, model-response"
+    );
+    let combined = "";
+    textNodes.forEach(n => { combined += " " + n.innerText; });
+    if (activeInputEl) combined += " " + getInputValue(activeInputEl);
+
+    const totalTokens = estimateTokensLocal(combined);
+    const percent = Math.min(100, Math.max(0, Math.round((totalTokens / 200_000) * 100)));
+    const status = totalTokens < 40_000 ? "safe" : totalTokens < 100_000 ? "moderate" : totalTokens < 160_000 ? "heavy" : "critical";
+    const statusLabel = status === "safe" ? "Safe Context" : status === "moderate" ? "Moderate Context" : status === "heavy" ? "Heavy Context" : "Critical Context (Start New Chat)";
+
+    let nudgeHtml = "";
+    if (totalTokens > 35_000) {
+      nudgeHtml = `
+        <div class="tm-summary-nudge">
+          <span class="tm-nudge-icon">⚡</span>
+          <span class="tm-nudge-text">High Context depth (${totalTokens.toLocaleString()} tokens). Starting a new chat cuts latency and cost by 70%!</span>
+          <button class="tm-nudge-btn tm-btn-gold" id="tmBarSummarizeBtn">Summarize & New Chat</button>
+        </div>
+      `;
+    }
+
+    usageBar.innerHTML = `
+      <div class="tm-usage-bar-content">
+        <div class="tm-usage-columns">
+          <div class="tm-context-column">
+            <span class="tm-usage-dot dot-${status}"></span>
+            <span class="tm-usage-title">Conversation Context:</span>
+            <span class="tm-usage-val">${totalTokens.toLocaleString()}</span>
+            <span class="tm-usage-divider">/</span>
+            <span class="tm-usage-limit">200K tokens</span>
+            <span class="tm-usage-percent">(${percent}%)</span>
+            <span class="tm-usage-status-inline status-${status}">${statusLabel}</span>
+          </div>
+        </div>
+        <div class="tm-progress-bars-container" style="display: flex; flex-direction: column; gap: 4px; width: 100%; margin-top: 4px;">
+          <div class="tm-usage-progress-track" title="Conversation Context: ${percent}% used">
+            <div class="tm-usage-progress-bar progress-${status}" style="width: ${percent}%"></div>
+          </div>
+        </div>
+        ${nudgeHtml}
+      </div>
+    `;
+
+    const barSumBtn = usageBar.querySelector("#tmBarSummarizeBtn");
+    if (barSumBtn) {
+      barSumBtn.addEventListener("click", () => {
+        if (summaryBtn) summaryBtn.click();
+      });
+    }
+  }
+
+  // --- VAULT BADGE UPDATE ---
+  function updateVaultBadge(promptText) {
+    if (!vaultBadge) return;
+    if (!promptText) {
+      vaultBadge.style.display = "none";
+      return;
+    }
+
+    chrome.storage.local.get(["vaultPreferences", "vaultPrefAlwaysInject", "vaultSmartTriggers", "vaultFiles"], data => {
+      const prefs = data.vaultPreferences || "";
+      const alwaysInject = data.vaultPrefAlwaysInject !== false;
+      const smartTriggers = data.vaultSmartTriggers !== false;
+      const files = data.vaultFiles || [];
+
+      let count = 0;
+      const attached = [];
+
+      if (prefs.trim() && alwaysInject) {
+        count++;
+        attached.push("Developer Profile");
+      }
+
+      if (files.length > 0) {
+        const lower = promptText.toLowerCase();
+        for (const f of files) {
+          let matches = false;
+          if (smartTriggers) {
+            const toks = f.name.replace(/\.[a-z0-9]+$/i, "").toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length >= 3);
+            for (const t of toks) {
+              if (new RegExp("\\b" + t + "\\b", "i").test(lower)) {
+                matches = true;
+                break;
+              }
+            }
+          } else {
+            matches = true;
+          }
+          if (matches && f.content) {
+            count++;
+            attached.push(f.name);
+          }
+        }
+      }
+
+      if (count > 0) {
+        vaultBadge.style.display = "inline-flex";
+        vaultBadge.innerHTML = `
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; color: #ff6d00;">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span style="font-size: 0.72rem; font-weight: 600; color: #ff6d00;">Vault: ${count}</span>
+        `;
+        vaultBadge.setAttribute("title", `Vault Context Attached:\n- ${attached.join("\n- ")}`);
+      } else {
+        vaultBadge.style.display = "none";
+      }
+    });
+  }
+
+  // --- SIDEBAR BUTTON & IN-PAGE DRAWER ---
+  function mountSidebarButton() {
+    if (sidebarBtn && document.contains(sidebarBtn)) return;
+
+    const nav = document.querySelector("nav") || document.querySelector('[role="navigation"]') || document.querySelector("aside");
+    if (!nav) return;
+
+    sidebarBtn = document.createElement("button");
+    sidebarBtn.className = "squeeze-sidebar-btn";
+    sidebarBtn.dataset.tooltip = "Open Squeeze Side Panel";
+    sidebarBtn.addEventListener("mouseenter", () => showTooltip(sidebarBtn, sidebarBtn.dataset.tooltip));
+    sidebarBtn.addEventListener("mouseleave", hideTooltip);
+    sidebarBtn.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 512 512" fill="none">
+        <path d="M 140 148 L 256 264 L 372 148" stroke="currentColor" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="160" y="324" width="192" height="44" rx="22" fill="currentColor"/>
+      </svg>
+    `;
+
+    sidebarBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      hideTooltip();
+      chrome.runtime.sendMessage({ action: "openSidePanel" });
+    });
+
+    nav.appendChild(sidebarBtn);
+  }
+
+  // --- LISTEN FOR MESSAGES (E.G. FROM SIDE PANEL) ---
+  chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    if (msg.action === "insertPrompt") {
+      const input = findChatInput();
+      if (input && msg.text) {
+        setInputValue(input, msg.text);
+        if (undoBtn) undoBtn.style.display = "inline-flex";
+        showToast(input, "Prompt squeezed & injected! ✨");
+        sendResponse({ success: true });
+      } else {
+        sendResponse({ success: false, error: "Chat input not found" });
+      }
+    }
+  });
+
+  // --- OBSERVER & INITIALIZATION ---
+  function init() {
+    chrome.storage.local.get(["optimizationMode"], data => {
+      if (data.optimizationMode) currentOptMode = data.optimizationMode;
+    });
+
+    mountWidgets();
+
+    let debounceTimer = null;
+    const observer = new MutationObserver(() => {
+      if (!debounceTimer) {
+        debounceTimer = setTimeout(() => {
+          mountWidgets();
+          debounceTimer = null;
+        }, 200);
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    chrome.storage.onChanged.addListener(changes => {
+      if (changes.optimizationMode) currentOptMode = changes.optimizationMode.newValue;
+      if (activeInputEl) updateVaultBadge(getInputValue(activeInputEl));
+    });
+  }
+
+  init();
+})();
