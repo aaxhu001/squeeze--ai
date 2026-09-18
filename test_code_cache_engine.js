@@ -7,7 +7,7 @@ const {
   alignPromptForCache
 } = require("./skeletonizer.js");
 
-console.log("🚀 Testing Graphify & Headroom Intelligence Engine...\n");
+console.log("🚀 Testing Squeeze Code & Cache Intelligence Engine...\n");
 
 // 1. Test Python Skeletonizer
 const pyCode = `
@@ -39,7 +39,7 @@ def standalone_helper(x: int) -> bool:
 `;
 
 const pySkeleton = skeletonizePython(pyCode);
-console.log("=== 1. PYTHON SKELETON (Graphify) ===");
+console.log("=== 1. PYTHON SKELETON (Squeeze AST) ===");
 console.log(pySkeleton);
 const pyOrigTokens = Math.ceil(pyCode.length / 4);
 const pySkelTokens = Math.ceil(pySkeleton.length / 4);
@@ -73,13 +73,13 @@ export class AuthService {
 `;
 
 const tsSkeleton = skeletonizeTypeScript(tsCode);
-console.log("=== 2. TYPESCRIPT SKELETON (Graphify) ===");
+console.log("=== 2. TYPESCRIPT SKELETON (Squeeze AST) ===");
 console.log(tsSkeleton);
 const tsOrigTokens = Math.ceil(tsCode.length / 4);
 const tsSkelTokens = Math.ceil(tsSkeleton.length / 4);
 console.log(`Original: ~${tsOrigTokens} tokens -> Skeleton: ~${tsSkelTokens} tokens (${Math.round((tsOrigTokens - tsSkelTokens)/tsOrigTokens * 100)}% saved!)\n`);
 
-// 3. Test JSON Array Folder (Headroom)
+// 3. Test JSON Array Folder
 const bigJson = JSON.stringify({
   status: "success",
   users: Array.from({ length: 25 }, (_, i) => ({
@@ -91,13 +91,13 @@ const bigJson = JSON.stringify({
 });
 
 const shrunkJson = shrinkJson(bigJson, 2);
-console.log("=== 3. JSON ARRAY FOLDER (Headroom) ===");
+console.log("=== 3. JSON ARRAY FOLDER (Squeeze Data) ===");
 console.log(shrunkJson.substring(0, 350) + "...\n");
 const jsonOrigTokens = Math.ceil(bigJson.length / 4);
 const jsonSkelTokens = Math.ceil(shrunkJson.length / 4);
 console.log(`Original: ~${jsonOrigTokens} tokens -> Shrunk: ~${jsonSkelTokens} tokens (${Math.round((jsonOrigTokens - jsonSkelTokens)/jsonOrigTokens * 100)}% saved!)\n`);
 
-// 4. Test Log Deduplicator (Headroom)
+// 4. Test Log Deduplicator
 const logs = `
 2026-09-19T01:10:00.123Z [INFO] Service starting up...
 2026-09-19T01:10:01.456Z [WARN] Connection timeout to Redis node 127.0.0.1:6379, retrying...
@@ -107,24 +107,24 @@ const logs = `
 2026-09-19T01:10:05.789Z [INFO] Connected to failover node.
 `;
 const cleanLogs = shrinkLogs(logs);
-console.log("=== 4. LOG DEDUPLICATION (Headroom) ===");
+console.log("=== 4. LOG DEDUPLICATION (Squeeze Data) ===");
 console.log(cleanLogs);
 
-// 5. Test Codebase Graph Builder (Graphify)
+// 5. Test Codebase Graph Builder
 const graph = buildCodebaseGraph([
   { name: "db.py", content: pyCode },
   { name: "auth.ts", content: tsCode }
 ]);
-console.log("=== 5. CODEBASE TOPOLOGICAL GRAPH (Graphify) ===");
+console.log("=== 5. CODEBASE TOPOLOGICAL GRAPH (Squeeze Engine) ===");
 console.log(graph.graphText);
 
-// 6. Test Cache Aligner (Headroom)
+// 6. Test Cache Aligner
 const aligned = alignPromptForCache(
   "Act as a Principal Staff Engineer. Prioritize speed & reliability.",
   graph.graphText,
   "How should AuthService interact with DatabaseClient?"
 );
-console.log("=== 6. CACHE-ALIGNED PROMPT (Headroom) ===");
+console.log("=== 6. CACHE-ALIGNED PROMPT (Squeeze Engine) ===");
 console.log(aligned);
 
-console.log("\n✅ ALL GRAPHIFY & HEADROOM INTELLIGENCE TESTS PASSED!");
+console.log("\n✅ ALL SQUEEZE CODE & CACHE ENGINE TESTS PASSED!");

@@ -662,7 +662,7 @@ Constraints:
     }
   });
 
-  // --- GRAPHIFY & HEADROOM CONTROLLER ---
+  // --- SQUEEZE CODE & CACHE CONTROLLER ---
   const skelLangSelect = document.getElementById("spSkelLangSelect");
   const skelLoadSampleBtn = document.getElementById("spSkelLoadSampleBtn");
   const skelRunBtn = document.getElementById("spSkelRunBtn");

@@ -1,12 +1,12 @@
 /**
- * Squeeze AI - Graphify & Headroom Intelligence Engine
+ * Squeeze AI - Code Architecture & Cache Optimization Engine
  * 
- * 1. Graphify: Deterministic Code Skeletonizer & Topological Code Graph
- * 2. Headroom: Content-Aware Shrinkers (JSON, Logs, Diffs) & Provider CacheAligner
+ * 1. Deterministic AST Code Skeletonizer & Topological Code Graph
+ * 2. Content-Aware Data Shrinkers (JSON, Logs, Diffs) & Provider CacheAligner
  */
 
 (function (exports) {
-  // --- 1. CODE SKELETONIZER (GRAPHIFY CORE) ---
+  // --- 1. CODE SKELETONIZER (AST COMPRESSION) ---
   // Strips implementation bodies while preserving classes, function signatures,
   // docstrings, type annotations, and exported interfaces. Slashes 70-90% of tokens.
 
@@ -225,7 +225,7 @@
       .trim();
   }
 
-  // --- 2. CONTENT-AWARE SHRINKERS (HEADROOM CORE) ---
+  // --- 2. CONTENT-AWARE DATA SHRINKERS ---
 
   // JSON Array Folder & Schema Extractor:
   // Condenses 100 repetitive items down to 1 item + item count notation
@@ -302,7 +302,7 @@
     return result.join("\n");
   }
 
-  // --- 3. TOPOLOGICAL CODE GRAPH (GRAPHIFY CORE) ---
+  // --- 3. TOPOLOGICAL CODEBASE GRAPH ---
   // Maps multi-file relationships, exports, classes, and dependencies into a compact map
   function buildCodebaseGraph(filesList) {
     if (!filesList || filesList.length === 0) return { graphText: "", nodes: [] };
@@ -352,7 +352,7 @@
     }
 
     // Format into compact graph summary
-    let graphText = "### CODEBASE TOPOLOGICAL GRAPH (Graphify Engine)\n";
+    let graphText = "### CODEBASE TOPOLOGICAL GRAPH (Squeeze Engine)\n";
     nodes.forEach(n => {
       const parts = [];
       if (n.classes.length > 0) parts.push(`Classes: [${n.classes.join(", ")}]`);
@@ -364,7 +364,7 @@
     return { graphText, nodes };
   }
 
-  // --- 4. PROVIDER CACHE ALIGNER (HEADROOM CORE) ---
+  // --- 4. PROVIDER CACHE ALIGNER ---
   // Reorders prompt content into [Tier 1: Static Prefix] -> [Tier 2: Code Skeletons] -> [Tier 3: Dynamic Tail]
   // to maximize Anthropic Claude & OpenAI 90% prompt-cache hit rates.
   function alignPromptForCache(systemPrompt, architectureContext, userTask) {

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Squeeze AI - Model Context Protocol (MCP) Server
-Integrates Squeeze AI, Graphify AST Skeletonizer, and Headroom Context Compression
+Integrates Squeeze AI AST Code Skeletonizer and Context Compression Engine
 directly into Cursor, Claude Code, Cline, and other AI coding assistants.
 
 Usage:
@@ -39,7 +39,7 @@ def mask_secrets(text: str) -> str:
     return text
 
 def skeletonize_code(code: str, language: str = "python") -> str:
-    """Graphify: Strips function and method bodies while preserving classes, signatures, and docstrings."""
+    """Strips function and method bodies while preserving classes, signatures, and docstrings."""
     if not code:
         return ""
     
@@ -106,7 +106,7 @@ def skeletonize_code(code: str, language: str = "python") -> str:
     return re.sub(r'\{([^{}]{50,})\}', '{\n    /* ... implementation collapsed by Squeeze ... */\n}', code)
 
 def shrink_json_data(text: str, max_items: int = 2) -> str:
-    """Headroom: Folds repetitive JSON arrays and truncates huge strings."""
+    """Folds repetitive JSON arrays and truncates huge strings."""
     try:
         data = json.loads(text)
         def fold(obj):
@@ -168,7 +168,7 @@ def optimize_prompt(prompt: str) -> dict:
 TOOLS = [
     {
         "name": "squeeze_compress",
-        "description": "Compress prompts, logs, or tool output text using Squeeze AI and Headroom rules.",
+        "description": "Compress prompts, logs, or tool output text using Squeeze AI rules.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -180,7 +180,7 @@ TOOLS = [
     },
     {
         "name": "squeeze_skeleton",
-        "description": "Graphify: Extract structural AST skeletons from source code (classes, signatures, types), saving 70-90% tokens.",
+        "description": "Squeeze AST: Extract structural skeletons from source code (classes, signatures, types), saving 70-90% tokens.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -192,7 +192,7 @@ TOOLS = [
     },
     {
         "name": "squeeze_shrink_json",
-        "description": "Headroom: Folds repetitive JSON arrays and truncates hashes/base64 strings, cutting 80%+ tokens on API responses.",
+        "description": "Squeeze Data: Folds repetitive JSON arrays and truncates hashes/base64 strings, cutting 80%+ tokens on API responses.",
         "inputSchema": {
             "type": "object",
             "properties": {

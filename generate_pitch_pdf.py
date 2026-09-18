@@ -278,11 +278,11 @@ def build_pdf(filename="Squeeze_AI_Hackathon_Pitch_Guide.pdf"):
             Paragraph("Real-time regex scanner detecting 8 credential types (OpenAI keys, Anthropic keys, Google AI keys, AWS keys, GitHub tokens, JWTs, DB URIs, and config secrets). Masks secrets locally.", body_style)
         ],
         [
-            Paragraph("<b>🚀 Graphify AST Code Skeletons</b>", styles['Normal']),
+            Paragraph("<b>🚀 Squeeze AST Code Skeletons</b>", styles['Normal']),
             Paragraph("Deterministic AST parser for Python, TypeScript, and JSON. Collapses function bodies to <code>...</code>, keeping classes, signatures, and types (saving 70–90% code tokens).", body_style)
         ],
         [
-            Paragraph("<b>⚡ Headroom Cache-Aligner &amp; MCP</b>", styles['Normal']),
+            Paragraph("<b>⚡ Squeeze CacheAligner &amp; MCP</b>", styles['Normal']),
             Paragraph("Reorders prompts into static prefixes and task tails to lock 90% provider prompt-caching. Includes a stdio MCP Server for Cursor, Claude Code, and Cline.", body_style)
         ],
         [

@@ -1,7 +1,7 @@
 /**
  * Squeeze AI - Background Service Worker (Manifest V3)
  * High-performance local token optimizer, DLP secret scanner,
- * Graphify AST Code Skeletonizer, Headroom CacheAligner & Context Vault engine.
+ * Squeeze AST Code Skeletonizer, CacheAligner & Context Vault engine.
  */
 
 try {
@@ -552,15 +552,15 @@ async function processVaultContext(prompt, mode, rules) {
         let contentToProcess = f.content;
         const ext = f.name.split(".").pop().toLowerCase();
 
-        // 🚀 Graphify & Headroom Intelligence:
+        // 🚀 Squeeze Code & Data Intelligence:
         // Automatically skeletonize code and fold JSON arrays to save 70-90% tokens!
         let labelSuffix = "";
         if (typeof skeletonizeCode === "function" && ["py", "ts", "tsx", "js", "jsx", "go", "rs"].includes(ext)) {
           contentToProcess = skeletonizeCode(f.content, f.name);
-          labelSuffix = " (Graphify Skeleton)";
+          labelSuffix = " (Squeeze Skeleton)";
         } else if (typeof shrinkJson === "function" && ext === "json") {
           contentToProcess = shrinkJson(f.content, 2);
-          labelSuffix = " (Headroom Shrunk)";
+          labelSuffix = " (Squeeze Shrunk)";
         }
 
         const optFile = optimizeLocally(maskSensitiveData(contentToProcess).sanitized, mode, rules).optimized;
@@ -745,7 +745,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
-  // --- GRAPHIFY & HEADROOM ACTIONS ---
+  // --- SQUEEZE CODE & CACHE ACTIONS ---
   if (request.action === "skeletonizeCode") {
     (async () => {
       try {
