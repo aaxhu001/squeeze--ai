@@ -87,10 +87,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function formatBytes(bytes) {
-    if (bytes === 0) return "0 B";
+    if (!bytes || bytes <= 0) return "0 B";
     const k = 1024;
-    const sizes = ["B", "KB", "MB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const sizes = ["B", "KB", "MB", "GB", "TB"];
+    const i = Math.min(Math.floor(Math.log(bytes) / Math.log(k)), sizes.length - 1);
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
   }
 
@@ -146,11 +146,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (statCost) statCost.textContent = cost > 0 && cost < 0.01 ? `$${cost.toFixed(4)}` : `$${cost.toFixed(2)}`;
 
         // Vault
-        vaultPreferences.value = data.vaultPreferences || "";
-        vaultPrefAlwaysInject.checked = data.vaultPrefAlwaysInject !== false;
-        vaultSmartTriggers.checked = data.vaultSmartTriggers !== false;
+        if (vaultPreferences) vaultPreferences.value = data.vaultPreferences || "";
+        if (vaultPrefAlwaysInject) vaultPrefAlwaysInject.checked = data.vaultPrefAlwaysInject !== false;
+        if (vaultSmartTriggers) vaultSmartTriggers.checked = data.vaultSmartTriggers !== false;
         localVaultFiles = data.vaultFiles || [];
-        renderVaultFiles();
+        if (vaultFileList) renderVaultFiles();
 
         // Apply article strip greying after mode is set
         updateArticleStripState();
@@ -177,66 +177,82 @@ document.addEventListener("DOMContentLoaded", () => {
     radio.addEventListener("change", updateArticleStripState);
   });
 
-  settingsForm.addEventListener("submit", e => {
-    e.preventDefault();
-    const mode = document.querySelector('input[name="optimizationMode"]:checked')?.value || "balanced";
+  if (settingsForm) {
+    settingsForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const mode = document.querySelector('input[name="optimizationMode"]:checked')?.value || "balanced";
 
-    chrome.storage.local.set(
-      {
-        optimizationMode: mode,
-        ruleSecretShield: ruleSecretShield ? ruleSecretShield.checked : true,
-        ruleStripGreetings: ruleStripGreetings ? ruleStripGreetings.checked : true,
-        ruleSimplifyPhrases: ruleSimplifyPhrases ? ruleSimplifyPhrases.checked : true,
-        ruleAbbreviate: ruleAbbreviate ? ruleAbbreviate.checked : true,
-        ruleStripArticles: ruleStripArticles ? ruleStripArticles.checked : true,
-        rulePolishMarkdown: rulePolishMarkdown ? rulePolishMarkdown.checked : true
-      },
-      () => {
-        saveFeedback.classList.add("show");
-        setTimeout(() => {
-          saveFeedback.classList.remove("show");
-        }, 2500);
-      }
-    );
-  });
+      chrome.storage.local.set(
+        {
+          optimizationMode: mode,
+          ruleSecretShield: ruleSecretShield ? ruleSecretShield.checked : true,
+          ruleStripGreetings: ruleStripGreetings ? ruleStripGreetings.checked : true,
+          ruleSimplifyPhrases: ruleSimplifyPhrases ? ruleSimplifyPhrases.checked : true,
+          ruleAbbreviate: ruleAbbreviate ? ruleAbbreviate.checked : true,
+          ruleStripArticles: ruleStripArticles ? ruleStripArticles.checked : true,
+          rulePolishMarkdown: rulePolishMarkdown ? rulePolishMarkdown.checked : true
+        },
+        () => {
+          if (saveFeedback) {
+            saveFeedback.classList.add("show");
+            setTimeout(() => {
+              saveFeedback.classList.remove("show");
+            }, 2500);
+          }
+        }
+      );
+    });
+  }
 
   // --- VAULT PREFERENCES AUTO-SAVE ---
-  vaultPreferences.addEventListener("input", () => {
-    chrome.storage.local.set({ vaultPreferences: vaultPreferences.value });
-  });
+  if (vaultPreferences) {
+    vaultPreferences.addEventListener("input", () => {
+      chrome.storage.local.set({ vaultPreferences: vaultPreferences.value });
+    });
+  }
 
-  vaultPrefAlwaysInject.addEventListener("change", () => {
-    chrome.storage.local.set({ vaultPrefAlwaysInject: vaultPrefAlwaysInject.checked });
-  });
+  if (vaultPrefAlwaysInject) {
+    vaultPrefAlwaysInject.addEventListener("change", () => {
+      chrome.storage.local.set({ vaultPrefAlwaysInject: vaultPrefAlwaysInject.checked });
+    });
+  }
 
-  vaultSmartTriggers.addEventListener("change", () => {
-    chrome.storage.local.set({ vaultSmartTriggers: vaultSmartTriggers.checked });
-  });
+  if (vaultSmartTriggers) {
+    vaultSmartTriggers.addEventListener("change", () => {
+      chrome.storage.local.set({ vaultSmartTriggers: vaultSmartTriggers.checked });
+    });
+  }
 
   // --- VAULT FILES UPLOAD ---
-  vaultBrowseLink.addEventListener("click", e => {
-    e.preventDefault();
-    vaultFileInput.click();
-  });
+  if (vaultBrowseLink && vaultFileInput) {
+    vaultBrowseLink.addEventListener("click", e => {
+      e.preventDefault();
+      vaultFileInput.click();
+    });
+  }
 
-  vaultFileInput.addEventListener("change", e => {
-    processUploadedFiles(e.target.files);
-  });
+  if (vaultFileInput) {
+    vaultFileInput.addEventListener("change", e => {
+      processUploadedFiles(e.target.files);
+    });
+  }
 
-  vaultDropZone.addEventListener("dragover", e => {
-    e.preventDefault();
-    vaultDropZone.classList.add("dragover");
-  });
+  if (vaultDropZone) {
+    vaultDropZone.addEventListener("dragover", e => {
+      e.preventDefault();
+      vaultDropZone.classList.add("dragover");
+    });
 
-  vaultDropZone.addEventListener("dragleave", () => {
-    vaultDropZone.classList.remove("dragover");
-  });
+    vaultDropZone.addEventListener("dragleave", () => {
+      vaultDropZone.classList.remove("dragover");
+    });
 
-  vaultDropZone.addEventListener("drop", e => {
-    e.preventDefault();
-    vaultDropZone.classList.remove("dragover");
-    processUploadedFiles(e.dataTransfer.files);
-  });
+    vaultDropZone.addEventListener("drop", e => {
+      e.preventDefault();
+      vaultDropZone.classList.remove("dragover");
+      processUploadedFiles(e.dataTransfer.files);
+    });
+  }
 
   function processUploadedFiles(files) {
     const MAX_FILE_BYTES  = 500 * 1024;  // 500 KB per file

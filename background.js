@@ -225,8 +225,9 @@ function optimizeLocally(text, mode = "balanced", rules = {}) {
       /\b(?:as\s+we\s+discussed|just\s+to\s+recap\s+our\s+discussion|recap\s+our\s+discussion)\b(?:\s+(?:earlier\s+in\s+the\s+thread|above|previously|before))?[.,!?]*\s*/gi
     ];
     metaPatterns.forEach(p => {
-      if (p.test(processed)) {
-        processed = processed.replace(p, "");
+      const next = processed.replace(p, "");
+      if (next !== processed) {
+        processed = next;
         changed = true;
       }
     });
@@ -248,8 +249,9 @@ function optimizeLocally(text, mode = "balanced", rules = {}) {
       /\bi\s+was\s+hoping\s+you\s+could\b\s*/gi
     ];
     qualifiers.forEach(regex => {
-      if (regex.test(processed)) {
-        processed = processed.replace(regex, "");
+      const next = processed.replace(regex, "");
+      if (next !== processed) {
+        processed = next;
         changed = true;
       }
     });
@@ -259,8 +261,9 @@ function optimizeLocally(text, mode = "balanced", rules = {}) {
   // 4. Role-play Preamble Compaction
   if (rules.ruleStripGreetings) {
     const roleRegex = /\bact\s+as\s+(?:if\s+you\s+were\s+)?(?:though\s+you\s+were\s+)?(?:a\s+|an\s+)?(?:the\s+)?(?:expert\s+|professional\s+|senior\s+|experienced\s+)?([\w\s-]+?)(?:\s+with\s+\d+\s+years\s+of\s+experience|\s+with\s+experience)?\s*([.,!?]|$)/gi;
-    if (roleRegex.test(processed)) {
-      processed = processed.replace(roleRegex, (m, role, punct) => `Act as ${role.trim()}${punct || "."}`);
+    const nextRole = processed.replace(roleRegex, (m, role, punct) => `Act as ${role.trim()}${punct || "."}`);
+    if (nextRole !== processed) {
+      processed = nextRole;
       rulesApplied.push("Role-play preamble compaction");
     }
   }
@@ -291,73 +294,78 @@ function optimizeLocally(text, mode = "balanced", rules = {}) {
     ];
 
     politenessPatterns.forEach(item => {
-      if (item.regex.test(processed)) {
-        processed = item.replaceWith !== undefined
-          ? processed.replace(item.regex, item.replaceWith)
-          : processed.replace(item.regex, "");
+      const next = item.replaceWith !== undefined
+        ? processed.replace(item.regex, item.replaceWith)
+        : processed.replace(item.regex, "");
+      if (next !== processed) {
+        processed = next;
         changed = true;
       }
     });
-    if (changed) rulesApplied.push("Politeness padding removal");
+    if (changed) rulesApplied.push("Greetings & politeness removal");
   }
 
-  // 6. Verbosity Simplification (Comprehensive dictionary)
+  // 6. Verbosity Simplification (Dictionary-based)
   if (rules.ruleSimplifyPhrases) {
     const dictionary = {
       "in order to": "to",
       "due to the fact that": "because",
       "at this point in time": "now",
-      "for the purpose of": "to",
-      "has the ability to": "can",
-      "take into consideration": "consider",
-      "make a decision": "decide",
-      "utilize": "use",
-      "utilizes": "uses",
-      "utilizing": "using",
-      "as well as": "and",
-      "a number of": "several",
-      "along the lines of": "like",
-      "referred to as": "called",
+      "until such time as": "until",
+      "with reference to": "about",
+      "with regard to": "about",
       "in the event that": "if",
-      "on a daily basis": "daily",
-      "with respect to": "regarding",
-      "in addition to": "and",
-      "so as to": "to",
-      "is responsible for": "does",
-      "by means of": "by",
-      "in close proximity to": "near",
-      "make use of": "use",
-      "perform an analysis of": "analyze",
-      "provide an explanation of": "explain",
-      "conduct an investigation into": "investigate",
-      "has a requirement for": "needs",
-      "it is important to note that": "note that",
-      "bearing in mind that": "considering",
-      "for the reason that": "because",
+      "for the purpose of": "to",
       "in the near future": "soon",
-      "in the course of": "during",
+      "a large number of": "many",
+      "a majority of": "most",
+      "has the ability to": "can",
+      "is able to": "can",
+      "are able to": "can",
+      "in accordance with": "per",
+      "prior to": "before",
+      "subsequent to": "after",
+      "take into consideration": "consider",
+      "make use of": "use",
+      "utilize": "use",
+      "in close proximity to": "near",
+      "at the present time": "currently",
+      "in view of the fact that": "because",
+      "give consideration to": "consider",
+      "have a tendency to": "tend to",
+      "conduct an investigation into": "investigate",
+      "make an assumption": "assume",
+      "are of the opinion that": "believe",
+      "in a timely manner": "promptly",
+      "on a daily basis": "daily",
+      "on a regular basis": "regularly",
+      "a sufficient amount of": "enough",
+      "give an indication of": "indicate",
+      "put an end to": "end",
+      "reach a decision": "decide",
+      "come to an end": "end",
       "with the exception of": "except",
+      "as a means of": "to",
+      "in connection with": "about",
+      "in terms of": "regarding",
       "are in agreement": "agree",
       "make adjustments to": "adjust",
       "give rise to": "cause",
       "draw attention to": "highlight",
-      "at the present time": "currently",
-      "subsequent to": "after",
-      "prior to": "before",
       "take steps to": "try to",
       "despite the fact that": "although",
       "as a consequence of": "because of",
       "at an early date": "soon",
       "by virtue of": "because of",
-      "give consideration to": "consider",
       "in spite of": "despite"
     };
 
     let changed = false;
     for (const [verbose, concise] of Object.entries(dictionary)) {
       const reg = new RegExp(`\\b${verbose}\\b`, "gi");
-      if (reg.test(processed)) {
-        processed = processed.replace(reg, concise);
+      const next = processed.replace(reg, concise);
+      if (next !== processed) {
+        processed = next;
         changed = true;
       }
     }
@@ -418,8 +426,9 @@ function optimizeLocally(text, mode = "balanced", rules = {}) {
     let changed = false;
     for (const [full, abbr] of Object.entries(abbrevs)) {
       const reg = new RegExp(`\\b${full}\\b`, "gi");
-      if (reg.test(processed)) {
-        processed = processed.replace(reg, abbr);
+      const next = processed.replace(reg, abbr);
+      if (next !== processed) {
+        processed = next;
         changed = true;
       }
     }
@@ -444,15 +453,17 @@ function optimizeLocally(text, mode = "balanced", rules = {}) {
     let changed = false;
     for (const [k, v] of Object.entries(auxiliaries)) {
       const reg = new RegExp(`\\b${k}\\b`, "gi");
-      if (reg.test(processed)) {
-        processed = processed.replace(reg, v);
+      const next = processed.replace(reg, v);
+      if (next !== processed) {
+        processed = next;
         changed = true;
       }
     }
 
     const articles = /\b(?:the|a|an)\b\s+/gi;
-    if (articles.test(processed)) {
-      processed = processed.replace(articles, "");
+    const nextArticles = processed.replace(articles, "");
+    if (nextArticles !== processed) {
+      processed = nextArticles;
       changed = true;
     }
 
@@ -713,26 +724,34 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.action === "getStats") {
     (async () => {
-      const stats = await chrome.storage.local.get([
-        "stats_promptsOptimized",
-        "stats_tokensSaved",
-        "stats_costSaved",
-        "stats_history"
-      ]);
-      sendResponse({ success: true, stats });
+      try {
+        const stats = await chrome.storage.local.get([
+          "stats_promptsOptimized",
+          "stats_tokensSaved",
+          "stats_costSaved",
+          "stats_history"
+        ]);
+        sendResponse({ success: true, stats });
+      } catch (err) {
+        sendResponse({ success: false, error: err.message });
+      }
     })();
     return true;
   }
 
   if (request.action === "resetStats") {
     (async () => {
-      await chrome.storage.local.set({
-        stats_promptsOptimized: 0,
-        stats_tokensSaved: 0,
-        stats_costSaved: 0,
-        stats_history: []
-      });
-      sendResponse({ success: true });
+      try {
+        await chrome.storage.local.set({
+          stats_promptsOptimized: 0,
+          stats_tokensSaved: 0,
+          stats_costSaved: 0,
+          stats_history: []
+        });
+        sendResponse({ success: true });
+      } catch (err) {
+        sendResponse({ success: false, error: err.message });
+      }
     })();
     return true;
   }

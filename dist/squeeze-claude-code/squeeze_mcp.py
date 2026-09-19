@@ -260,7 +260,7 @@ def generate_codebase_graph(root_dir: str = ".", max_files: int = 120) -> str:
     symbol_count = 0
     raw_bytes = 0
 
-    for root, dirs, files in os.walk(root_dir):
+    for root, dirs, files in os.walk(root_dir, followlinks=False):
         dirs[:] = [d for d in dirs if d not in ignore_dirs and not d.startswith(".")]
         for f in files:
             if f.endswith(".min.js") or f.endswith(".min.css") or f.startswith("."):
@@ -563,7 +563,9 @@ def handle_message(msg):
         args = params.get("arguments", {})
 
         if tool_name == "squeeze_codebase_graph":
-            graph = generate_codebase_graph(args.get("directory_path", "."), args.get("max_files", 100))
+            target_dir = args.get("directory_path") or args.get("root_dir") or "."
+            max_f = args.get("max_files", 100)
+            graph = generate_codebase_graph(target_dir, max_f)
             return {
                 "jsonrpc": "2.0",
                 "id": msg_id,
@@ -574,7 +576,8 @@ def handle_message(msg):
             }
         
         elif tool_name == "squeeze_compress":
-            res = optimize_prompt(args.get("text", ""), store_reversible=args.get("store_reversible", True))
+            input_text = args.get("text") or args.get("prompt") or ""
+            res = optimize_prompt(input_text, store_reversible=args.get("store_reversible", True))
             return {
                 "jsonrpc": "2.0",
                 "id": msg_id,
@@ -585,7 +588,9 @@ def handle_message(msg):
             }
             
         elif tool_name == "squeeze_skeleton":
-            skel = skeletonize_code(args.get("code", ""), args.get("language", "python"))
+            input_code = args.get("code") or args.get("text") or ""
+            lang = args.get("language") or args.get("lang") or "python"
+            skel = skeletonize_code(input_code, lang)
             return {
                 "jsonrpc": "2.0",
                 "id": msg_id,
@@ -596,7 +601,8 @@ def handle_message(msg):
             }
             
         elif tool_name == "squeeze_shrink_json":
-            shrunk = shrink_json_data(args.get("json_text", ""), args.get("max_array_items", 2))
+            input_json = args.get("json_text") or args.get("text") or ""
+            shrunk = shrink_json_data(input_json, args.get("max_array_items", 2))
             return {
                 "jsonrpc": "2.0",
                 "id": msg_id,
@@ -607,7 +613,8 @@ def handle_message(msg):
             }
 
         elif tool_name == "squeeze_shrink_logs":
-            shrunk_l = shrink_logs_data(args.get("log_text", ""))
+            input_logs = args.get("log_text") or args.get("logs") or args.get("text") or ""
+            shrunk_l = shrink_logs_data(input_logs)
             return {
                 "jsonrpc": "2.0",
                 "id": msg_id,
@@ -618,7 +625,7 @@ def handle_message(msg):
             }
 
         elif tool_name == "squeeze_retrieve":
-            cid = args.get("chunk_id", "").strip()
+            cid = (args.get("chunk_id") or args.get("id") or "").strip()
             if cid in CHUNK_STORE:
                 chunk_data = CHUNK_STORE[cid]
                 return {
@@ -641,9 +648,9 @@ def handle_message(msg):
 
         elif tool_name == "squeeze_cache_align":
             aligned = align_prompt_for_cache(
-                args.get("system_prompt", ""),
-                args.get("architecture_context", ""),
-                args.get("user_task", "")
+                args.get("system_prompt") or args.get("prefix") or "",
+                args.get("architecture_context") or args.get("context") or "",
+                args.get("user_task") or args.get("task") or args.get("prompt") or ""
             )
             return {
                 "jsonrpc": "2.0",
@@ -693,11 +700,26 @@ def main():
         line = sys.stdin.readline()
         if not line:
             break
+        stripped = line.strip()
+        if not stripped:
+            continue
         try:
-            line = line.strip()
-            if not line:
-                continue
-            req = json.loads(line)
+            req = json.loads(stripped)
+        except json.JSONDecodeError as jde:
+            err_res = {
+                "jsonrpc": "2.0",
+                "id": None,
+                "error": {"code": -32700, "message": f"Parse error: {str(jde)}"}
+            }
+            sys.stdout.write(json.dumps(err_res) + "\n")
+            sys.stdout.flush()
+            continue
+        except Exception as e:
+            sys.stderr.write(f"Error parsing input line: {e}\n")
+            sys.stderr.flush()
+            continue
+
+        try:
             res = handle_message(req)
             if res:
                 sys.stdout.write(json.dumps(res) + "\n")

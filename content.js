@@ -1250,7 +1250,12 @@
     sidebarBtn.addEventListener("click", e => {
       e.stopPropagation();
       hideTooltip();
-      chrome.runtime.sendMessage({ action: "openSidePanel" });
+      chrome.runtime.sendMessage({ action: "openSidePanel" }, response => {
+        if (chrome.runtime.lastError) {
+          // Suppress error in console if side panel is not accessible
+          const _err = chrome.runtime.lastError.message;
+        }
+      });
     });
 
     nav.appendChild(sidebarBtn);

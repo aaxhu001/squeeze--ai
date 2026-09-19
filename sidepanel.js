@@ -134,14 +134,16 @@ document.addEventListener("DOMContentLoaded", () => {
     charCount.textContent = `${chars.toLocaleString()} chars · ${words.toLocaleString()} words`;
   }
 
-  inputPrompt.addEventListener("input", updateInputMetrics);
+  if (inputPrompt) inputPrompt.addEventListener("input", updateInputMetrics);
 
-  clearInputBtn.addEventListener("click", () => {
-    inputPrompt.value = "";
-    updateInputMetrics();
-    outputSection.style.display = "none";
-    inputPrompt.focus();
-  });
+  if (clearInputBtn) {
+    clearInputBtn.addEventListener("click", () => {
+      if (inputPrompt) inputPrompt.value = "";
+      updateInputMetrics();
+      if (outputSection) outputSection.style.display = "none";
+      if (inputPrompt) inputPrompt.focus();
+    });
+  }
 
   // --- MODE SELECTION ---
   modeButtons.forEach(btn => {
@@ -208,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function escapeHtml(str) {
-    return str
+    return (str || "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -218,14 +220,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- SQUEEZE EXECUTION ---
   async function executeOptimization() {
+    if (!inputPrompt) return;
     const text = inputPrompt.value.trim();
     if (!text) {
       inputPrompt.focus();
       return;
     }
 
-    squeezeBtn.disabled = true;
-    squeezeBtn.querySelector(".btn-text").textContent = "Squeezing...";
+    if (squeezeBtn) {
+      squeezeBtn.disabled = true;
+      const btnText = squeezeBtn.querySelector(".btn-text");
+      if (btnText) btnText.textContent = "Squeezing...";
+    }
 
     try {
       chrome.runtime.sendMessage(
@@ -235,8 +241,11 @@ document.addEventListener("DOMContentLoaded", () => {
           mode: currentMode
         },
         response => {
-          squeezeBtn.disabled = false;
-          squeezeBtn.querySelector(".btn-text").textContent = "Squeeze Prompt";
+          if (squeezeBtn) {
+            squeezeBtn.disabled = false;
+            const btnText = squeezeBtn.querySelector(".btn-text");
+            if (btnText) btnText.textContent = "Squeeze Prompt";
+          }
 
           if (chrome.runtime.lastError) {
             alert("Error communicating with Squeeze background service: " + chrome.runtime.lastError.message);
@@ -251,135 +260,160 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       );
     } catch (err) {
-      squeezeBtn.disabled = false;
-      squeezeBtn.querySelector(".btn-text").textContent = "Squeeze Prompt";
+      if (squeezeBtn) {
+        squeezeBtn.disabled = false;
+        const btnText = squeezeBtn.querySelector(".btn-text");
+        if (btnText) btnText.textContent = "Squeeze Prompt";
+      }
       alert("Error: " + err.message);
     }
   }
 
   function renderOutput(data) {
     lastOptimizedResult = data;
-    outputSection.style.display = "flex";
+    if (outputSection) outputSection.style.display = "flex";
 
     // Tokens & Percent
-    tokensSavedVal.textContent = data.tokensSaved.toLocaleString();
-    percentSavedVal.textContent = `${data.percentageSaved}%`;
-    finalTokenCount.textContent = data.optimizedTokens.toLocaleString();
+    if (tokensSavedVal) tokensSavedVal.textContent = data.tokensSaved.toLocaleString();
+    if (percentSavedVal) percentSavedVal.textContent = `${data.percentageSaved}%`;
+    if (finalTokenCount) finalTokenCount.textContent = data.optimizedTokens.toLocaleString();
 
     // Intent quality heuristic
     let intentScore = 98;
     if (data.mode === "squeeze") intentScore = 93;
     else if (data.mode === "polish") intentScore = 99;
-    qualityPill.textContent = `⚡ ${intentScore}% Intent Preserved`;
+    if (qualityPill) qualityPill.textContent = `⚡ ${intentScore}% Intent Preserved`;
 
     // DLP Alert
-    if (data.secretsDetected && data.secretsDetected.length > 0) {
-      secretAlertBanner.style.display = "flex";
-      secretAlertCount.textContent = `${data.secretsDetected.length} secret(s) safely masked (${data.secretsDetected.map(s => s.type).join(", ")}).`;
-    } else {
-      secretAlertBanner.style.display = "none";
+    if (secretAlertBanner) {
+      if (data.secretsDetected && data.secretsDetected.length > 0) {
+        secretAlertBanner.style.display = "flex";
+        if (secretAlertCount) secretAlertCount.textContent = `${data.secretsDetected.length} secret(s) safely masked (${data.secretsDetected.map(s => s.type).join(", ")}).`;
+      } else {
+        secretAlertBanner.style.display = "none";
+      }
     }
 
     // Diff view & clean view
-    diffContainer.innerHTML = generateDiffHtml(data.original, data.optimized);
-    cleanTextarea.value = data.optimized;
+    if (diffContainer) diffContainer.innerHTML = generateDiffHtml(data.original, data.optimized);
+    if (cleanTextarea) cleanTextarea.value = data.optimized;
 
     // Default to diff view
-    diffContainer.style.display = "block";
-    cleanTextarea.style.display = "none";
-    viewDiffBtn.classList.add("active");
-    viewCleanBtn.classList.remove("active");
+    if (diffContainer) diffContainer.style.display = "block";
+    if (cleanTextarea) cleanTextarea.style.display = "none";
+    if (viewDiffBtn) viewDiffBtn.classList.add("active");
+    if (viewCleanBtn) viewCleanBtn.classList.remove("active");
 
     // Applied rule chips
-    rulesChips.innerHTML = "";
-    if (data.rulesApplied && data.rulesApplied.length > 0) {
-      data.rulesApplied.forEach(rule => {
-        const chip = document.createElement("span");
-        chip.className = "sp-rule-chip";
-        chip.textContent = `✓ ${rule}`;
-        rulesChips.appendChild(chip);
-      });
+    if (rulesChips) {
+      rulesChips.innerHTML = "";
+      if (data.rulesApplied && data.rulesApplied.length > 0) {
+        data.rulesApplied.forEach(rule => {
+          const chip = document.createElement("span");
+          chip.className = "sp-rule-chip";
+          chip.textContent = `✓ ${rule}`;
+          rulesChips.appendChild(chip);
+        });
+      }
     }
 
     // Cost calculations per 100 queries
     const multiplier = 100;
     const tokens = data.tokensSaved;
-    costSonnet.textContent = `$${((tokens / 1_000_000) * 3.00 * multiplier).toFixed(3)}`;
-    costGpt4o.textContent = `$${((tokens / 1_000_000) * 2.50 * multiplier).toFixed(3)}`;
-    costGemini.textContent = `$${((tokens / 1_000_000) * 1.25 * multiplier).toFixed(3)}`;
-    costDeepseek.textContent = `$${((tokens / 1_000_000) * 0.14 * multiplier).toFixed(4)}`;
+    if (costSonnet) costSonnet.textContent = `$${((tokens / 1_000_000) * 3.00 * multiplier).toFixed(3)}`;
+    if (costGpt4o) costGpt4o.textContent = `$${((tokens / 1_000_000) * 2.50 * multiplier).toFixed(3)}`;
+    if (costGemini) costGemini.textContent = `$${((tokens / 1_000_000) * 1.25 * multiplier).toFixed(3)}`;
+    if (costDeepseek) costDeepseek.textContent = `$${((tokens / 1_000_000) * 0.14 * multiplier).toFixed(4)}`;
 
     // Scroll output into view
-    outputSection.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (outputSection) outputSection.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
-  squeezeBtn.addEventListener("click", executeOptimization);
+  if (squeezeBtn) squeezeBtn.addEventListener("click", executeOptimization);
 
   // View toggle
-  viewDiffBtn.addEventListener("click", () => {
-    viewDiffBtn.classList.add("active");
-    viewCleanBtn.classList.remove("active");
-    diffContainer.style.display = "block";
-    cleanTextarea.style.display = "none";
-  });
+  if (viewDiffBtn) {
+    viewDiffBtn.addEventListener("click", () => {
+      viewDiffBtn.classList.add("active");
+      if (viewCleanBtn) viewCleanBtn.classList.remove("active");
+      if (diffContainer) diffContainer.style.display = "block";
+      if (cleanTextarea) cleanTextarea.style.display = "none";
+    });
+  }
 
-  viewCleanBtn.addEventListener("click", () => {
-    viewCleanBtn.classList.add("active");
-    viewDiffBtn.classList.remove("active");
-    diffContainer.style.display = "none";
-    cleanTextarea.style.display = "block";
-  });
+  if (viewCleanBtn) {
+    viewCleanBtn.addEventListener("click", () => {
+      viewCleanBtn.classList.add("active");
+      if (viewDiffBtn) viewDiffBtn.classList.remove("active");
+      if (diffContainer) diffContainer.style.display = "none";
+      if (cleanTextarea) cleanTextarea.style.display = "block";
+    });
+  }
 
   // Copy result
-  copyResultBtn.addEventListener("click", async () => {
-    if (!lastOptimizedResult) return;
-    try {
-      await navigator.clipboard.writeText(lastOptimizedResult.optimized);
-      feedbackMsg.textContent = "Copied to clipboard!";
-      feedbackMsg.style.display = "block";
-      setTimeout(() => { feedbackMsg.style.display = "none"; }, 2000);
-    } catch (err) {
-      feedbackMsg.textContent = "Failed to copy.";
-      feedbackMsg.style.display = "block";
-    }
-  });
+  if (copyResultBtn) {
+    copyResultBtn.addEventListener("click", async () => {
+      if (!lastOptimizedResult) return;
+      try {
+        await navigator.clipboard.writeText(lastOptimizedResult.optimized);
+        if (feedbackMsg) {
+          feedbackMsg.textContent = "Copied to clipboard!";
+          feedbackMsg.style.display = "block";
+          setTimeout(() => { feedbackMsg.style.display = "none"; }, 2000);
+        }
+      } catch (err) {
+        if (feedbackMsg) {
+          feedbackMsg.textContent = "Failed to copy.";
+          feedbackMsg.style.display = "block";
+        }
+      }
+    });
+  }
 
   // Insert into active tab
-  sendToTabBtn.addEventListener("click", async () => {
-    if (!lastOptimizedResult) return;
-    const textToInsert = lastOptimizedResult.optimized;
+  if (sendToTabBtn) {
+    sendToTabBtn.addEventListener("click", async () => {
+      if (!lastOptimizedResult) return;
+      const textToInsert = lastOptimizedResult.optimized;
 
-    try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (!tab?.id) {
-        alert("No active browser tab found.");
-        return;
-      }
-
-      chrome.tabs.sendMessage(
-        tab.id,
-        { action: "insertPrompt", text: textToInsert },
-        response => {
-          if (chrome.runtime.lastError || !response?.success) {
-            // Fallback copy
-            navigator.clipboard.writeText(textToInsert);
-            feedbackMsg.textContent = "Copied to clipboard! (Switch to chat and paste)";
-            feedbackMsg.style.display = "block";
-            setTimeout(() => { feedbackMsg.style.display = "none"; }, 3500);
-          } else {
-            feedbackMsg.textContent = "Injected into active chat input! ✨";
-            feedbackMsg.style.display = "block";
-            setTimeout(() => { feedbackMsg.style.display = "none"; }, 2500);
-          }
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab?.id) {
+          alert("No active browser tab found.");
+          return;
         }
-      );
-    } catch (e) {
-      navigator.clipboard.writeText(textToInsert);
-      feedbackMsg.textContent = "Copied to clipboard!";
-      feedbackMsg.style.display = "block";
-      setTimeout(() => { feedbackMsg.style.display = "none"; }, 2500);
-    }
-  });
+
+        chrome.tabs.sendMessage(
+          tab.id,
+          { action: "insertPrompt", text: textToInsert },
+          response => {
+            if (chrome.runtime.lastError || !response?.success) {
+              // Fallback copy
+              navigator.clipboard.writeText(textToInsert);
+              if (feedbackMsg) {
+                feedbackMsg.textContent = "Copied to clipboard! (Switch to chat and paste)";
+                feedbackMsg.style.display = "block";
+                setTimeout(() => { feedbackMsg.style.display = "none"; }, 3500);
+              }
+            } else {
+              if (feedbackMsg) {
+                feedbackMsg.textContent = "Injected into active chat input! ✨";
+                feedbackMsg.style.display = "block";
+                setTimeout(() => { feedbackMsg.style.display = "none"; }, 2500);
+              }
+            }
+          }
+        );
+      } catch (e) {
+        navigator.clipboard.writeText(textToInsert);
+        if (feedbackMsg) {
+          feedbackMsg.textContent = "Copied to clipboard!";
+          feedbackMsg.style.display = "block";
+          setTimeout(() => { feedbackMsg.style.display = "none"; }, 2500);
+        }
+      }
+    });
+  }
 
   // --- DEMO PRESETS (HACKATHON SHOWCASE) ---
   const DEV_DEMO_PROMPT = `Hello Claude! Hope you are doing well today. Could you please help me write a function in order to connect to our MongoDB database?
@@ -405,8 +439,10 @@ In the event that the service fails, you will be able to retry up to 3 times.`;
 
   function loadAndRunDemo(promptText, mode = "squeeze") {
     switchTab("studio");
-    inputPrompt.value = promptText;
-    updateInputMetrics();
+    if (inputPrompt) {
+      inputPrompt.value = promptText;
+      updateInputMetrics();
+    }
 
     // Select mode
     modeButtons.forEach(b => {
@@ -421,27 +457,32 @@ In the event that the service fails, you will be able to retry up to 3 times.`;
     }, 150);
   }
 
-  demoPitchBtn.addEventListener("click", () => loadAndRunDemo(DEV_DEMO_PROMPT, "squeeze"));
-  demoPresetDev.addEventListener("click", () => loadAndRunDemo(DEV_DEMO_PROMPT, "squeeze"));
-  demoPresetEmail.addEventListener("click", () => loadAndRunDemo(EMAIL_DEMO_PROMPT, "balanced"));
-  demoPresetCode.addEventListener("click", () => loadAndRunDemo(SPEC_DEMO_PROMPT, "squeeze"));
+  if (demoPitchBtn) demoPitchBtn.addEventListener("click", () => loadAndRunDemo(DEV_DEMO_PROMPT, "squeeze"));
+  if (demoPresetDev) demoPresetDev.addEventListener("click", () => loadAndRunDemo(DEV_DEMO_PROMPT, "squeeze"));
+  if (demoPresetEmail) demoPresetEmail.addEventListener("click", () => loadAndRunDemo(EMAIL_DEMO_PROMPT, "balanced"));
+  if (demoPresetCode) demoPresetCode.addEventListener("click", () => loadAndRunDemo(SPEC_DEMO_PROMPT, "squeeze"));
 
   // --- FRAMEWORKS TAB ---
-  fwApplyCostar.addEventListener("click", () => {
-    const costarTemplate = `# Context: Building a high-throughput payment processing service in Go.
+  if (fwApplyCostar) {
+    fwApplyCostar.addEventListener("click", () => {
+      const costarTemplate = `# Context: Building a high-throughput payment processing service in Go.
 # Objective: Implement a resilient idempotent webhook handler for Stripe events.
 # Style: Concise, production-ready Go code with idiomatic error handling.
 # Tone: Direct, technical, zero conversational filler.
 # Audience: Senior Backend Systems Engineer.
 # Response: Output only the handler function and table-driven unit tests.`;
-    switchTab("studio");
-    inputPrompt.value = costarTemplate;
-    updateInputMetrics();
-    inputPrompt.focus();
-  });
+      switchTab("studio");
+      if (inputPrompt) {
+        inputPrompt.value = costarTemplate;
+        updateInputMetrics();
+        inputPrompt.focus();
+      }
+    });
+  }
 
-  fwApplyFewshot.addEventListener("click", () => {
-    const fewshotTemplate = `Task: Convert natural language queries to SQL.
+  if (fwApplyFewshot) {
+    fwApplyFewshot.addEventListener("click", () => {
+      const fewshotTemplate = `Task: Convert natural language queries to SQL.
 
 Input: "Show all active users signed up in the last 7 days"
 Output: SELECT * FROM users WHERE status = 'active' AND created_at >= NOW() - INTERVAL '7 days';
@@ -451,14 +492,18 @@ Output: SELECT category, SUM(amount) AS total_revenue FROM sales WHERE EXTRACT(Y
 
 Input: "List customers with more than 5 orders who haven't purchased in 30 days"
 Output:`;
-    switchTab("studio");
-    inputPrompt.value = fewshotTemplate;
-    updateInputMetrics();
-    inputPrompt.focus();
-  });
+      switchTab("studio");
+      if (inputPrompt) {
+        inputPrompt.value = fewshotTemplate;
+        updateInputMetrics();
+        inputPrompt.focus();
+      }
+    });
+  }
 
-  fwApplyCode.addEventListener("click", () => {
-    const codeTemplate = `// Problem: Memory leak in long-running worker process.
+  if (fwApplyCode) {
+    fwApplyCode.addEventListener("click", () => {
+      const codeTemplate = `// Problem: Memory leak in long-running worker process.
 // Constraints: Node.js 20, heap limit 512MB, zero external deps.
 // Stack Trace: Allocation failed - JavaScript heap out of memory.
 
@@ -470,32 +515,39 @@ function processBatch(items) {
 }
 
 // Request: Refactor to stream or chunk processing with garbage collector friendly pattern.`;
-    switchTab("studio");
-    inputPrompt.value = codeTemplate;
-    updateInputMetrics();
-    inputPrompt.focus();
-  });
+      switchTab("studio");
+      if (inputPrompt) {
+        inputPrompt.value = codeTemplate;
+        updateInputMetrics();
+        inputPrompt.focus();
+      }
+    });
+  }
 
-  fwApplyExec.addEventListener("click", () => {
-    const execTemplate = `Summarize the following document for an executive brief.
+  if (fwApplyExec) {
+    fwApplyExec.addEventListener("click", () => {
+      const execTemplate = `Summarize the following document for an executive brief.
 Constraints:
 - Exactly 3 core takeaways with quantitative metrics.
 - 2 critical risks and mitigations.
 - Zero introductory or concluding pleasantries.
 
 [Insert Document Text Here]`;
-    switchTab("studio");
-    inputPrompt.value = execTemplate;
-    updateInputMetrics();
-    inputPrompt.focus();
-  });
+      switchTab("studio");
+      if (inputPrompt) {
+        inputPrompt.value = execTemplate;
+        updateInputMetrics();
+        inputPrompt.focus();
+      }
+    });
+  }
 
   // --- DLP SHIELD REALTIME TESTER ---
   if (dlpTestInput) {
     dlpTestInput.addEventListener("input", () => {
       const val = dlpTestInput.value;
       if (!val.trim()) {
-        dlpResultBox.innerHTML = '<span class="sp-placeholder-text">Sanitized output will appear here in real time...</span>';
+        if (dlpResultBox) dlpResultBox.innerHTML = '<span class="sp-placeholder-text">Sanitized output will appear here in real time...</span>';
         return;
       }
       // Run quick local regex
@@ -507,7 +559,7 @@ Constraints:
       sanitized = sanitized.replace(/((?:mongodb(?:\+srv)?|postgres(?:ql)?|mysql):\/\/[^:\s]+:)([^@\s]+)(@)/gi, '$1<span style="color: #f87171; font-weight: bold;">[MASKED_DB_PASS]</span>$3');
       sanitized = sanitized.replace(/\b((?:API_KEY|SECRET|PASSWORD|PASSWD)\s*[:=]\s*["'])([^"'\n]{4,})(["'])/gi, '$1<span style="color: #f87171; font-weight: bold;">[MASKED_SECRET]</span>$3');
 
-      dlpResultBox.innerHTML = sanitized;
+      if (dlpResultBox) dlpResultBox.innerHTML = sanitized;
     });
   }
 
@@ -520,46 +572,60 @@ Constraints:
       "vaultFiles"
     ]);
 
-    vaultPrefs.value = data.vaultPreferences || "";
-    vaultAlwaysInject.checked = data.vaultPrefAlwaysInject !== false;
-    vaultSmartTriggers.checked = data.vaultSmartTriggers !== false;
+    if (vaultPrefs) vaultPrefs.value = data.vaultPreferences || "";
+    if (vaultAlwaysInject) vaultAlwaysInject.checked = data.vaultPrefAlwaysInject !== false;
+    if (vaultSmartTriggers) vaultSmartTriggers.checked = data.vaultSmartTriggers !== false;
     vaultFilesList = data.vaultFiles || [];
     renderVaultFiles();
   }
 
-  vaultPrefs.addEventListener("input", () => {
-    chrome.storage.local.set({ vaultPreferences: vaultPrefs.value });
-  });
+  if (vaultPrefs) {
+    vaultPrefs.addEventListener("input", () => {
+      chrome.storage.local.set({ vaultPreferences: vaultPrefs.value });
+    });
+  }
 
-  vaultAlwaysInject.addEventListener("change", () => {
-    chrome.storage.local.set({ vaultPrefAlwaysInject: vaultAlwaysInject.checked });
-  });
+  if (vaultAlwaysInject) {
+    vaultAlwaysInject.addEventListener("change", () => {
+      chrome.storage.local.set({ vaultPrefAlwaysInject: vaultAlwaysInject.checked });
+    });
+  }
 
-  vaultSmartTriggers.addEventListener("change", () => {
-    chrome.storage.local.set({ vaultSmartTriggers: vaultSmartTriggers.checked });
-  });
+  if (vaultSmartTriggers) {
+    vaultSmartTriggers.addEventListener("change", () => {
+      chrome.storage.local.set({ vaultSmartTriggers: vaultSmartTriggers.checked });
+    });
+  }
 
-  vaultBrowseLink.addEventListener("click", () => vaultFileInput.click());
-  vaultDropzone.addEventListener("click", e => {
-    if (e.target !== vaultBrowseLink) vaultFileInput.click();
-  });
+  if (vaultBrowseLink && vaultFileInput) {
+    vaultBrowseLink.addEventListener("click", () => vaultFileInput.click());
+  }
+  if (vaultDropzone && vaultFileInput) {
+    vaultDropzone.addEventListener("click", e => {
+      if (e.target !== vaultBrowseLink) vaultFileInput.click();
+    });
+  }
 
-  vaultFileInput.addEventListener("change", e => handleFilesUpload(e.target.files));
+  if (vaultFileInput) {
+    vaultFileInput.addEventListener("change", e => handleFilesUpload(e.target.files));
+  }
 
-  vaultDropzone.addEventListener("dragover", e => {
-    e.preventDefault();
-    vaultDropzone.classList.add("dragover");
-  });
+  if (vaultDropzone) {
+    vaultDropzone.addEventListener("dragover", e => {
+      e.preventDefault();
+      vaultDropzone.classList.add("dragover");
+    });
 
-  vaultDropzone.addEventListener("dragleave", () => {
-    vaultDropzone.classList.remove("dragover");
-  });
+    vaultDropzone.addEventListener("dragleave", () => {
+      vaultDropzone.classList.remove("dragover");
+    });
 
-  vaultDropzone.addEventListener("drop", e => {
-    e.preventDefault();
-    vaultDropzone.classList.remove("dragover");
-    handleFilesUpload(e.dataTransfer.files);
-  });
+    vaultDropzone.addEventListener("drop", e => {
+      e.preventDefault();
+      vaultDropzone.classList.remove("dragover");
+      handleFilesUpload(e.dataTransfer.files);
+    });
+  }
 
   function handleFilesUpload(files) {
     const valid = Array.from(files).map(f => {
@@ -589,6 +655,7 @@ Constraints:
   }
 
   function renderVaultFiles() {
+    if (!vaultList) return;
     vaultList.innerHTML = "";
     if (vaultFilesList.length === 0) {
       vaultList.innerHTML = '<li class="empty-list-msg">No reference files in vault yet.</li>';
@@ -625,42 +692,46 @@ Constraints:
     const tokens = data.stats_tokensSaved || 0;
     const cost = data.stats_costSaved || 0;
 
-    analyticsPrompts.textContent = prompts >= 1000 ? `${(prompts / 1000).toFixed(1)}k` : prompts;
-    analyticsTokens.textContent = tokens >= 1000000 ? `${(tokens / 1000000).toFixed(2)}M` : tokens >= 1000 ? `${(tokens / 1000).toFixed(1)}k` : tokens;
-    analyticsCost.textContent = cost > 0 && cost < 0.01 ? `$${cost.toFixed(4)}` : `$${cost.toFixed(2)}`;
+    if (analyticsPrompts) analyticsPrompts.textContent = prompts >= 1000 ? `${(prompts / 1000).toFixed(1)}k` : prompts;
+    if (analyticsTokens) analyticsTokens.textContent = tokens >= 1000000 ? `${(tokens / 1000000).toFixed(2)}M` : tokens >= 1000 ? `${(tokens / 1000).toFixed(1)}k` : tokens;
+    if (analyticsCost) analyticsCost.textContent = cost > 0 && cost < 0.01 ? `$${cost.toFixed(4)}` : `$${cost.toFixed(2)}`;
 
     // Eco stats: 1,000 tokens ~ 0.003 Wh on an H100 cluster, ~ 0.0015 g CO2
     const wh = (tokens * 0.000003).toFixed(2);
     const co2 = (tokens * 0.0000015).toFixed(2);
-    ecoEnergy.textContent = `${wh} Wh`;
-    ecoCo2.textContent = `${co2} g`;
+    if (ecoEnergy) ecoEnergy.textContent = `${wh} Wh`;
+    if (ecoCo2) ecoCo2.textContent = `${co2} g`;
 
     // History
     const history = data.stats_history || [];
-    historyList.innerHTML = "";
-    if (history.length === 0) {
-      historyList.innerHTML = '<li class="empty-list-msg">No history entries yet.</li>';
-      return;
-    }
+    if (historyList) {
+      historyList.innerHTML = "";
+      if (history.length === 0) {
+        historyList.innerHTML = '<li class="empty-list-msg">No history entries yet.</li>';
+        return;
+      }
 
-    history.forEach(item => {
-      const li = document.createElement("li");
-      li.className = "sp-history-item";
-      li.innerHTML = `
-        <span class="sp-history-snippet" title="${escapeHtml(item.snippet)}">${escapeHtml(item.snippet)}</span>
-        <span class="sp-history-stat">+${item.tokensSaved} tok (${item.percentageSaved}%)</span>
-      `;
-      historyList.appendChild(li);
-    });
-  }
-
-  resetStatsBtn.addEventListener("click", () => {
-    if (confirm("Reset all local statistics for a fresh demo run?")) {
-      chrome.runtime.sendMessage({ action: "resetStats" }, () => {
-        loadAnalytics();
+      history.forEach(item => {
+        const li = document.createElement("li");
+        li.className = "sp-history-item";
+        li.innerHTML = `
+          <span class="sp-history-snippet" title="${escapeHtml(item.snippet)}">${escapeHtml(item.snippet)}</span>
+          <span class="sp-history-stat">+${item.tokensSaved} tok (${item.percentageSaved}%)</span>
+        `;
+        historyList.appendChild(li);
       });
     }
-  });
+  }
+
+  if (resetStatsBtn) {
+    resetStatsBtn.addEventListener("click", () => {
+      if (confirm("Reset all local statistics for a fresh demo run?")) {
+        chrome.runtime.sendMessage({ action: "resetStats" }, () => {
+          loadAnalytics();
+        });
+      }
+    });
+  }
 
   // --- SQUEEZE CODE & CACHE CONTROLLER ---
   const skelLangSelect = document.getElementById("spSkelLangSelect");

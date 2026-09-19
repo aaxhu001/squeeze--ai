@@ -311,9 +311,10 @@
     const relationships = [];
 
     for (const file of filesList) {
-      const name = file.name;
+      if (!file) continue;
+      const name = file.name || "unnamed";
       const content = file.content || "";
-      const ext = name.split(".").pop().toLowerCase();
+      const ext = name.includes(".") ? name.split(".").pop().toLowerCase() : "";
 
       const imports = [];
       const exportsList = [];
@@ -366,7 +367,7 @@
 
   // --- 4. PROVIDER CACHE ALIGNER ---
   // Reorders prompt content into [Tier 1: Static Prefix] -> [Tier 2: Code Skeletons] -> [Tier 3: Dynamic Tail]
-  // to maximize Anthropic Claude & OpenAI 90% prompt-cache hit rates.
+  // to maximize Anthropic Claude & OpenAI prompt-cache hit rates.
   function alignPromptForCache(systemPrompt, architectureContext, userTask) {
     const parts = [];
 
@@ -397,4 +398,29 @@
   exports.buildCodebaseGraph = buildCodebaseGraph;
   exports.alignPromptForCache = alignPromptForCache;
 
-})(typeof module !== "undefined" && module.exports ? module.exports : (window.SqueezeSkeletonizer = {}));
+  // Also bind to root scope (self/globalThis/window) so service workers and extension pages
+  // can access top-level functions directly.
+  const rootScope = typeof globalThis !== "undefined"
+    ? globalThis
+    : typeof self !== "undefined"
+      ? self
+      : typeof window !== "undefined"
+        ? window
+        : this;
+
+  if (rootScope) {
+    rootScope.SqueezeSkeletonizer = exports;
+    rootScope.skeletonizePython = skeletonizePython;
+    rootScope.skeletonizeTypeScript = skeletonizeTypeScript;
+    rootScope.skeletonizeCode = skeletonizeCode;
+    rootScope.shrinkJson = shrinkJson;
+    rootScope.shrinkLogs = shrinkLogs;
+    rootScope.buildCodebaseGraph = buildCodebaseGraph;
+    rootScope.alignPromptForCache = alignPromptForCache;
+  }
+
+})(
+  typeof module !== "undefined" && module.exports
+    ? module.exports
+    : ((typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : this).SqueezeSkeletonizer = {})
+);
