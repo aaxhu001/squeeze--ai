@@ -1,0 +1,303 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Squeeze AI - LLM Context Optimizer API",
+    "description": "Native context compression, code skeletonization, log collapsing, and secret masking engine for LLM pipelines and Bedrock Agents.",
+    "version": "1.3.0"
+  },
+  "paths": {
+    "/shrink-logs": {
+      "post": {
+        "summary": "Compress repetitive terminal or CloudWatch logs",
+        "description": "Deduplicates repeating log lines, collapses stack traces, and strips noisy timestamps and UUIDs, reducing log volume by 80-95% before sending to Bedrock.",
+        "operationId": "squeeze_shrink_logs",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "log_text": {
+                    "type": "string",
+                    "description": "Raw uncompressed CloudWatch or application log output"
+                  }
+                },
+                "required": ["log_text"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Compressed and deduplicated log summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "compressed_logs": { "type": "string" },
+                    "original_tokens": { "type": "integer" },
+                    "compressed_tokens": { "type": "integer" },
+                    "tokens_saved": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shrink-json": {
+      "post": {
+        "summary": "Fold repetitive JSON data structures and huge hashes",
+        "description": "Folds repetitive array records and collapses long base64/hex data hashes to save 75%+ tokens on API responses and DynamoDB/Kinesis dumps.",
+        "operationId": "squeeze_shrink_json",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "json_text": {
+                    "type": "string",
+                    "description": "Large JSON string to shrink"
+                  },
+                  "max_array_items": {
+                    "type": "integer",
+                    "description": "Number of sample items to preserve per array (default 2)",
+                    "default": 2
+                  }
+                },
+                "required": ["json_text"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Shrunk JSON payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "shrunk_json": { "type": "string" },
+                    "original_tokens": { "type": "integer" },
+                    "shrunk_tokens": { "type": "integer" },
+                    "tokens_saved": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/skeleton": {
+      "post": {
+        "summary": "Extract AST code skeleton from source code",
+        "description": "Strips function and method bodies while preserving classes, signatures, interfaces, and docstrings for Python, TypeScript, Go, or Rust.",
+        "operationId": "squeeze_skeleton",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "Full source code text"
+                  },
+                  "language": {
+                    "type": "string",
+                    "description": "Programming language (python, typescript, javascript, go, rust)",
+                    "default": "python"
+                  }
+                },
+                "required": ["code"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "AST structural skeleton",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "skeleton": { "type": "string" },
+                    "original_tokens": { "type": "integer" },
+                    "skeleton_tokens": { "type": "integer" },
+                    "tokens_saved": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/compress": {
+      "post": {
+        "summary": "Compress prompt or tool output with DLP secret masking",
+        "description": "Applies Squeeze heuristic optimization, masks 8 credential signatures (AWS, OpenAI, GitHub, DB URIs), and applies reversible chunk caching.",
+        "operationId": "squeeze_compress",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "Prompt, tool output, or text to compress"
+                  },
+                  "mask_secrets": {
+                    "type": "boolean",
+                    "description": "Scan and mask API credentials and secrets",
+                    "default": true
+                  }
+                },
+                "required": ["text"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Compressed and sanitized text",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "optimized": { "type": "string" },
+                    "chunk_id": { "type": "string", "nullable": true },
+                    "original_tokens": { "type": "integer" },
+                    "optimized_tokens": { "type": "integer" },
+                    "tokens_saved": { "type": "integer" },
+                    "secrets_masked": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/codebase-graph": {
+      "post": {
+        "summary": "Generate topological codebase knowledge graph",
+        "description": "Scans directories to build an import dependency graph, computes centrality ranking, and exposes module interface hubs.",
+        "operationId": "squeeze_codebase_graph",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "directory_path": {
+                    "type": "string",
+                    "description": "Root directory path to scan (defaults to current directory)",
+                    "default": "."
+                  },
+                  "max_files": {
+                    "type": "integer",
+                    "description": "Maximum files to inspect",
+                    "default": 100
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Topological dependency graph markdown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "graph_markdown": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/retrieve": {
+      "post": {
+        "summary": "Losslessly retrieve original uncompressed chunk",
+        "description": "Retrieves the full original content for a chunk previously compressed with reversible chunking.",
+        "operationId": "squeeze_retrieve",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "chunk_id": {
+                    "type": "string",
+                    "description": "Deterministic chunk ID (e.g. chunk_a1b2c3d4)"
+                  }
+                },
+                "required": ["chunk_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Original uncompressed content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "original_text": { "type": "string" },
+                    "found": { "type": "boolean" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats": {
+      "get": {
+        "summary": "Get cumulative token metrics and multi-model cost savings",
+        "description": "Returns total tokens compressed, tokens saved, compression ratio, and cost savings across Claude 3.5 Sonnet, Opus, and GPT-4o.",
+        "operationId": "squeeze_stats",
+        "responses": {
+          "200": {
+            "description": "Token and dollar savings analytics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "metrics": { "type": "object" },
+                    "compression_percentage": { "type": "number" },
+                    "estimated_dollar_savings": { "type": "object" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

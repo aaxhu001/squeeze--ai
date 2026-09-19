@@ -1,0 +1,66 @@
+{
+  "version": "54.0.0",
+  "files": {
+    "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6": {
+      "displayName": "SqueezeLogPipelineStack/Custom::S3AutoDeleteObjectsCustomResourceProvider Code",
+      "source": {
+        "path": "asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "691193790160-us-east-1-d49f54f8": {
+          "bucketName": "cdk-hnb659fds-assets-691193790160-us-east-1",
+          "objectKey": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::691193790160:role/cdk-hnb659fds-file-publishing-role-691193790160-us-east-1"
+        }
+      }
+    },
+    "81fdfd454df1b33db3e850aeb6c423df6be298d85a4ab7f85d63c99f76eb53c7": {
+      "displayName": "NoisyLoggerFunction/Code",
+      "source": {
+        "path": "asset.81fdfd454df1b33db3e850aeb6c423df6be298d85a4ab7f85d63c99f76eb53c7",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "691193790160-us-east-1-4203dc62": {
+          "bucketName": "cdk-hnb659fds-assets-691193790160-us-east-1",
+          "objectKey": "81fdfd454df1b33db3e850aeb6c423df6be298d85a4ab7f85d63c99f76eb53c7.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::691193790160:role/cdk-hnb659fds-file-publishing-role-691193790160-us-east-1"
+        }
+      }
+    },
+    "56c263d9e76312476cd8ca620fd191b4d2db9ee4537f33eff0658877dacb7124": {
+      "displayName": "SqueezeLogProcessorFunction/Code",
+      "source": {
+        "path": "asset.56c263d9e76312476cd8ca620fd191b4d2db9ee4537f33eff0658877dacb7124",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "691193790160-us-east-1-905b8468": {
+          "bucketName": "cdk-hnb659fds-assets-691193790160-us-east-1",
+          "objectKey": "56c263d9e76312476cd8ca620fd191b4d2db9ee4537f33eff0658877dacb7124.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::691193790160:role/cdk-hnb659fds-file-publishing-role-691193790160-us-east-1"
+        }
+      }
+    },
+    "53d76abb09dd34cb02be099099bf1069ff71e93e27f107cc13a70e83a20f7297": {
+      "displayName": "SqueezeLogPipelineStack Template",
+      "source": {
+        "path": "SqueezeLogPipelineStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "691193790160-us-east-1-2d98c37f": {
+          "bucketName": "cdk-hnb659fds-assets-691193790160-us-east-1",
+          "objectKey": "53d76abb09dd34cb02be099099bf1069ff71e93e27f107cc13a70e83a20f7297.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::691193790160:role/cdk-hnb659fds-file-publishing-role-691193790160-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

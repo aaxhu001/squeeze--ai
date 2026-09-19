@@ -1,0 +1,525 @@
+{
+ "Description": "Priority 1: Squeeze Remote MCP Server and Bedrock Agent Action Group",
+ "Resources": {
+  "SqueezeMcpServerFunctionServiceRole7AFA3115": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/SqueezeMcpServerFunction/ServiceRole/Resource"
+   }
+  },
+  "SqueezeMcpServerFunction3366EA92": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-691193790160-us-east-1",
+     "S3Key": "6732323ac764912c1126eb2a09ad4f297d4f7747e794397ac2a7b4169f7bd6c7.zip"
+    },
+    "Description": "Squeeze AI Remote MCP & REST context compression server",
+    "Environment": {
+     "Variables": {
+      "PYTHONUNBUFFERED": "1"
+     }
+    },
+    "FunctionName": "squeeze-aws-mcp-server",
+    "Handler": "app.lambda_handler",
+    "MemorySize": 512,
+    "Role": {
+     "Fn::GetAtt": [
+      "SqueezeMcpServerFunctionServiceRole7AFA3115",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "SqueezeMcpServerFunctionServiceRole7AFA3115"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/SqueezeMcpServerFunction/Resource",
+    "aws:asset:path": "asset.6732323ac764912c1126eb2a09ad4f297d4f7747e794397ac2a7b4169f7bd6c7",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "SqueezeMcpServerFunctionFunctionUrl2C0BB9E3": {
+   "Type": "AWS::Lambda::Url",
+   "Properties": {
+    "AuthType": "NONE",
+    "Cors": {
+     "AllowHeaders": [
+      "*"
+     ],
+     "AllowMethods": [
+      "*"
+     ],
+     "AllowOrigins": [
+      "*"
+     ],
+     "MaxAge": 86400
+    },
+    "TargetFunctionArn": {
+     "Fn::GetAtt": [
+      "SqueezeMcpServerFunction3366EA92",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/SqueezeMcpServerFunction/FunctionUrl/Resource"
+   }
+  },
+  "SqueezeMcpServerFunctioninvokefunctionurlA32B5404": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunctionUrl",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SqueezeMcpServerFunction3366EA92",
+      "Arn"
+     ]
+    },
+    "FunctionUrlAuthType": "NONE",
+    "Principal": "*"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/SqueezeMcpServerFunction/invoke-function-url"
+   }
+  },
+  "SqueezeMcpServerFunctioninvokefunctionDF63CBB4": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SqueezeMcpServerFunction3366EA92",
+      "Arn"
+     ]
+    },
+    "InvokedViaFunctionUrl": true,
+    "Principal": "*"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/SqueezeMcpServerFunction/invoke-function"
+   }
+  },
+  "SqueezeActionGroupFunctionServiceRole2E5B628A": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/SqueezeActionGroupFunction/ServiceRole/Resource"
+   }
+  },
+  "SqueezeActionGroupFunctionServiceRoleDefaultPolicyED921F14": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "cloudwatch:PutMetricData",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SqueezeActionGroupFunctionServiceRoleDefaultPolicyED921F14",
+    "Roles": [
+     {
+      "Ref": "SqueezeActionGroupFunctionServiceRole2E5B628A"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/SqueezeActionGroupFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "SqueezeActionGroupFunctionB7EFFD94": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-691193790160-us-east-1",
+     "S3Key": "fb7524e4bdfa49a7c0562cbda0a8fcb4382ae04921545c47005de6f6d6593dcf.zip"
+    },
+    "Description": "Executes Squeeze context compression tools for Bedrock Agents",
+    "Environment": {
+     "Variables": {
+      "PYTHONUNBUFFERED": "1"
+     }
+    },
+    "FunctionName": "squeeze-bedrock-action-handler",
+    "Handler": "index.lambda_handler",
+    "MemorySize": 512,
+    "Role": {
+     "Fn::GetAtt": [
+      "SqueezeActionGroupFunctionServiceRole2E5B628A",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "SqueezeActionGroupFunctionServiceRoleDefaultPolicyED921F14",
+    "SqueezeActionGroupFunctionServiceRole2E5B628A"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/SqueezeActionGroupFunction/Resource",
+    "aws:asset:path": "asset.fb7524e4bdfa49a7c0562cbda0a8fcb4382ae04921545c47005de6f6d6593dcf",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "SqueezeActionGroupFunctionAllowBedrockInvocation3DE94E5C": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SqueezeActionGroupFunctionB7EFFD94",
+      "Arn"
+     ]
+    },
+    "Principal": "bedrock.amazonaws.com",
+    "SourceAccount": "691193790160"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/SqueezeActionGroupFunction/AllowBedrockInvocation"
+   }
+  },
+  "SqueezeBedrockAgentRoleB639F1A3": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "bedrock.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "IAM execution role for Squeeze AI Bedrock Agent",
+    "RoleName": "squeeze-bedrock-agent-role-us-east-1",
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/SqueezeBedrockAgentRole/Resource"
+   }
+  },
+  "SqueezeBedrockAgentRoleDefaultPolicyB0842AAB": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "bedrock:InvokeModel",
+       "Effect": "Allow",
+       "Resource": "arn:aws:bedrock:us-east-1::foundation-model/*"
+      },
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SqueezeActionGroupFunctionB7EFFD94",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SqueezeActionGroupFunctionB7EFFD94",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SqueezeBedrockAgentRoleDefaultPolicyB0842AAB",
+    "Roles": [
+     {
+      "Ref": "SqueezeBedrockAgentRoleB639F1A3"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/SqueezeBedrockAgentRole/DefaultPolicy/Resource"
+   }
+  },
+  "SqueezeBedrockAgent": {
+   "Type": "AWS::Bedrock::Agent",
+   "Properties": {
+    "ActionGroups": [
+     {
+      "ActionGroupExecutor": {
+       "Lambda": {
+        "Fn::GetAtt": [
+         "SqueezeActionGroupFunctionB7EFFD94",
+         "Arn"
+        ]
+       }
+      },
+      "ActionGroupName": "SqueezeOptimizerActions",
+      "ApiSchema": {
+       "Payload": "{\n  \"openapi\": \"3.0.0\",\n  \"info\": {\n    \"title\": \"Squeeze AI - LLM Context Optimizer API\",\n    \"description\": \"Native context compression, code skeletonization, log collapsing, and secret masking engine for LLM pipelines and Bedrock Agents.\",\n    \"version\": \"1.3.0\"\n  },\n  \"paths\": {\n    \"/shrink-logs\": {\n      \"post\": {\n        \"summary\": \"Compress repetitive terminal or CloudWatch logs\",\n        \"description\": \"Deduplicates repeating log lines, collapses stack traces, and strips noisy timestamps and UUIDs, reducing log volume by 80-95% before sending to Bedrock.\",\n        \"operationId\": \"squeeze_shrink_logs\",\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"log_text\": {\n                    \"type\": \"string\",\n                    \"description\": \"Raw uncompressed CloudWatch or application log output\"\n                  }\n                },\n                \"required\": [\"log_text\"]\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Compressed and deduplicated log summary\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"object\",\n                  \"properties\": {\n                    \"compressed_logs\": { \"type\": \"string\" },\n                    \"original_tokens\": { \"type\": \"integer\" },\n                    \"compressed_tokens\": { \"type\": \"integer\" },\n                    \"tokens_saved\": { \"type\": \"integer\" }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    },\n    \"/shrink-json\": {\n      \"post\": {\n        \"summary\": \"Fold repetitive JSON data structures and huge hashes\",\n        \"description\": \"Folds repetitive array records and collapses long base64/hex data hashes to save 75%+ tokens on API responses and DynamoDB/Kinesis dumps.\",\n        \"operationId\": \"squeeze_shrink_json\",\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"json_text\": {\n                    \"type\": \"string\",\n                    \"description\": \"Large JSON string to shrink\"\n                  },\n                  \"max_array_items\": {\n                    \"type\": \"integer\",\n                    \"description\": \"Number of sample items to preserve per array (default 2)\",\n                    \"default\": 2\n                  }\n                },\n                \"required\": [\"json_text\"]\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Shrunk JSON payload\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"object\",\n                  \"properties\": {\n                    \"shrunk_json\": { \"type\": \"string\" },\n                    \"original_tokens\": { \"type\": \"integer\" },\n                    \"shrunk_tokens\": { \"type\": \"integer\" },\n                    \"tokens_saved\": { \"type\": \"integer\" }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    },\n    \"/skeleton\": {\n      \"post\": {\n        \"summary\": \"Extract AST code skeleton from source code\",\n        \"description\": \"Strips function and method bodies while preserving classes, signatures, interfaces, and docstrings for Python, TypeScript, Go, or Rust.\",\n        \"operationId\": \"squeeze_skeleton\",\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"code\": {\n                    \"type\": \"string\",\n                    \"description\": \"Full source code text\"\n                  },\n                  \"language\": {\n                    \"type\": \"string\",\n                    \"description\": \"Programming language (python, typescript, javascript, go, rust)\",\n                    \"default\": \"python\"\n                  }\n                },\n                \"required\": [\"code\"]\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"AST structural skeleton\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"object\",\n                  \"properties\": {\n                    \"skeleton\": { \"type\": \"string\" },\n                    \"original_tokens\": { \"type\": \"integer\" },\n                    \"skeleton_tokens\": { \"type\": \"integer\" },\n                    \"tokens_saved\": { \"type\": \"integer\" }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    },\n    \"/compress\": {\n      \"post\": {\n        \"summary\": \"Compress prompt or tool output with DLP secret masking\",\n        \"description\": \"Applies Squeeze heuristic optimization, masks 8 credential signatures (AWS, OpenAI, GitHub, DB URIs), and applies reversible chunk caching.\",\n        \"operationId\": \"squeeze_compress\",\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"text\": {\n                    \"type\": \"string\",\n                    \"description\": \"Prompt, tool output, or text to compress\"\n                  },\n                  \"mask_secrets\": {\n                    \"type\": \"boolean\",\n                    \"description\": \"Scan and mask API credentials and secrets\",\n                    \"default\": true\n                  }\n                },\n                \"required\": [\"text\"]\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Compressed and sanitized text\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"object\",\n                  \"properties\": {\n                    \"optimized\": { \"type\": \"string\" },\n                    \"chunk_id\": { \"type\": \"string\", \"nullable\": true },\n                    \"original_tokens\": { \"type\": \"integer\" },\n                    \"optimized_tokens\": { \"type\": \"integer\" },\n                    \"tokens_saved\": { \"type\": \"integer\" },\n                    \"secrets_masked\": { \"type\": \"integer\" }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    },\n    \"/codebase-graph\": {\n      \"post\": {\n        \"summary\": \"Generate topological codebase knowledge graph\",\n        \"description\": \"Scans directories to build an import dependency graph, computes centrality ranking, and exposes module interface hubs.\",\n        \"operationId\": \"squeeze_codebase_graph\",\n        \"requestBody\": {\n          \"required\": false,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"directory_path\": {\n                    \"type\": \"string\",\n                    \"description\": \"Root directory path to scan (defaults to current directory)\",\n                    \"default\": \".\"\n                  },\n                  \"max_files\": {\n                    \"type\": \"integer\",\n                    \"description\": \"Maximum files to inspect\",\n                    \"default\": 100\n                  }\n                }\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Topological dependency graph markdown\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"object\",\n                  \"properties\": {\n                    \"graph_markdown\": { \"type\": \"string\" }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    },\n    \"/retrieve\": {\n      \"post\": {\n        \"summary\": \"Losslessly retrieve original uncompressed chunk\",\n        \"description\": \"Retrieves the full original content for a chunk previously compressed with reversible chunking.\",\n        \"operationId\": \"squeeze_retrieve\",\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"type\": \"object\",\n                \"properties\": {\n                  \"chunk_id\": {\n                    \"type\": \"string\",\n                    \"description\": \"Deterministic chunk ID (e.g. chunk_a1b2c3d4)\"\n                  }\n                },\n                \"required\": [\"chunk_id\"]\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Original uncompressed content\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"object\",\n                  \"properties\": {\n                    \"original_text\": { \"type\": \"string\" },\n                    \"found\": { \"type\": \"boolean\" }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    },\n    \"/stats\": {\n      \"get\": {\n        \"summary\": \"Get cumulative token metrics and multi-model cost savings\",\n        \"description\": \"Returns total tokens compressed, tokens saved, compression ratio, and cost savings across Claude 3.5 Sonnet, Opus, and GPT-4o.\",\n        \"operationId\": \"squeeze_stats\",\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Token and dollar savings analytics\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"object\",\n                  \"properties\": {\n                    \"metrics\": { \"type\": \"object\" },\n                    \"compression_percentage\": { \"type\": \"number\" },\n                    \"estimated_dollar_savings\": { \"type\": \"object\" }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+      },
+      "Description": "Squeeze context compression, log deduplication, AST skeletonization, and secret masking tools"
+     }
+    ],
+    "AgentName": "Squeeze-Bedrock-Optimizer",
+    "AgentResourceRoleArn": {
+     "Fn::GetAtt": [
+      "SqueezeBedrockAgentRoleB639F1A3",
+      "Arn"
+     ]
+    },
+    "AutoPrepare": true,
+    "Description": "Autonomous AWS Agent with Squeeze context compression and DLP Secret Shield tools",
+    "FoundationModel": "anthropic.claude-3-5-sonnet-20241022-v2:0",
+    "Instruction": "You are the Squeeze-Bedrock-Optimizer Agent. Before analyzing large logs, massive JSON structures, or source code, ALWAYS call the appropriate Squeeze action (squeeze_shrink_logs, squeeze_shrink_json, squeeze_skeleton, squeeze_compress, squeeze_codebase_graph) to compress the context window and prevent token bloat. Then synthesize your findings and report the compression savings.",
+    "Tags": {
+     "Hackathon": "Bedrock-Context-Optimizer",
+     "ManagedBy": "AWS-CDK",
+     "Project": "Squeeze-AI"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/SqueezeBedrockAgent"
+   }
+  },
+  "SqueezeAgentAlias": {
+   "Type": "AWS::Bedrock::AgentAlias",
+   "Properties": {
+    "AgentAliasName": "live",
+    "AgentId": {
+     "Fn::GetAtt": [
+      "SqueezeBedrockAgent",
+      "AgentId"
+     ]
+    },
+    "Description": "Live production alias for Squeeze Bedrock Agent",
+    "Tags": {
+     "Hackathon": "Bedrock-Context-Optimizer",
+     "ManagedBy": "AWS-CDK",
+     "Project": "Squeeze-AI"
+    }
+   },
+   "DependsOn": [
+    "SqueezeBedrockAgent"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/SqueezeAgentAlias"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/z2LTWvDMAyGf0vvjlacw85pYdeVlp2L4qhBjSOPSF4Zxv99JFt3eh7eDw/+dQ/7HT60CcPURO6hXAzD5PCh1xJx7geE8pYlGCdxx5v8+1M+lrjmfzjRMrMqJ6mOcYZyTpHWYuMpRQ7f226z6rS9oiqZQrfCaQuHHCayAyq5noYlhQnK8SbdSGLuKV1k1Frd9roYjizjWr5n+8xWnaSB4K4vX96Db8Hv7srcLFmMZ4LzL38AxqzdRAABAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeMcpBedrockStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "SqueezeMcpEndpointUrl": {
+   "Description": "Public HTTP/SSE Remote MCP Endpoint for Squeeze (compatible with Cursor, Claude Code, Bedrock)",
+   "Value": {
+    "Fn::GetAtt": [
+     "SqueezeMcpServerFunctionFunctionUrl2C0BB9E3",
+     "FunctionUrl"
+    ]
+   }
+  },
+  "BedrockAgentId": {
+   "Description": "Amazon Bedrock Agent ID equipped with Squeeze Action Group",
+   "Value": {
+    "Fn::GetAtt": [
+     "SqueezeBedrockAgent",
+     "AgentId"
+    ]
+   }
+  },
+  "BedrockAgentAliasId": {
+   "Description": "Amazon Bedrock Agent Live Alias ID",
+   "Value": {
+    "Fn::GetAtt": [
+     "SqueezeAgentAlias",
+     "AgentAliasId"
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

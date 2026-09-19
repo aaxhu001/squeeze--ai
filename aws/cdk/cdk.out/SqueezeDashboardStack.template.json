@@ -1,0 +1,109 @@
+{
+ "Description": "CloudWatch Dashboard for real-time Squeeze token savings and metrics",
+ "Resources": {
+  "SqueezeCloudWatchDashboard1D03C6F1": {
+   "Type": "AWS::CloudWatch::Dashboard",
+   "Properties": {
+    "DashboardBody": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"start\":\"-PT1H\",\"widgets\":[{\"type\":\"text\",\"width\":24,\"height\":2,\"x\":0,\"y\":0,\"properties\":{\"markdown\":\"# ⚡ SQUEEZE AI - LIVE CONTEXT OPTIMIZATION & DLP MONITOR\\nUniversal LLM context compressor running natively on AWS Bedrock, Lambda, and CloudWatch.\\n**Deduplicates logs • Skeletons AST • Folds JSON • Masks secrets • Cuts token costs by 80–95%**\"}},{\"type\":\"metric\",\"width\":6,\"height\":4,\"x\":0,\"y\":2,\"properties\":{\"view\":\"singleValue\",\"title\":\"💎 Cumulative Tokens Saved\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"SqueezeAI\",\"TokensSaved\",{\"color\":\"#4BC0C0\",\"label\":\"Tokens Saved\",\"period\":60,\"stat\":\"Sum\"}]]}},{\"type\":\"metric\",\"width\":6,\"height\":4,\"x\":6,\"y\":2,\"properties\":{\"view\":\"singleValue\",\"title\":\"💵 Estimated Cost Saved ($ USD)\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"SqueezeAI\",\"EstimatedCostSavedUSD\",{\"color\":\"#FFCE56\",\"label\":\"Cost Saved (USD @ Sonnet $3/M)\",\"period\":60,\"stat\":\"Sum\"}]]}},{\"type\":\"metric\",\"width\":6,\"height\":4,\"x\":12,\"y\":2,\"properties\":{\"view\":\"singleValue\",\"title\":\"🛡️ DLP Secrets Intercepted\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"SqueezeAI\",\"SecretsMasked\",{\"color\":\"#9966FF\",\"label\":\"DLP Credentials Masked\",\"period\":60,\"stat\":\"Sum\"}]]}},{\"type\":\"metric\",\"width\":6,\"height\":4,\"x\":18,\"y\":2,\"properties\":{\"view\":\"singleValue\",\"title\":\"📉 Real-Time Compression Ratio\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[{\"label\":\"Compression Ratio (%)\",\"color\":\"#2ECC71\",\"expression\":\"((m1 - m2) / m1) * 100\",\"period\":60}],[\"SqueezeAI\",\"TokensBefore\",{\"color\":\"#FF6384\",\"label\":\"Raw Tokens Ingested\",\"id\":\"m1\",\"visible\":false,\"period\":60,\"stat\":\"Sum\"}],[\"SqueezeAI\",\"TokensAfter\",{\"color\":\"#36A2EB\",\"label\":\"Squeezed Tokens Sent to Bedrock\",\"id\":\"m2\",\"visible\":false,\"period\":60,\"stat\":\"Sum\"}]]}},{\"type\":\"metric\",\"width\":16,\"height\":6,\"x\":0,\"y\":6,\"properties\":{\"view\":\"timeSeries\",\"title\":\"📊 Raw Tokens vs Squeezed Tokens Ingested Over Time\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"SqueezeAI\",\"TokensBefore\",{\"color\":\"#FF6384\",\"label\":\"Raw Tokens Ingested\",\"period\":60,\"stat\":\"Sum\"}],[\"SqueezeAI\",\"TokensAfter\",{\"color\":\"#36A2EB\",\"label\":\"Squeezed Tokens Sent to Bedrock\",\"period\":60,\"stat\":\"Sum\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":8,\"height\":6,\"x\":16,\"y\":6,\"properties\":{\"view\":\"timeSeries\",\"title\":\"📈 Token Compression % Efficiency\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[{\"label\":\"Compression Ratio (%)\",\"color\":\"#2ECC71\",\"expression\":\"((m1 - m2) / m1) * 100\",\"period\":60}],[\"SqueezeAI\",\"TokensBefore\",{\"color\":\"#FF6384\",\"label\":\"Raw Tokens Ingested\",\"id\":\"m1\",\"visible\":false,\"period\":60,\"stat\":\"Sum\"}],[\"SqueezeAI\",\"TokensAfter\",{\"color\":\"#36A2EB\",\"label\":\"Squeezed Tokens Sent to Bedrock\",\"id\":\"m2\",\"visible\":false,\"period\":60,\"stat\":\"Sum\"}]],\"yAxis\":{\"left\":{\"min\":0,\"max\":100}}}}]}"
+      ]
+     ]
+    },
+    "DashboardName": "Squeeze-AI-Token-Optimizer",
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDashboardStack/SqueezeCloudWatchDashboard/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/z3HQQqDMBAAwLd4T9awPfgAvQvtA8qaKEZjUtyNOYh/L0XoaRgEbAyYigpr61Yd/ADnS8iuigq/bUjZFRI7w9kRz0Oi3al2iv9cv/VZPlkuFZMbYeH6QAR8AFYLe6/3HMVvIzxvv06+rjJzAAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDashboardStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "CloudWatchDashboardNameOutput": {
+   "Description": "Access the Squeeze AI metrics dashboard in AWS CloudWatch Console",
+   "Value": "Squeeze-AI-Token-Optimizer"
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

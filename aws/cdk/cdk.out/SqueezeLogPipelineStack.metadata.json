@@ -1,0 +1,301 @@
+{
+  "/SqueezeLogPipelineStack": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:28:26)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    },
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "Hackathon",
+          "value": "Bedrock-Context-Optimizer"
+        },
+        {
+          "key": "ManagedBy",
+          "value": "AWS-CDK"
+        },
+        {
+          "key": "Project",
+          "value": "Squeeze-AI"
+        }
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/Custom::S3AutoDeleteObjectsCustomResourceProvider": [
+    {
+      "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+      "data": true
+    }
+  ],
+  "/SqueezeLogPipelineStack/IncidentReportsBucketOutput": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "IncidentReportsBucketOutput"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new SqueezeLogPipelineStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-log-pipeline-stack.ts:109:5)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:28:26)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/NoisyLoggerFunctionNameOutput": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NoisyLoggerFunctionNameOutput"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new SqueezeLogPipelineStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-log-pipeline-stack.ts:114:5)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:28:26)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/SqueezeIncidentReportsBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeIncidentReportsBucket34257CDC"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Bucket2 in aws-cdk-lib...",
+        "new SqueezeLogPipelineStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-log-pipeline-stack.ts:27:26)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:28:26)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketAutoDeleteObjects"
+      }
+    }
+  ],
+  "/SqueezeLogPipelineStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/NoisyLoggerLogGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NoisyLoggerLogGroupAF82AEA7"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new LogGroup2 in aws-cdk-lib...",
+        "new SqueezeLogPipelineStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-log-pipeline-stack.ts:44:27)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:28:26)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/NoisyLoggerFunction/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NoisyLoggerFunction76DCF1D6"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new SqueezeLogPipelineStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-log-pipeline-stack.ts:50:32)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:28:26)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/SqueezeLogProcessorFunction/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeLogProcessorFunction60A117EC"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new SqueezeLogPipelineStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-log-pipeline-stack.ts:64:33)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:28:26)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/SqueezeLogSubscriptionFilter/CanInvokeLambda": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeLogSubscriptionFilterCanInvokeLambdaA9959A5B"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new SubscriptionFilter2 in aws-cdk-lib...",
+        "new SqueezeLogPipelineStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-log-pipeline-stack.ts:100:5)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:28:26)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/SqueezeLogSubscriptionFilter/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeLogSubscriptionFilterA621D739"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new SubscriptionFilter2 in aws-cdk-lib...",
+        "new SqueezeLogPipelineStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-log-pipeline-stack.ts:100:5)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:28:26)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...App.synth in aws-cdk-lib...",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:51:5)",
+        "...node internals..."
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/SqueezeIncidentReportsBucket/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeIncidentReportsBucketPolicyDA7AF73E"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Bucket2 in aws-cdk-lib...",
+        "new SqueezeLogPipelineStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-log-pipeline-stack.ts:27:26)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:28:26)",
+        "...node internals..."
+      ]
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketPolicyStatements"
+      }
+    }
+  ],
+  "/SqueezeLogPipelineStack/SqueezeIncidentReportsBucket/AutoDeleteObjectsCustomResource/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeIncidentReportsBucketAutoDeleteObjectsCustomResource51214B68"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/NoisyLoggerFunction/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NoisyLoggerFunctionServiceRoleA037B2CB"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new SqueezeLogPipelineStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-log-pipeline-stack.ts:50:32)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:28:26)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/SqueezeLogProcessorFunction/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeLogProcessorFunctionServiceRole2A5F7BED"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new SqueezeLogPipelineStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-log-pipeline-stack.ts:64:33)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:28:26)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeLogPipelineStack/SqueezeLogProcessorFunction/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeLogProcessorFunctionServiceRoleDefaultPolicy72A9C414"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ]
+}

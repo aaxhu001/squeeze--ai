@@ -1,0 +1,97 @@
+{
+  "/SqueezeDashboardStack": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:35:24)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    },
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "Hackathon",
+          "value": "Bedrock-Context-Optimizer"
+        },
+        {
+          "key": "ManagedBy",
+          "value": "AWS-CDK"
+        },
+        {
+          "key": "Project",
+          "value": "Squeeze-AI"
+        }
+      ]
+    }
+  ],
+  "/SqueezeDashboardStack/CloudWatchDashboardNameOutput": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CloudWatchDashboardNameOutput"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new SqueezeDashboardStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dashboard-stack.ts:137:5)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:35:24)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDashboardStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SqueezeDashboardStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SqueezeDashboardStack/SqueezeCloudWatchDashboard/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeCloudWatchDashboard1D03C6F1"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Dashboard2 in aws-cdk-lib...",
+        "new SqueezeDashboardStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dashboard-stack.ts:13:23)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:35:24)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDashboardStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...App.synth in aws-cdk-lib...",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:51:5)",
+        "...node internals..."
+      ]
+    }
+  ]
+}

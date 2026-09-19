@@ -1,0 +1,303 @@
+{
+  "/SqueezeDevToolsStack": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    },
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "Hackathon",
+          "value": "Bedrock-Context-Optimizer"
+        },
+        {
+          "key": "ManagedBy",
+          "value": "AWS-CDK"
+        },
+        {
+          "key": "Project",
+          "value": "Squeeze-AI"
+        }
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/CodeBuildProjectOutput": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CodeBuildProjectOutput"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:126:5)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/CodebaseIndexerEndpointUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CodebaseIndexerEndpointUrl"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:131:5)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/DlpVerifierEndpointUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DlpVerifierEndpointUrl"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:136:5)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/SqueezeCiLogOptimizerProject/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeCiLogOptimizerProjectE15E8B4D"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Project2 in aws-cdk-lib...",
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:19:28)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/CodebaseIndexerFunction/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CodebaseIndexerFunctionB2E80EF5"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:71:29)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/CodebaseIndexerFunction/invoke-function-url": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CodebaseIndexerFunctioninvokefunctionurl7F98DEA0"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addFunctionUrl in aws-cdk-lib...",
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:85:48)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/CodebaseIndexerFunction/invoke-function": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CodebaseIndexerFunctioninvokefunction92AD584F"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addFunctionUrl in aws-cdk-lib...",
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:85:48)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/DlpVerifierFunction/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DlpVerifierFunctionF6E82D05"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:99:33)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/DlpVerifierFunction/invoke-function-url": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DlpVerifierFunctioninvokefunctionurlE834A2F7"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addFunctionUrl in aws-cdk-lib...",
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:112:48)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/DlpVerifierFunction/invoke-function": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DlpVerifierFunctioninvokefunction42569E09"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addFunctionUrl in aws-cdk-lib...",
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:112:48)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...App.synth in aws-cdk-lib...",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:51:5)",
+        "...node internals..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/SqueezeCiLogOptimizerProject/Role/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeCiLogOptimizerProjectRole6B66D0C0"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Project2 in aws-cdk-lib...",
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:19:28)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/CodebaseIndexerFunction/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CodebaseIndexerFunctionServiceRole1860D58F"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:71:29)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/CodebaseIndexerFunction/FunctionUrl/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CodebaseIndexerFunctionFunctionUrl9E649E69"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addFunctionUrl in aws-cdk-lib...",
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:85:48)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/DlpVerifierFunction/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DlpVerifierFunctionServiceRole86B618F4"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:99:33)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/DlpVerifierFunction/FunctionUrl/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DlpVerifierFunctionFunctionUrlA6797449"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addFunctionUrl in aws-cdk-lib...",
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:112:48)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:41:23)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeDevToolsStack/SqueezeCiLogOptimizerProject/Role/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeCiLogOptimizerProjectRoleDefaultPolicy1626334A"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Project2 in aws-cdk-lib...",
+        "new SqueezeDevToolsStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-dev-tools-stack.ts:19:28)"
+      ]
+    }
+  ]
+}

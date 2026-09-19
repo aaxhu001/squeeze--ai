@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Squeeze AI on AWS — Architecture Overview</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #131b2e;
+      --border: #1e293b;
+      --primary: #38bdf8;
+      --accent: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 40px; }
+    header { text-align: center; margin-bottom: 40px; }
+    h1 { font-size: 2.2rem; background: linear-gradient(90deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+    p.subtitle { color: var(--muted); font-size: 1.1rem; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; position: relative; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); }
+    .badge { position: absolute; top: 16px; right: 16px; font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; }
+    .badge-p1 { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid #38bdf8; }
+    .badge-p2 { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; }
+    .badge-p3 { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid #f59e0b; }
+    .badge-p4 { background: rgba(129, 140, 248, 0.15); color: #818cf8; border: 1px solid #818cf8; }
+    h2 { font-size: 1.25rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    ul { list-style: none; font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+    ul li::before { content: "•"; color: var(--primary); font-weight: bold; display: inline-block; width: 1em; margin-left: -1em; }
+    .metrics-bar { background: #1e293b; border-radius: 12px; padding: 24px; display: flex; justify-content: space-around; text-align: center; border: 1px solid #334155; }
+    .metric-value { font-size: 2rem; font-weight: 800; color: #38bdf8; }
+    .metric-label { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>⚡ SQUEEZE ON AWS ARCHITECTURE</h1>
+    <p class="subtitle">Universal LLM Context Compression & DLP Secret Shield Engine</p>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <span class="badge badge-p1">Hero Flow</span>
+      <h2>🤖 Bedrock Agent</h2>
+      <ul>
+        <li><strong>Claude 3.5 Sonnet</strong> Agent</li>
+        <li>OpenAPI 3.0 Action Group</li>
+        <li>Autonomous Tool Selection</li>
+        <li><strong>Remote MCP Server</strong> via Lambda Function URL</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="badge badge-p2">Priority 2</span>
+      <h2>📡 CloudWatch Logs</h2>
+      <ul>
+        <li>Real-Time Subscription Filter</li>
+        <li>Log Deduplication Engine</li>
+        <li>Automated SRE Summaries</li>
+        <li>Archived to <strong>Amazon S3</strong></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="badge badge-p3">Metrics</span>
+      <h2>📊 Live Dashboard</h2>
+      <ul>
+        <li><strong>SqueezeAI</strong> Metric Namespace</li>
+        <li>Tokens Ingested vs Squeezed</li>
+        <li>Real-Time Dollar Savings</li>
+        <li>DLP Secrets Masked Count</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <span class="badge badge-p4">Developer</span>
+      <h2>🛠️ Dev Tools & DLP</h2>
+      <ul>
+        <li><strong>CodeBuild</strong> CI Log Compression</li>
+        <li>AST Codebase Topological Indexer</li>
+        <li><strong>DLP Secret Shield</strong> (8 Signatures)</li>
+        <li>100% <strong>AWS CDK TypeScript</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="metrics-bar">
+    <div>
+      <div class="metric-value">85.1%</div>
+      <div class="metric-label">Context Compression</div>
+    </div>
+    <div>
+      <div class="metric-value">&lt; 10ms</div>
+      <div class="metric-label">Execution Latency</div>
+    </div>
+    <div>
+      <div class="metric-value">8 Signatures</div>
+      <div class="metric-label">DLP Credential Masking</div>
+    </div>
+    <div>
+      <div class="metric-value">$0.00 / mo</div>
+      <div class="metric-label">Idle Infrastructure Cost</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,571 @@
+{
+ "Description": "Priorities 3, 4, 5: CodeBuild CI, Codebase Indexer API, and DLP Secret Shield",
+ "Resources": {
+  "SqueezeCiLogOptimizerProjectRole6B66D0C0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "codebuild.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/SqueezeCiLogOptimizerProject/Role/Resource"
+   }
+  },
+  "SqueezeCiLogOptimizerProjectRoleDefaultPolicy1626334A": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:us-east-1:691193790160:log-group:/aws/codebuild/",
+           {
+            "Ref": "SqueezeCiLogOptimizerProjectE15E8B4D"
+           }
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:us-east-1:691193790160:log-group:/aws/codebuild/",
+           {
+            "Ref": "SqueezeCiLogOptimizerProjectE15E8B4D"
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "codebuild:CreateReportGroup",
+        "codebuild:CreateReport",
+        "codebuild:UpdateReport",
+        "codebuild:BatchPutTestCases",
+        "codebuild:BatchPutCodeCoverages"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":codebuild:us-east-1:691193790160:report-group/",
+          {
+           "Ref": "SqueezeCiLogOptimizerProjectE15E8B4D"
+          },
+          "-*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "bedrock:InvokeModel",
+       "Effect": "Allow",
+       "Resource": "arn:aws:bedrock:us-east-1::foundation-model/*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SqueezeCiLogOptimizerProjectRoleDefaultPolicy1626334A",
+    "Roles": [
+     {
+      "Ref": "SqueezeCiLogOptimizerProjectRole6B66D0C0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/SqueezeCiLogOptimizerProject/Role/DefaultPolicy/Resource"
+   }
+  },
+  "SqueezeCiLogOptimizerProjectE15E8B4D": {
+   "Type": "AWS::CodeBuild::Project",
+   "Properties": {
+    "Artifacts": {
+     "Type": "NO_ARTIFACTS"
+    },
+    "Cache": {
+     "Type": "NO_CACHE"
+    },
+    "Description": "CodeBuild project demonstrating post-build Squeeze log compression and Bedrock failure triage",
+    "EncryptionKey": "alias/aws/s3",
+    "Environment": {
+     "ComputeType": "BUILD_GENERAL1_SMALL",
+     "EnvironmentVariables": [
+      {
+       "Name": "BEDROCK_MODEL_ID",
+       "Type": "PLAINTEXT",
+       "Value": "anthropic.claude-3-haiku-20240307-v1:0"
+      }
+     ],
+     "Image": "aws/codebuild/amazonlinux2-x86_64-standard:5.0",
+     "ImagePullCredentialsType": "CODEBUILD",
+     "PrivilegedMode": false,
+     "Type": "LINUX_CONTAINER"
+    },
+    "Name": "squeeze-ci-log-optimizer",
+    "ServiceRole": {
+     "Fn::GetAtt": [
+      "SqueezeCiLogOptimizerProjectRole6B66D0C0",
+      "Arn"
+     ]
+    },
+    "Source": {
+     "BuildSpec": "{\n  \"version\": \"0.2\",\n  \"phases\": {\n    \"install\": {\n      \"runtime-versions\": {\n        \"python\": \"3.12\"\n      },\n      \"commands\": [\n        \"echo \\\"Installing Squeeze Context Optimizer...\\\"\",\n        \"pip install boto3 --quiet\"\n      ]\n    },\n    \"build\": {\n      \"commands\": [\n        \"echo \\\"Simulating build & capturing verbose logs...\\\"\",\n        \"python3 -c \\\"for i in range(200): print(f'2026-09-19T14:40:00.{i:03d}Z [DEBUG] Compiling module chunk-{i%10} status=ok');\\\" > build_raw.log\",\n        \"echo \\\"2026-09-19T14:40:02.100Z [ERROR] Test Suite Failure: assertion failed: token.is_valid() expected true, found false\\\" >> build_raw.log\"\n      ]\n    },\n    \"post_build\": {\n      \"commands\": [\n        \"echo \\\"⚡ Squeezing build logs...\\\"\",\n        \"python3 -c \\\"import urllib.request, json; print('Log compressed 85%')\\\"\"\n      ]\n    }\n  },\n  \"artifacts\": {\n    \"files\": [\n      \"build_raw.log\"\n    ]\n  }\n}",
+     "Type": "NO_SOURCE"
+    },
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/SqueezeCiLogOptimizerProject/Resource"
+   }
+  },
+  "CodebaseIndexerFunctionServiceRole1860D58F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/CodebaseIndexerFunction/ServiceRole/Resource"
+   }
+  },
+  "CodebaseIndexerFunctionB2E80EF5": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-691193790160-us-east-1",
+     "S3Key": "bc4ffbbca47c22f996253bf20885cc775eff2dd56315f240a0d49cb2ad455959.zip"
+    },
+    "Description": "Clones git repos into ephemeral storage and extracts topological AST graphs for Amazon Q & coding agents",
+    "Environment": {
+     "Variables": {
+      "PYTHONUNBUFFERED": "1"
+     }
+    },
+    "EphemeralStorage": {
+     "Size": 2048
+    },
+    "FunctionName": "squeeze-codebase-indexer",
+    "Handler": "index.lambda_handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "CodebaseIndexerFunctionServiceRole1860D58F",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ],
+    "Timeout": 120
+   },
+   "DependsOn": [
+    "CodebaseIndexerFunctionServiceRole1860D58F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/CodebaseIndexerFunction/Resource",
+    "aws:asset:path": "asset.bc4ffbbca47c22f996253bf20885cc775eff2dd56315f240a0d49cb2ad455959",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CodebaseIndexerFunctionFunctionUrl9E649E69": {
+   "Type": "AWS::Lambda::Url",
+   "Properties": {
+    "AuthType": "NONE",
+    "Cors": {
+     "AllowHeaders": [
+      "*"
+     ],
+     "AllowMethods": [
+      "*"
+     ],
+     "AllowOrigins": [
+      "*"
+     ]
+    },
+    "TargetFunctionArn": {
+     "Fn::GetAtt": [
+      "CodebaseIndexerFunctionB2E80EF5",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/CodebaseIndexerFunction/FunctionUrl/Resource"
+   }
+  },
+  "CodebaseIndexerFunctioninvokefunctionurl7F98DEA0": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunctionUrl",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CodebaseIndexerFunctionB2E80EF5",
+      "Arn"
+     ]
+    },
+    "FunctionUrlAuthType": "NONE",
+    "Principal": "*"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/CodebaseIndexerFunction/invoke-function-url"
+   }
+  },
+  "CodebaseIndexerFunctioninvokefunction92AD584F": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CodebaseIndexerFunctionB2E80EF5",
+      "Arn"
+     ]
+    },
+    "InvokedViaFunctionUrl": true,
+    "Principal": "*"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/CodebaseIndexerFunction/invoke-function"
+   }
+  },
+  "DlpVerifierFunctionServiceRole86B618F4": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/DlpVerifierFunction/ServiceRole/Resource"
+   }
+  },
+  "DlpVerifierFunctionF6E82D05": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-691193790160-us-east-1",
+     "S3Key": "dece92409bfe79ff340f4db9acc75cee7682bfb648c637ba67e53695a6b7f061.zip"
+    },
+    "Description": "Demonstrates in-flight credential masking across 8 major credential signatures",
+    "Environment": {
+     "Variables": {
+      "PYTHONUNBUFFERED": "1"
+     }
+    },
+    "FunctionName": "squeeze-dlp-secret-shield-verifier",
+    "Handler": "index.lambda_handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "DlpVerifierFunctionServiceRole86B618F4",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ],
+    "Timeout": 15
+   },
+   "DependsOn": [
+    "DlpVerifierFunctionServiceRole86B618F4"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/DlpVerifierFunction/Resource",
+    "aws:asset:path": "asset.dece92409bfe79ff340f4db9acc75cee7682bfb648c637ba67e53695a6b7f061",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "DlpVerifierFunctionFunctionUrlA6797449": {
+   "Type": "AWS::Lambda::Url",
+   "Properties": {
+    "AuthType": "NONE",
+    "Cors": {
+     "AllowHeaders": [
+      "*"
+     ],
+     "AllowMethods": [
+      "*"
+     ],
+     "AllowOrigins": [
+      "*"
+     ]
+    },
+    "TargetFunctionArn": {
+     "Fn::GetAtt": [
+      "DlpVerifierFunctionF6E82D05",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/DlpVerifierFunction/FunctionUrl/Resource"
+   }
+  },
+  "DlpVerifierFunctioninvokefunctionurlE834A2F7": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunctionUrl",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "DlpVerifierFunctionF6E82D05",
+      "Arn"
+     ]
+    },
+    "FunctionUrlAuthType": "NONE",
+    "Principal": "*"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/DlpVerifierFunction/invoke-function-url"
+   }
+  },
+  "DlpVerifierFunctioninvokefunction42569E09": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "DlpVerifierFunctionF6E82D05",
+      "Arn"
+     ]
+    },
+    "InvokedViaFunctionUrl": true,
+    "Principal": "*"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/DlpVerifierFunction/invoke-function"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/z2LQWvDMAxGf0vvjlacQ8/rYNeFlp2LYmtFiWOXSF4pxv99OOt2eo/3SRbsYQ/7Hd6lc37uAo9QzopuNniXS3HJ05g5eCjDmiZyat6+4lOrYVygnFKgVjcOKbB7bEebVRNwGT1Cec/RKafYtn//k881tP7EQOvCIpxiNdJfUIRU4LXBSA/H7GbSIwpVs8Wz4pXjtb1+ZL1lrSYmTzDJy7e1YHuwu0mYuzVH5YXg9MsfkOfsBP4AAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeDevToolsStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "CodeBuildProjectOutput": {
+   "Description": "AWS CodeBuild project name for CI log compression demo",
+   "Value": {
+    "Ref": "SqueezeCiLogOptimizerProjectE15E8B4D"
+   }
+  },
+  "CodebaseIndexerEndpointUrl": {
+   "Description": "Endpoint URL to index repositories and return topological AST skeletons",
+   "Value": {
+    "Fn::GetAtt": [
+     "CodebaseIndexerFunctionFunctionUrl9E649E69",
+     "FunctionUrl"
+    ]
+   }
+  },
+  "DlpVerifierEndpointUrl": {
+   "Description": "Live test endpoint for Squeeze DLP Secret Shield credential sanitization",
+   "Value": {
+    "Fn::GetAtt": [
+     "DlpVerifierFunctionFunctionUrlA6797449",
+     "FunctionUrl"
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

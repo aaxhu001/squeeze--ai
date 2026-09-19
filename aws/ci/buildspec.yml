@@ -1,0 +1,39 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+    commands:
+      - echo "Installing dependencies and Squeeze AI Context Optimizer..."
+      - pip install boto3 --quiet
+  
+  pre_build:
+    commands:
+      - echo "Starting build and test execution..."
+
+  build:
+    commands:
+      - echo "Simulating full multi-crate build & integration test run..."
+      # Capture verbose build output to a log file
+      - python3 -c "for i in range(250): print(f'2026-09-19T14:40:00.{i:03d}Z [DEBUG] Compiling module chunk-{i%10} status=ok');" > build_raw.log
+      - echo "2026-09-19T14:40:02.100Z [ERROR] Test Suite Failure in auth_integration_test.rs: assertion failed: token.is_valid() expected true, found false" >> build_raw.log
+      - python3 -c "for i in range(50): print(f'Traceback (line {i}): in test_runner.execute() retry={i}');" >> build_raw.log
+
+  post_build:
+    commands:
+      - echo "⚡ Running Squeeze AI Post-Build Log Compressor..."
+      - python3 -c "
+import sys; sys.path.insert(0, 'aws/mcp-server'); import squeeze_core as s;
+with open('build_raw.log') as f: raw = f.read()
+opt = s.shrink_logs_data(raw)
+with open('build_squeezed.log', 'w') as f: f.write(opt)
+print(f'Raw Bytes: {len(raw)} -> Squeezed Bytes: {len(opt)} (Saved {round((1-len(opt)/len(raw))*100, 1)}%)')
+"
+      - echo "🤖 Sending Squeezed Logs to Amazon Bedrock Build-Failure Triager..."
+      - python3 aws/ci/triage_build_failure.py --log-file build_squeezed.log
+
+artifacts:
+  files:
+    - build_squeezed.log
+    - build_triage_report.json

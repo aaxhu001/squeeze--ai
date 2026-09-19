@@ -1,0 +1,579 @@
+{
+ "Description": "Priority 2: CloudWatch Logs Subscription Filter to Squeeze and Bedrock",
+ "Resources": {
+  "SqueezeIncidentReportsBucket34257CDC": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": "squeeze-incident-reports-691193790160-us-east-1",
+    "LifecycleConfiguration": {
+     "Rules": [
+      {
+       "ExpirationInDays": 7,
+       "Id": "ExpireOldReports",
+       "Status": "Enabled"
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "aws-cdk:auto-delete-objects",
+      "Value": "true"
+     },
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/SqueezeIncidentReportsBucket/Resource"
+   }
+  },
+  "SqueezeIncidentReportsBucketPolicyDA7AF73E": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "SqueezeIncidentReportsBucket34257CDC"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:PutBucketPolicy",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::GetAtt": [
+          "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+          "Arn"
+         ]
+        }
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SqueezeIncidentReportsBucket34257CDC",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SqueezeIncidentReportsBucket34257CDC",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/SqueezeIncidentReportsBucket/Policy/Resource"
+   }
+  },
+  "SqueezeIncidentReportsBucketAutoDeleteObjectsCustomResource51214B68": {
+   "Type": "Custom::S3AutoDeleteObjects",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "SqueezeIncidentReportsBucket34257CDC"
+    }
+   },
+   "DependsOn": [
+    "SqueezeIncidentReportsBucketPolicyDA7AF73E"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/SqueezeIncidentReportsBucket/AutoDeleteObjectsCustomResource/Default"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-691193790160-us-east-1",
+     "S3Key": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip"
+    },
+    "Timeout": 900,
+    "MemorySize": 128,
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs24.x",
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Lambda function for auto-deleting objects in ",
+       {
+        "Ref": "SqueezeIncidentReportsBucket34257CDC"
+       },
+       " S3 bucket."
+      ]
+     ]
+    }
+   },
+   "DependsOn": [
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
+    "aws:asset:path": "asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6",
+    "aws:asset:property": "Code"
+   }
+  },
+  "NoisyLoggerLogGroupAF82AEA7": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/squeeze-demo-noisy-logger",
+    "RetentionInDays": 1,
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/NoisyLoggerLogGroup/Resource"
+   }
+  },
+  "NoisyLoggerFunctionServiceRoleA037B2CB": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/NoisyLoggerFunction/ServiceRole/Resource"
+   }
+  },
+  "NoisyLoggerFunction76DCF1D6": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-691193790160-us-east-1",
+     "S3Key": "81fdfd454df1b33db3e850aeb6c423df6be298d85a4ab7f85d63c99f76eb53c7.zip"
+    },
+    "Description": "Emits repetitive error logs and credentials to CloudWatch for Squeeze demo",
+    "FunctionName": "squeeze-demo-noisy-logger",
+    "Handler": "index.lambda_handler",
+    "LoggingConfig": {
+     "LogGroup": {
+      "Ref": "NoisyLoggerLogGroupAF82AEA7"
+     }
+    },
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "NoisyLoggerFunctionServiceRoleA037B2CB",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "NoisyLoggerFunctionServiceRoleA037B2CB"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/NoisyLoggerFunction/Resource",
+    "aws:asset:path": "asset.81fdfd454df1b33db3e850aeb6c423df6be298d85a4ab7f85d63c99f76eb53c7",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "SqueezeLogProcessorFunctionServiceRole2A5F7BED": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/SqueezeLogProcessorFunction/ServiceRole/Resource"
+   }
+  },
+  "SqueezeLogProcessorFunctionServiceRoleDefaultPolicy72A9C414": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "SqueezeIncidentReportsBucket34257CDC",
+            "Arn"
+           ]
+          },
+          "/*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "cloudwatch:PutMetricData",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": "bedrock:InvokeModel",
+       "Effect": "Allow",
+       "Resource": "arn:aws:bedrock:us-east-1::foundation-model/*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SqueezeLogProcessorFunctionServiceRoleDefaultPolicy72A9C414",
+    "Roles": [
+     {
+      "Ref": "SqueezeLogProcessorFunctionServiceRole2A5F7BED"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/SqueezeLogProcessorFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "SqueezeLogProcessorFunction60A117EC": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-691193790160-us-east-1",
+     "S3Key": "56c263d9e76312476cd8ca620fd191b4d2db9ee4537f33eff0658877dacb7124.zip"
+    },
+    "Description": "Intercepts CloudWatch logs, collapses lines via Squeeze, emits metrics, and triggers Bedrock",
+    "Environment": {
+     "Variables": {
+      "REPORTS_BUCKET_NAME": {
+       "Ref": "SqueezeIncidentReportsBucket34257CDC"
+      },
+      "BEDROCK_MODEL_ID": "anthropic.claude-3-5-sonnet-20241022-v2:0",
+      "FALLBACK_MODEL_ID": "anthropic.claude-3-haiku-20240307-v1:0",
+      "PYTHONUNBUFFERED": "1"
+     }
+    },
+    "FunctionName": "squeeze-cloudwatch-log-processor",
+    "Handler": "index.lambda_handler",
+    "MemorySize": 512,
+    "Role": {
+     "Fn::GetAtt": [
+      "SqueezeLogProcessorFunctionServiceRole2A5F7BED",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Hackathon",
+      "Value": "Bedrock-Context-Optimizer"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "AWS-CDK"
+     },
+     {
+      "Key": "Project",
+      "Value": "Squeeze-AI"
+     }
+    ],
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "SqueezeLogProcessorFunctionServiceRoleDefaultPolicy72A9C414",
+    "SqueezeLogProcessorFunctionServiceRole2A5F7BED"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/SqueezeLogProcessorFunction/Resource",
+    "aws:asset:path": "asset.56c263d9e76312476cd8ca620fd191b4d2db9ee4537f33eff0658877dacb7124",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "SqueezeLogSubscriptionFilterCanInvokeLambdaA9959A5B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SqueezeLogProcessorFunction60A117EC",
+      "Arn"
+     ]
+    },
+    "Principal": "logs.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "NoisyLoggerLogGroupAF82AEA7",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/SqueezeLogSubscriptionFilter/CanInvokeLambda"
+   }
+  },
+  "SqueezeLogSubscriptionFilterA621D739": {
+   "Type": "AWS::Logs::SubscriptionFilter",
+   "Properties": {
+    "DestinationArn": {
+     "Fn::GetAtt": [
+      "SqueezeLogProcessorFunction60A117EC",
+      "Arn"
+     ]
+    },
+    "FilterPattern": "",
+    "LogGroupName": {
+     "Ref": "NoisyLoggerLogGroupAF82AEA7"
+    }
+   },
+   "DependsOn": [
+    "SqueezeLogSubscriptionFilterCanInvokeLambdaA9959A5B"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/SqueezeLogSubscriptionFilter/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/5VPTWsCMRD9Le45prJ7KPSmFr0UFPdYimSz02U0m0hmoi0h/73EgFp66um9mfcxTC3r55mcTdSFpro/Tg12Mras9FGoC+0jNTIugj4Ci+WnLew9ViN+oa1eqsdY9lMjrxLJYp0Hdq9ggGHTHUAzVelDFGnrDOrve2uZ/9FdAi0rhhHsY/VCESRh3EAyvrlh7V045UM33oaOtMcTo7MrNAw+y3+3SRg1dr2ScRWszvvse+Rb8CMSobNJoBpl3DkDWbji/cfCkqBmr4iASc4zJLEMxG7cAbngdUne+C9p690Ze/D5OXENt6wGtEPObAKfAidhXQ/yQE/nupZ1I+vJgRCnPljGEeSu4A/E9mK39AEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "SqueezeLogPipelineStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "IncidentReportsBucketOutput": {
+   "Description": "S3 Bucket holding Squeeze AI Incident Summaries",
+   "Value": {
+    "Ref": "SqueezeIncidentReportsBucket34257CDC"
+   }
+  },
+  "NoisyLoggerFunctionNameOutput": {
+   "Description": "Trigger this Lambda to generate live noisy logs and feed Squeeze pipeline",
+   "Value": {
+    "Ref": "NoisyLoggerFunction76DCF1D6"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

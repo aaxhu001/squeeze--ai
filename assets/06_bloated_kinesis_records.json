@@ -1,0 +1,556 @@
+{
+  "stream_name": "iot-fleet-telemetry-kinesis",
+  "batch_id": "batch-9901",
+  "records": [
+    {
+      "record_id": "rec_telemetry_0000",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740000,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-1",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0001",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740001,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-2",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0002",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740002,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-3",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0003",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740003,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-4",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0004",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740004,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-5",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0005",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740005,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-1",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0006",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740006,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-2",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0007",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740007,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-3",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0008",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740008,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-4",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0009",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740009,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-5",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0010",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740010,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-1",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0011",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740011,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-2",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0012",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740012,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-3",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0013",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740013,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-4",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0014",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740014,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-5",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0015",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740015,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-1",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0016",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740016,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-2",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0017",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740017,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-3",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0018",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740018,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-4",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0019",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740019,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-5",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0020",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740020,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-1",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0021",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740021,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-2",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0022",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740022,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-3",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0023",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740023,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-4",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0024",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740024,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-5",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0025",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740025,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-1",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0026",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740026,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-2",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0027",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740027,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-3",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0028",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740028,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-4",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0029",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740029,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-5",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0030",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740030,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-1",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0031",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740031,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-2",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0032",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740032,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-3",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0033",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740033,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-4",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0034",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740034,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-5",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0035",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740035,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-1",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0036",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740036,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-2",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0037",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740037,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-3",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0038",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740038,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-4",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0039",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740039,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-5",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0040",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740040,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-1",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0041",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740041,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-2",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0042",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740042,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-3",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0043",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740043,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-4",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0044",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740044,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-5",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0045",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740045,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-1",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0046",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740046,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-2",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0047",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740047,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-3",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0048",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740048,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-4",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0049",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740049,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-5",
+        "env": "production"
+      }
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "version": "54.0.0",
+  "files": {
+    "e3a15decf3a0b461b280cbc76fcad0b62fe5aedfd3b104d7d36b3730620ff1a0": {
+      "displayName": "SqueezeDashboardStack Template",
+      "source": {
+        "path": "SqueezeDashboardStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "691193790160-us-east-1-31638035": {
+          "bucketName": "cdk-hnb659fds-assets-691193790160-us-east-1",
+          "objectKey": "e3a15decf3a0b461b280cbc76fcad0b62fe5aedfd3b104d7d36b3730620ff1a0.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::691193790160:role/cdk-hnb659fds-file-publishing-role-691193790160-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

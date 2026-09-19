@@ -1,0 +1,67 @@
+{
+  "stream_name": "production-telemetry-cdc-stream",
+  "partition_key": "shardId-000000000001",
+  "records_count": 48,
+  "records": [
+    {
+      "sequence_number": "49652391029381029381029381029381029381029381029381029381",
+      "approximate_arrival_timestamp": 1726742000.123,
+      "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "signature_base64": "MEUCIQDxv1Z7jTq9KzLp8MnB4VcY2XwA9Zl0Kj8Hn7Fv6E3W1wIgR9T8Y7U6I5O4P3L2K1J0H9G8F7D6S5A4Q3W2E1R0T9Y=",
+      "metadata": {
+        "source_ip": "10.0.4.12",
+        "datacenter": "us-east-1",
+        "env": "production",
+        "component": "order-api",
+        "build_version": "v3.18.2-rc.4+sha.902b4fc"
+      },
+      "data": {
+        "order_id": "ord-8839102",
+        "customer_id": "cust-99201",
+        "status": "PROCESSED",
+        "items_count": 3,
+        "amount_usd": 129.50
+      }
+    },
+    {
+      "sequence_number": "49652391029381029381029381029381029381029381029381029382",
+      "approximate_arrival_timestamp": 1726742000.125,
+      "payload_sha256": "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e",
+      "signature_base64": "MEQCIC8F7D6S5A4Q3W2E1R0T9YDxv1Z7jTq9KzLp8MnB4VcY2XwA9Zl0Kj8Hn7Fv6E3W1wIgR9T8Y7U6I5O4P3L2K1J0H9G=",
+      "metadata": {
+        "source_ip": "10.0.4.12",
+        "datacenter": "us-east-1",
+        "env": "production",
+        "component": "order-api",
+        "build_version": "v3.18.2-rc.4+sha.902b4fc"
+      },
+      "data": {
+        "order_id": "ord-8839103",
+        "customer_id": "cust-99202",
+        "status": "PROCESSED",
+        "items_count": 1,
+        "amount_usd": 24.00
+      }
+    },
+    {
+      "sequence_number": "49652391029381029381029381029381029381029381029381029383",
+      "approximate_arrival_timestamp": 1726742000.128,
+      "payload_sha256": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+      "signature_base64": "MEQCIFv6E3W1wIgR9T8Y7U6I5O4P3L2K1J0H9G8F7D6S5A4Q3W2E1R0T9YDxv1Z7jTq9KzLp8MnB4VcY2XwA9Zl0Kj8Hn7=",
+      "metadata": {
+        "source_ip": "10.0.4.12",
+        "datacenter": "us-east-1",
+        "env": "production",
+        "component": "order-api",
+        "build_version": "v3.18.2-rc.4+sha.902b4fc"
+      },
+      "data": {
+        "order_id": "ord-8839104",
+        "customer_id": "cust-99203",
+        "status": "FAILED",
+        "error_code": "INSUFFICIENT_FUNDS",
+        "amount_usd": 890.00
+      }
+    }
+  ]
+}

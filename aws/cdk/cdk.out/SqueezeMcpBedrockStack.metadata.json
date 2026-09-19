@@ -1,0 +1,303 @@
+{
+  "/SqueezeMcpBedrockStack": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    },
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "Hackathon",
+          "value": "Bedrock-Context-Optimizer"
+        },
+        {
+          "key": "ManagedBy",
+          "value": "AWS-CDK"
+        },
+        {
+          "key": "Project",
+          "value": "Squeeze-AI"
+        }
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeBedrockAgent": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeBedrockAgent"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:114:19)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeAgentAlias": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeAgentAlias"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:140:24)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeMcpEndpointUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeMcpEndpointUrl"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:151:5)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/BedrockAgentId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BedrockAgentId"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:156:5)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/BedrockAgentAliasId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BedrockAgentAliasId"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:161:5)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeMcpServerFunction/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeMcpServerFunction3366EA92"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:26:25)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeMcpServerFunction/invoke-function-url": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeMcpServerFunctioninvokefunctionurlA32B5404"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addFunctionUrl in aws-cdk-lib...",
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:40:31)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeMcpServerFunction/invoke-function": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeMcpServerFunctioninvokefunctionDF63CBB4"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addFunctionUrl in aws-cdk-lib...",
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:40:31)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeActionGroupFunction/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeActionGroupFunctionB7EFFD94"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:55:33)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeActionGroupFunction/AllowBedrockInvocation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeActionGroupFunctionAllowBedrockInvocation3DE94E5C"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addPermission in aws-cdk-lib...",
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:77:25)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeBedrockAgentRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeBedrockAgentRoleB639F1A3"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Role2 in aws-cdk-lib...",
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:88:23)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...App.synth in aws-cdk-lib...",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:51:5)",
+        "...node internals..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeMcpServerFunction/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeMcpServerFunctionServiceRole7AFA3115"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:26:25)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeMcpServerFunction/FunctionUrl/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeMcpServerFunctionFunctionUrl2C0BB9E3"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addFunctionUrl in aws-cdk-lib...",
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:40:31)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeActionGroupFunction/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeActionGroupFunctionServiceRole2E5B628A"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Function2 in aws-cdk-lib...",
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:55:33)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeBedrockAgentRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeBedrockAgentRoleDefaultPolicyB0842AAB"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.<anonymous> in aws-cdk-lib...",
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:94:15)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals..."
+      ]
+    }
+  ],
+  "/SqueezeMcpBedrockStack/SqueezeActionGroupFunction/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SqueezeActionGroupFunctionServiceRoleDefaultPolicyED921F14"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...WrappedClass.addToRolePolicy in aws-cdk-lib...",
+        "new SqueezeMcpBedrockStack (/Users/aashu/Aashu/Squeeze/aws/cdk/lib/squeeze-mcp-bedrock-stack.ts:69:25)",
+        "<anonymous> (/Users/aashu/Aashu/Squeeze/aws/cdk/bin/squeeze-app.ts:21:25)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ]
+}

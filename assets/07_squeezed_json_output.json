@@ -1,0 +1,29 @@
+{
+  "stream_name": "iot-fleet-telemetry-kinesis",
+  "batch_id": "batch-9901",
+  "records": [
+    {
+      "record_id": "rec_telemetry_0000",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740000,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-1",
+        "env": "production"
+      }
+    },
+    {
+      "record_id": "rec_telemetry_0001",
+      "device_signature": "a8f5b2c9e1d047382910abcdef0123456789abcdef0123456789abcdef0123456789",
+      "raw_payload_base64": "eyJkZXZpY2VfaWQiOiAidXMtZWFzdC0xLWFhYmJjYy0wMDEiLCAidGVtcCI6IDk4LjIsICJzdGF0dXMiOiAic3RhYmxlIn0=",
+      "timestamp": 1726740001,
+      "metadata": {
+        "datacenter": "us-east-1",
+        "rack": "rack-2",
+        "env": "production"
+      }
+    },
+    "... [48 items collapsed by Squeeze AI]"
+  ]
+}

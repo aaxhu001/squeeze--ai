@@ -1,0 +1,64 @@
+2026-09-19T14:32:00.012Z [INFO]  [pool-1-thread-14] [req-a1b2c3d4-e5f6-7890-abcd-ef0123456789] HealthCheckService: Ping ok to aurora-cluster-ro-replica.us-east-1.rds.amazonaws.com (latency=0.8ms)
+2026-09-19T14:32:00.015Z [INFO]  [pool-1-thread-14] [req-a1b2c3d4-e5f6-7890-abcd-ef0123456789] HealthCheckService: Ping ok to aurora-cluster-ro-replica.us-east-1.rds.amazonaws.com (latency=0.8ms)
+2026-09-19T14:32:00.018Z [INFO]  [pool-1-thread-14] [req-a1b2c3d4-e5f6-7890-abcd-ef0123456789] HealthCheckService: Ping ok to aurora-cluster-ro-replica.us-east-1.rds.amazonaws.com (latency=0.8ms)
+2026-09-19T14:32:00.021Z [INFO]  [pool-1-thread-14] [req-a1b2c3d4-e5f6-7890-abcd-ef0123456789] HealthCheckService: Ping ok to aurora-cluster-ro-replica.us-east-1.rds.amazonaws.com (latency=0.8ms)
+2026-09-19T14:32:00.024Z [INFO]  [pool-1-thread-14] [req-a1b2c3d4-e5f6-7890-abcd-ef0123456789] HealthCheckService: Ping ok to aurora-cluster-ro-replica.us-east-1.rds.amazonaws.com (latency=0.8ms)
+2026-09-19T14:32:00.027Z [INFO]  [pool-1-thread-14] [req-a1b2c3d4-e5f6-7890-abcd-ef0123456789] HealthCheckService: Ping ok to aurora-cluster-ro-replica.us-east-1.rds.amazonaws.com (latency=0.8ms)
+2026-09-19T14:32:00.030Z [INFO]  [pool-1-thread-14] [req-a1b2c3d4-e5f6-7890-abcd-ef0123456789] HealthCheckService: Ping ok to aurora-cluster-ro-replica.us-east-1.rds.amazonaws.com (latency=0.8ms)
+2026-09-19T14:32:00.033Z [INFO]  [pool-1-thread-14] [req-a1b2c3d4-e5f6-7890-abcd-ef0123456789] HealthCheckService: Ping ok to aurora-cluster-ro-replica.us-east-1.rds.amazonaws.com (latency=0.8ms)
+2026-09-19T14:32:00.036Z [INFO]  [pool-1-thread-14] [req-a1b2c3d4-e5f6-7890-abcd-ef0123456789] HealthCheckService: Ping ok to aurora-cluster-ro-replica.us-east-1.rds.amazonaws.com (latency=0.8ms)
+2026-09-19T14:32:00.039Z [INFO]  [pool-1-thread-14] [req-a1b2c3d4-e5f6-7890-abcd-ef0123456789] HealthCheckService: Ping ok to aurora-cluster-ro-replica.us-east-1.rds.amazonaws.com (latency=0.8ms)
+2026-09-19T14:32:01.100Z [DEBUG] [pool-3-thread-02] [req-b2c3d4e5-f6a7-8901-bcde-f0123456789a] AuthSessionTokenManager: Validating session token for tenant=acme-corp
+2026-09-19T14:32:01.101Z [DEBUG] [pool-3-thread-02] [req-b2c3d4e5-f6a7-8901-bcde-f0123456789a] AuthSessionTokenManager: Validating session token for tenant=acme-corp
+2026-09-19T14:32:01.102Z [DEBUG] [pool-3-thread-02] [req-b2c3d4e5-f6a7-8901-bcde-f0123456789a] AuthSessionTokenManager: Validating session token for tenant=acme-corp
+2026-09-19T14:32:01.105Z [WARN]  [pool-3-thread-02] [req-b2c3d4e5-f6a7-8901-bcde-f0123456789a] ClientConfig: AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE aws_secret_access_key="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+2026-09-19T14:32:01.108Z [WARN]  [pool-3-thread-02] [req-b2c3d4e5-f6a7-8901-bcde-f0123456789a] AI Gateway initialized with key sk-proj-abCDefGhIjKlMnOpQrStUvWxYz1234567890
+2026-09-19T14:32:01.110Z [WARN]  [pool-3-thread-02] [req-b2c3d4e5-f6a7-8901-bcde-f0123456789a] Connection URI: postgresql://admin_user:SuperSecretP@ssw0rd123!@aurora-cluster.us-east-1.rds.amazonaws.com:5432/orders_db
+2026-09-19T14:32:02.401Z [ERROR] [pool-2-thread-88] [req-c3d4e5f6-a7b8-9012-cdef-0123456789ab] ConnectionAcquisitionException: HikariPool-1 - Connection is not available, request timed out after 30005ms.
+Traceback (most recent call last):
+  File "/var/task/app/services/order_processor.py", line 87, in process_order
+    with db_pool.get_connection() as conn:
+  File "/var/task/vendor/hikari/pool.py", line 156, in get_connection
+    raise ConnectionTimeout("Connection pool exhausted. Max connections: 100")
+hikari.exceptions.ConnectionTimeout: Connection pool exhausted. Max connections: 100 (active=100, idle=0, waiting=47)
+2026-09-19T14:32:02.402Z [ERROR] [pool-2-thread-88] [req-c3d4e5f6-a7b8-9012-cdef-0123456789ab] ConnectionAcquisitionException: HikariPool-1 - Connection is not available, request timed out after 30005ms.
+Traceback (most recent call last):
+  File "/var/task/app/services/order_processor.py", line 87, in process_order
+    with db_pool.get_connection() as conn:
+  File "/var/task/vendor/hikari/pool.py", line 156, in get_connection
+    raise ConnectionTimeout("Connection pool exhausted. Max connections: 100")
+hikari.exceptions.ConnectionTimeout: Connection pool exhausted. Max connections: 100 (active=100, idle=0, waiting=48)
+2026-09-19T14:32:02.403Z [ERROR] [pool-2-thread-88] [req-c3d4e5f6-a7b8-9012-cdef-0123456789ab] ConnectionAcquisitionException: HikariPool-1 - Connection is not available, request timed out after 30005ms.
+Traceback (most recent call last):
+  File "/var/task/app/services/order_processor.py", line 87, in process_order
+    with db_pool.get_connection() as conn:
+  File "/var/task/vendor/hikari/pool.py", line 156, in get_connection
+    raise ConnectionTimeout("Connection pool exhausted. Max connections: 100")
+hikari.exceptions.ConnectionTimeout: Connection pool exhausted. Max connections: 100 (active=100, idle=0, waiting=49)
+2026-09-19T14:32:02.404Z [ERROR] [pool-2-thread-88] [req-c3d4e5f6-a7b8-9012-cdef-0123456789ab] ConnectionAcquisitionException: HikariPool-1 - Connection is not available, request timed out after 30005ms.
+Traceback (most recent call last):
+  File "/var/task/app/services/order_processor.py", line 87, in process_order
+    with db_pool.get_connection() as conn:
+  File "/var/task/vendor/hikari/pool.py", line 156, in get_connection
+    raise ConnectionTimeout("Connection pool exhausted. Max connections: 100")
+hikari.exceptions.ConnectionTimeout: Connection pool exhausted. Max connections: 100 (active=100, idle=0, waiting=50)
+2026-09-19T14:32:02.405Z [ERROR] [pool-2-thread-88] [req-c3d4e5f6-a7b8-9012-cdef-0123456789ab] ConnectionAcquisitionException: HikariPool-1 - Connection is not available, request timed out after 30005ms.
+Traceback (most recent call last):
+  File "/var/task/app/services/order_processor.py", line 87, in process_order
+    with db_pool.get_connection() as conn:
+  File "/var/task/vendor/hikari/pool.py", line 156, in get_connection
+    raise ConnectionTimeout("Connection pool exhausted. Max connections: 100")
+hikari.exceptions.ConnectionTimeout: Connection pool exhausted. Max connections: 100 (active=100, idle=0, waiting=51)
+2026-09-19T14:32:02.406Z [ERROR] [pool-2-thread-88] [req-c3d4e5f6-a7b8-9012-cdef-0123456789ab] ConnectionAcquisitionException: HikariPool-1 - Connection is not available, request timed out after 30005ms.
+Traceback (most recent call last):
+  File "/var/task/app/services/order_processor.py", line 87, in process_order
+    with db_pool.get_connection() as conn:
+  File "/var/task/vendor/hikari/pool.py", line 156, in get_connection
+    raise ConnectionTimeout("Connection pool exhausted. Max connections: 100")
+hikari.exceptions.ConnectionTimeout: Connection pool exhausted. Max connections: 100 (active=100, idle=0, waiting=52)
+2026-09-19T14:32:03.110Z [WARN]  [pool-5-thread-01] [req-d4e5f6a7-b8c9-0123-def0-123456789abc] CircuitBreaker: State transitioning from CLOSED to HALF_OPEN (threshold=5 failures)
+2026-09-19T14:32:03.111Z [WARN]  [pool-5-thread-01] [req-d4e5f6a7-b8c9-0123-def0-123456789abc] CircuitBreaker: State transitioning from CLOSED to HALF_OPEN (threshold=5 failures)
+2026-09-19T14:32:03.112Z [WARN]  [pool-5-thread-01] [req-d4e5f6a7-b8c9-0123-def0-123456789abc] CircuitBreaker: State transitioning from CLOSED to HALF_OPEN (threshold=5 failures)
+2026-09-19T14:32:03.113Z [WARN]  [pool-5-thread-01] [req-d4e5f6a7-b8c9-0123-def0-123456789abc] CircuitBreaker: State transitioning from CLOSED to HALF_OPEN (threshold=5 failures)
+2026-09-19T14:32:03.114Z [WARN]  [pool-5-thread-01] [req-d4e5f6a7-b8c9-0123-def0-123456789abc] CircuitBreaker: State transitioning from CLOSED to HALF_OPEN (threshold=5 failures)
+2026-09-19T14:32:04.990Z [FATAL] [pool-5-thread-01] [req-e5f6a7b8-c9d0-1234-ef01-23456789abcd] ServiceUnavailable: Downstream database partition 'us-east-1b' unresponsive. Activating fallback cache.
