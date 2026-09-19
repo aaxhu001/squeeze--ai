@@ -74,7 +74,7 @@ body {
   backface-visibility: hidden;
 }
 
-.hero-section, .section, .marquee-section, .sq21, .feedback-section {
+.hero-section, .section, .marquee-section, .sq21 {
   position: relative;
   z-index: 1;
 }
@@ -958,58 +958,6 @@ p.subhead {
   margin-bottom: 8px;
 }
 
-/* 6. TESTIMONIAL / PROOF SECTION */
-.testimonial-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-}
-
-.testimonial-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.quote-text {
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: var(--text-white);
-  font-style: italic;
-}
-
-.author-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.author-avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: var(--primary-accent);
-  color: var(--text-dark);
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.author-name {
-  font-weight: 700;
-  font-size: 0.95rem;
-}
-
-.author-role {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
 
 /* 7. PRICING SECTION */
 .pricing-grid {
@@ -1385,7 +1333,7 @@ p.subhead {
 
 /* Accessibility & Responsive Overrides */
 @media (max-width: 900px) {
-  .feature-grid, .pricing-grid, .stats-grid, .testimonial-grid {
+  .feature-grid, .pricing-grid, .stats-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1757,146 +1705,6 @@ p.subhead {
 /* --- Container Polish: Outer Box Glow --- */
 .squeeze-logo-box {
   transition: stroke 0.4s ease, filter 0.4s ease;
-}
-
-/* ==========================================================================
-   FEEDBACKS / TESTIMONIALS (Cegnify Style)
-   ========================================================================== */
-.feedback-section {
-  padding: 90px 0;
-  position: relative;
-}
-
-.feedback-container {
-  max-width: 800px;
-  margin: 0 auto;
-  position: relative;
-}
-
-/* Avatar Stack Row at top */
-.feedback-avatar-stack {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: -40px;
-  position: relative;
-  z-index: 10;
-}
-
-.feedback-avatar-card {
-  width: 90px;
-  height: 105px;
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: #0D111D;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  filter: grayscale(80%) brightness(0.6);
-  opacity: 0.45;
-  transform: scale(0.85);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-}
-
-.feedback-avatar-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.feedback-avatar-card.active {
-  width: 125px;
-  height: 140px;
-  border-radius: 24px;
-  filter: grayscale(0%) brightness(1);
-  opacity: 1;
-  transform: scale(1) translateY(-6px);
-  border: 2px solid var(--primary-accent);
-  box-shadow: 0 0 35px rgba(245, 197, 24, 0.3), 0 15px 40px rgba(0, 0, 0, 0.6);
-  z-index: 5;
-}
-
-/* Main Feedback Box */
-.feedback-box {
-  background: rgba(13, 17, 29, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 28px;
-  padding: 68px 44px 36px;
-  text-align: center;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  position: relative;
-}
-
-.feedback-quote {
-  font-size: clamp(1.1rem, 2.2vw, 1.4rem);
-  line-height: 1.65;
-  color: #F7F6F4;
-  font-weight: 400;
-  max-width: 660px;
-  margin: 0 auto 32px;
-  min-height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
-
-.feedback-quote.switching {
-  opacity: 0;
-  transform: translateY(8px);
-}
-
-/* Bottom Control Row */
-.feedback-controls-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 440px;
-  margin: 0 auto;
-}
-
-.feedback-nav-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: var(--primary-accent);
-  color: #07090E;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 14px rgba(245, 197, 24, 0.3);
-}
-
-.feedback-nav-btn:hover {
-  transform: scale(1.12);
-  background: var(--primary-hover);
-  box-shadow: 0 6px 20px rgba(245, 197, 24, 0.5);
-}
-
-.feedback-nav-btn:active {
-  transform: scale(0.95);
-}
-
-.feedback-author-meta {
-  text-align: center;
-}
-
-.feedback-author-name {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--text-white);
-  margin-bottom: 2px;
-}
-
-.feedback-author-role {
-  font-size: 0.88rem;
-  color: var(--text-muted);
 }
 
 .brand-logo:hover .squeeze-logo-box {

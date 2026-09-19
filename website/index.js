@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initCopyButtons();
   initBlurFadeText();
   initTextRoll();
-  initFeedbackCarousel();
 });
 
 /* ==========================================================================
@@ -355,80 +354,6 @@ function initTextRoll() {
   });
 }
 
-/* ==========================================================================
-   10. Cegnify-Style Feedback / Testimonial Carousel Engine
-   ========================================================================== */
-function initFeedbackCarousel() {
-  const stack = document.getElementById('feedbackAvatarStack');
-  const quoteEl = document.getElementById('feedbackQuote');
-  const nameEl = document.getElementById('feedbackAuthorName');
-  const roleEl = document.getElementById('feedbackAuthorRole');
-  const prevBtn = document.getElementById('feedbackPrevBtn');
-  const nextBtn = document.getElementById('feedbackNextBtn');
 
-  if (!stack || !quoteEl) return;
-
-  const feedbacks = [
-    {
-      quote: '"Squeeze completely stopped my Claude.ai rate limit warnings when debugging large API logs. It\'s an essential tool for my daily workflow."',
-      name: 'Alex Rivera',
-      role: 'Full-Stack Engineer'
-    },
-    {
-      quote: '"Our workflow finally runs smoothly. Tasks are automated, information is organized, and decisions happen faster than ever."',
-      name: 'Michael Reyes',
-      role: 'Operations Manager'
-    },
-    {
-      quote: '"Pasting entire JSON responses used to eat up my context window instantly. With Squeeze running locally, I get 3x more conversation turns."',
-      name: 'Sarah Chen',
-      role: 'Backend Developer'
-    }
-  ];
-
-  let currentIndex = 1; // Start on middle active card (Michael Reyes)
-
-  function updateDisplay(index) {
-    currentIndex = index;
-    const cards = stack.querySelectorAll('.feedback-avatar-card');
-
-    cards.forEach((card, i) => {
-      if (i === currentIndex) {
-        card.classList.add('active');
-      } else {
-        card.classList.remove('active');
-      }
-    });
-
-    quoteEl.classList.add('switching');
-    setTimeout(() => {
-      quoteEl.textContent = feedbacks[currentIndex].quote;
-      nameEl.textContent = feedbacks[currentIndex].name;
-      roleEl.textContent = feedbacks[currentIndex].role;
-      quoteEl.classList.remove('switching');
-    }, 200);
-  }
-
-  // Avatar click handling
-  const cards = stack.querySelectorAll('.feedback-avatar-card');
-  cards.forEach((card, i) => {
-    card.addEventListener('click', () => updateDisplay(i));
-  });
-
-  // Prev / Next button controls
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      const newIdx = (currentIndex - 1 + feedbacks.length) % feedbacks.length;
-      updateDisplay(newIdx);
-    });
-  }
-
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      const newIdx = (currentIndex + 1) % feedbacks.length;
-      updateDisplay(newIdx);
-    });
-  }
-}
 
 

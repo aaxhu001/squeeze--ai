@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Squeeze AI - Interactive Codebase Knowledge Graph</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%2307090E'/%3E%3Cpath d='M 20 7 Q 20 20 33 20 Q 20 20 20 33 Q 20 20 7 20 Q 20 20 20 7 Z' fill='%23F5C518'/%3E%3C/svg%3E">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #090d16;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      user-select: none;
+    }
+    #canvas-container {
+      position: absolute;
+      top: 64px;
+      left: 0;
+      right: 360px;
+      bottom: 0;
+      overflow: hidden;
+      cursor: grab;
+    }
+    #canvas-container:active {
+      cursor: grabbing;
+    }
+    canvas {
+      display: block;
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .neon-glow-emerald {
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.5);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="h-screen w-screen flex flex-col">
+
+  <!-- Top Navigation Bar -->
+  <header class="h-16 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md px-6 flex items-center justify-between z-20">
+    <div class="flex items-center gap-3">
+      <svg class="w-9 h-9 rounded-xl shadow-lg border border-slate-700/60 flex-shrink-0" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#07090E" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1.5"/>
+        <path d="M 20 7 Q 20 20 33 20 Q 20 20 20 33 Q 20 20 7 20 Q 20 20 20 7 Z" fill="#F5C518"/>
+      </svg>
+      <div>
+        <h1 class="font-bold text-slate-100 text-base tracking-tight flex items-center gap-2">
+          Squeeze AI <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">Codebase Graph</span>
+        </h1>
+        <p class="text-xs text-slate-400">Interactive Topological Dependency & Symbol Visualizer</p>
+      </div>
+    </div>
+
+    <!-- Stats Summary Badges -->
+    <div class="hidden md:flex items-center gap-4 text-xs font-mono">
+      <div class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-slate-400">Files:</span>
+        <span class="text-emerald-300 font-semibold" id="statFiles">11</span>
+      </div>
+      <div class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-2">
+        <span class="text-slate-400">Symbols:</span>
+        <span class="text-cyan-300 font-semibold" id="statSymbols">150</span>
+      </div>
+      <div class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-2">
+        <span class="text-slate-400">Raw:</span>
+        <span class="text-slate-300">~59.9k tok</span>
+        <span class="text-slate-500">→</span>
+        <span class="text-slate-400">Graph:</span>
+        <span class="text-emerald-400 font-bold">~385 tok</span>
+        <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">-99.4%</span>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex items-center gap-2">
+      <button id="btnResetView" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+        Reset Zoom
+      </button>
+      <button id="btnToggleLabels" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-950/40 hover:bg-emerald-900/50 text-emerald-300 border border-emerald-500/30 transition">
+        Toggle Labels
+      </button>
+    </div>
+  </header>
+
+  <!-- Main View Area -->
+  <div class="flex-1 relative flex">
+    
+    <!-- Graph Canvas Container -->
+    <div id="canvas-container">
+      <canvas id="graphCanvas"></canvas>
+      
+      <!-- Canvas Overlay Legend -->
+      <div class="absolute bottom-4 left-4 p-3 rounded-xl glass-panel text-xs text-slate-400 space-y-1.5 pointer-events-none">
+        <div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-1">Architecture Legend</div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-emerald-400 shadow-sm"></span>
+          <span class="text-slate-200">Core AST Engine Hub</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-indigo-400 shadow-sm"></span>
+          <span class="text-slate-200">MCP Protocol Backend</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-cyan-400 shadow-sm"></span>
+          <span class="text-slate-200">Extension UI & DOM Injectors</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-amber-400 shadow-sm"></span>
+          <span class="text-slate-200">Tooling, Installers & Tests</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side Inspector Panel -->
+    <aside class="w-[360px] h-[calc(100vh-64px)] border-l border-slate-800/80 bg-slate-950/90 flex flex-col z-10">
+      
+      <!-- Search & Filter Bar -->
+      <div class="p-4 border-b border-slate-800/80 space-y-2">
+        <div class="relative">
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Search file, class, function..." 
+            class="w-full bg-slate-900 text-slate-200 text-xs rounded-lg pl-8 pr-3 py-2 border border-slate-800 focus:outline-none focus:border-emerald-500 transition"
+          />
+          <svg class="w-4 h-4 text-slate-500 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Node Details Container -->
+      <div id="inspectorContent" class="flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar">
+        <!-- Default State: Repo Overview -->
+        <div class="space-y-4">
+          <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800">
+            <div class="text-xs uppercase tracking-wider text-emerald-400 font-bold mb-1">Click Any Node</div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Select any file node on the canvas to inspect its AST symbols, token footprint, dependencies, and exported interfaces.
+            </p>
+          </div>
+
+          <div>
+            <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Central Architecture Hubs</h3>
+            <div class="space-y-2" id="hubList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="p-3 border-t border-slate-800/80 bg-slate-950 text-[11px] text-slate-500 flex items-center justify-between">
+        <span>Squeeze AST Knowledge Engine</span>
+        <span class="text-emerald-500 font-mono">v1.0.0</span>
+      </div>
+    </aside>
+
+  </div>
+
+  <script>
+    // --- CODEBASE GRAPH DATA ---
+    const GRAPH_DATA = {
+      nodes: [
+        {
+          id: "skeletonizer.js",
+          name: "skeletonizer.js",
+          type: "hub",
+          lines: 435,
+          tokens: 3773,
+          centrality: 3,
+          color: "#10b981",
+          classes: ["ASTParser", "CodeSkeletonizer"],
+          functions: ["skeletonizePython", "skeletonizeTypeScript", "skeletonizeCode", "shrinkJson", "shrinkLogs", "buildCodebaseGraph", "alignPromptForCache"],
+          description: "Core deterministic AST parser and token reducer. Extracts structural skeletons, strips implementations, and condenses JSON/logs."
+        },
+        {
+          id: "squeeze_mcp.py",
+          name: "squeeze_mcp.py",
+          type: "backend",
+          lines: 771,
+          tokens: 7476,
+          centrality: 2,
+          color: "#6366f1",
+          classes: [],
+          functions: ["mask_secrets", "skeletonize_python", "skeletonize_typescript", "skeletonize_code", "shrink_json_data", "shrink_logs_data", "generate_codebase_graph", "align_prompt_for_cache", "optimize_prompt", "handle_message"],
+          description: "Standalone JSON-RPC 2.0 MCP server for Claude Code and Cursor. Exposes AST skeletonization, prompt compression, cache alignment, and graph visualizer tools."
+        },
+        {
+          id: "background.js",
+          name: "background.js",
+          type: "extension",
+          lines: 859,
+          tokens: 7328,
+          centrality: 1,
+          color: "#06b6d4",
+          classes: [],
+          functions: ["estimateTokens", "maskSensitiveData", "removeDuplicateSentences", "optimizeLocally", "processVaultContext"],
+          description: "Manifest V3 service worker. Manages extension background state, context vault persistence, and real-time prompt telemetry."
+        },
+        {
+          id: "content.js",
+          name: "content.js",
+          type: "extension",
+          lines: 1323,
+          tokens: 13146,
+          centrality: 1,
+          color: "#06b6d4",
+          classes: [],
+          functions: ["findChatInput", "getInputValue", "setInputValue", "findToolbarAnchor", "estimateTokensLocal", "mountWidgets", "wireInputEvents"],
+          description: "DOM content script injected into Claude, ChatGPT, and DeepSeek. Attaches real-time token counters, floating compression HUD, and context buttons."
+        },
+        {
+          id: "sidepanel.js",
+          name: "sidepanel.js",
+          type: "extension",
+          lines: 928,
+          tokens: 8947,
+          centrality: 1,
+          color: "#06b6d4",
+          classes: ["PaymentGateway", "AuthenticationManager", "SessionPayload"],
+          functions: ["switchTab", "estimateTokensLocal", "updateInputMetrics", "generateLineDiffHtml", "executeOptimization", "renderOutput", "loadAndRunDemo", "processBatch"],
+          description: "Interactive Optimization Studio side panel. Provides side-by-side diffing, AST skeleton playground, and JSON array truncation viewer."
+        },
+        {
+          id: "popup.js",
+          name: "popup.js",
+          type: "extension",
+          lines: 336,
+          tokens: 3238,
+          centrality: 1,
+          color: "#06b6d4",
+          classes: [],
+          functions: ["launchSidePanel", "formatNumber", "formatBytes", "escapeHtml", "loadDashboardData", "processUploadedFiles", "renderVaultFiles"],
+          description: "Extension popup dashboard. Displays lifetime token/dollar savings, compression rule toggles, and direct side panel triggers."
+        },
+        {
+          id: "install.py",
+          name: "install.py",
+          type: "tooling",
+          lines: 257,
+          tokens: 2383,
+          centrality: 1,
+          color: "#f59e0b",
+          classes: [],
+          functions: ["test_mcp_server", "update_json_mcp_config", "install_claude_code", "install_claude_desktop", "install_cursor", "install_antigravity"],
+          description: "Zero-dependency multi-agent installer. Auto-detects and configures Claude Code, Cursor, and Claude Desktop MCP setups."
+        },
+        {
+          id: "uninstall.py",
+          name: "uninstall.py",
+          type: "tooling",
+          lines: 79,
+          tokens: 617,
+          centrality: 0,
+          color: "#f59e0b",
+          classes: [],
+          functions: ["remove_from_json", "main"],
+          description: "Clean uninstaller for removing Squeeze MCP registrations across all assistant configurations."
+        },
+        {
+          id: "test_suite.js",
+          name: "test_suite.js",
+          type: "tooling",
+          lines: 149,
+          tokens: 1657,
+          centrality: 1,
+          color: "#f59e0b",
+          classes: ["PaymentGateway", "AuthenticationManager", "Database", "UserProfile"],
+          functions: ["process_transaction", "calculate_fee", "start", "verify"],
+          description: "Automated regression verification suite for multiline AST signature preservation, JSON array folding, and log deduplication."
+        },
+        {
+          id: "website/app.js",
+          name: "website/app.js",
+          type: "web",
+          lines: 884,
+          tokens: 7841,
+          centrality: 0,
+          color: "#8b5cf6",
+          classes: [],
+          functions: ["renderCanvas", "optimizeSandboxPrompt", "updateCalculator", "openWaitlist"],
+          description: "Interactive landing page engine featuring live token savings calculator and visual sandbox."
+        },
+        {
+          id: "website/index.js",
+          name: "website/index.js",
+          type: "web",
+          lines: 435,
+          tokens: 3546,
+          centrality: 0,
+          color: "#8b5cf6",
+          classes: [],
+          functions: ["initStickyNavbar", "initWordRotator", "initScrollReveal", "initStatsCounter", "initFaqAccordion"],
+          description: "Showcase animations, FAQ accordions, and documentation tab switches."
+        }
+      ],
+      links: [
+        { source: "background.js", target: "skeletonizer.js", label: "imports" },
+        { source: "sidepanel.js", target: "skeletonizer.js", label: "uses AST rules" },
+        { source: "popup.js", target: "sidepanel.js", label: "opens" },
+        { source: "install.py", target: "squeeze_mcp.py", label: "registers" },
+        { source: "uninstall.py", target: "squeeze_mcp.py", label: "unregisters" },
+        { source: "test_suite.js", target: "skeletonizer.js", label: "validates" },
+        { source: "content.js", target: "background.js", label: "messages" }
+      ]
+    };
+
+    // --- CANVAS FORCE SIMULATION ---
+    const container = document.getElementById("canvas-container");
+    const canvas = document.getElementById("graphCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let width = container.clientWidth;
+    let height = container.clientHeight;
+    let showLabels = true;
+    let selectedNode = null;
+    let hoveredNode = null;
+
+    // Viewport transform (Pan & Zoom)
+    let transform = { x: width / 2, y: height / 2, scale: 0.9 };
+    let isDraggingView = false;
+    let dragStart = { x: 0, y: 0 };
+    let draggedNode = null;
+
+    function resize() {
+      width = container.clientWidth;
+      height = container.clientHeight;
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      render();
+    }
+    window.addEventListener("resize", resize);
+
+    // Initialize node positions in circular layout
+    const nodes = GRAPH_DATA.nodes;
+    const links = GRAPH_DATA.links;
+    const nodeMap = {};
+
+    nodes.forEach((node, i) => {
+      const angle = (i / nodes.length) * Math.PI * 2;
+      const radius = 180 + (i % 2) * 50;
+      node.x = Math.cos(angle) * radius;
+      node.y = Math.sin(angle) * radius;
+      node.vx = 0;
+      node.vy = 0;
+      node.radius = 14 + (node.centrality * 4) + Math.min(node.tokens / 2000, 10);
+      nodeMap[node.id] = node;
+    });
+
+    links.forEach(link => {
+      link.sourceNode = nodeMap[link.source];
+      link.targetNode = nodeMap[link.target];
+    });
+
+    // Physics Step
+    function stepPhysics() {
+      // Repulsion between nodes
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const n1 = nodes[i];
+          const n2 = nodes[j];
+          const dx = n2.x - n1.x;
+          const dy = n2.y - n1.y;
+          const dist = Math.hypot(dx, dy) || 1;
+          if (dist < 320) {
+            const force = (320 - dist) / dist * 0.04;
+            n1.vx -= dx * force;
+            n1.vy -= dy * force;
+            n2.vx += dx * force;
+            n2.vy += dy * force;
+          }
+        }
+      }
+
+      // Spring attraction along links
+      links.forEach(link => {
+        if (!link.sourceNode || !link.targetNode) return;
+        const dx = link.targetNode.x - link.sourceNode.x;
+        const dy = link.targetNode.y - link.sourceNode.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const targetDist = 140;
+        const force = (dist - targetDist) * 0.015;
+        link.sourceNode.vx += (dx / dist) * force;
+        link.sourceNode.vy += (dy / dist) * force;
+        link.targetNode.vx -= (dx / dist) * force;
+        link.targetNode.vy -= (dy / dist) * force;
+      });
+
+      // Gravity towards center & friction damping
+      nodes.forEach(node => {
+        if (node === draggedNode) return;
+        node.vx += -node.x * 0.002;
+        node.vy += -node.y * 0.002;
+        node.vx *= 0.88;
+        node.vy *= 0.88;
+        node.x += node.vx;
+        node.y += node.vy;
+      });
+    }
+
+    // Render loop
+    function render() {
+      ctx.save();
+      ctx.clearRect(0, 0, width, height);
+
+      // Grid background
+      ctx.save();
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
+      ctx.lineWidth = 1;
+      const gridSize = 40 * transform.scale;
+      const startX = (transform.x % gridSize) - gridSize;
+      const startY = (transform.y % gridSize) - gridSize;
+      for (let x = startX; x < width + gridSize; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      for (let y = startY; y < height + gridSize; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Apply viewport pan & zoom
+      ctx.translate(transform.x, transform.y);
+      ctx.scale(transform.scale, transform.scale);
+
+      // Draw Links
+      links.forEach(link => {
+        if (!link.sourceNode || !link.targetNode) return;
+        const isHighlighted = (selectedNode && (link.sourceNode === selectedNode || link.targetNode === selectedNode)) ||
+                              (hoveredNode && (link.sourceNode === hoveredNode || link.targetNode === hoveredNode));
+
+        ctx.beginPath();
+        ctx.moveTo(link.sourceNode.x, link.sourceNode.y);
+        ctx.lineTo(link.targetNode.x, link.targetNode.y);
+        ctx.strokeStyle = isHighlighted ? "rgba(16, 185, 129, 0.8)" : "rgba(148, 163, 184, 0.25)";
+        ctx.lineWidth = isHighlighted ? 2.5 : 1.2;
+        ctx.stroke();
+
+        // Direction arrow
+        const dx = link.targetNode.x - link.sourceNode.x;
+        const dy = link.targetNode.y - link.sourceNode.y;
+        const angle = Math.atan2(dy, dx);
+        const dist = Math.hypot(dx, dy);
+        const arrowDist = dist - link.targetNode.radius - 8;
+        const ax = link.sourceNode.x + Math.cos(angle) * arrowDist;
+        const ay = link.sourceNode.y + Math.sin(angle) * arrowDist;
+
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(ax - 8 * Math.cos(angle - 0.4), ay - 8 * Math.sin(angle - 0.4));
+        ctx.lineTo(ax - 8 * Math.cos(angle + 0.4), ay - 8 * Math.sin(angle + 0.4));
+        ctx.fillStyle = isHighlighted ? "#10b981" : "rgba(148, 163, 184, 0.4)";
+        ctx.fill();
+      });
+
+      // Draw Nodes
+      nodes.forEach(node => {
+        const isSelected = node === selectedNode;
+        const isHovered = node === hoveredNode;
+
+        // Glow ring if selected or hovered
+        if (isSelected || isHovered) {
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.radius + 8, 0, Math.PI * 2);
+          ctx.fillStyle = node.color + "33";
+          ctx.fill();
+          ctx.strokeStyle = node.color;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+
+        // Node Circle
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        ctx.fillStyle = isSelected ? "#ffffff" : node.color;
+        ctx.shadowColor = node.color;
+        ctx.shadowBlur = isSelected || isHovered ? 16 : 6;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Border
+        ctx.strokeStyle = "#090d16";
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // Node Label
+        if (showLabels || isSelected || isHovered) {
+          ctx.font = isSelected ? "bold 12px Inter, sans-serif" : "11px Inter, sans-serif";
+          ctx.fillStyle = isSelected ? "#ffffff" : "#cbd5e1";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.fillText(node.name, node.x, node.y + node.radius + 6);
+        }
+      });
+
+      ctx.restore();
+    }
+
+    // Animation frame
+    function animate() {
+      stepPhysics();
+      render();
+      requestAnimationFrame(animate);
+    }
+
+    // Coordinate conversion
+    function toWorldCoords(screenX, screenY) {
+      return {
+        x: (screenX - transform.x) / transform.scale,
+        y: (screenY - transform.y) / transform.scale
+      };
+    }
+
+    function findNodeAt(screenX, screenY) {
+      const world = toWorldCoords(screenX, screenY);
+      for (let i = nodes.length - 1; i >= 0; i--) {
+        const n = nodes[i];
+        const dist = Math.hypot(world.x - n.x, world.y - n.y);
+        if (dist <= n.radius + 4) return n;
+      }
+      return null;
+    }
+
+    // Mouse & Touch events
+    container.addEventListener("mousedown", e => {
+      const rect = container.getBoundingClientRect();
+      const sx = e.clientX - rect.left;
+      const sy = e.clientY - rect.top;
+      const node = findNodeAt(sx, sy);
+
+      if (node) {
+        draggedNode = node;
+        selectedNode = node;
+        updateInspector(node);
+      } else {
+        isDraggingView = true;
+        dragStart = { x: e.clientX - transform.x, y: e.clientY - transform.y };
+      }
+    });
+
+    window.addEventListener("mousemove", e => {
+      const rect = container.getBoundingClientRect();
+      const sx = e.clientX - rect.left;
+      const sy = e.clientY - rect.top;
+
+      if (draggedNode) {
+        const world = toWorldCoords(sx, sy);
+        draggedNode.x = world.x;
+        draggedNode.y = world.y;
+        draggedNode.vx = 0;
+        draggedNode.vy = 0;
+      } else if (isDraggingView) {
+        transform.x = e.clientX - dragStart.x;
+        transform.y = e.clientY - dragStart.y;
+      } else {
+        const node = findNodeAt(sx, sy);
+        if (node !== hoveredNode) {
+          hoveredNode = node;
+          container.style.cursor = node ? "pointer" : "grab";
+        }
+      }
+    });
+
+    window.addEventListener("mouseup", () => {
+      draggedNode = null;
+      isDraggingView = false;
+    });
+
+    // Zoom on wheel
+    container.addEventListener("wheel", e => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+      const rect = container.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const newScale = Math.max(0.3, Math.min(3.0, transform.scale * zoomFactor));
+      transform.x = mouseX - (mouseX - transform.x) * (newScale / transform.scale);
+      transform.y = mouseY - (mouseY - transform.y) * (newScale / transform.scale);
+      transform.scale = newScale;
+    });
+
+    // Buttons
+    document.getElementById("btnResetView").addEventListener("click", () => {
+      transform = { x: width / 2, y: height / 2, scale: 0.9 };
+    });
+
+    document.getElementById("btnToggleLabels").addEventListener("click", () => {
+      showLabels = !showLabels;
+      document.getElementById("btnToggleLabels").textContent = showLabels ? "Hide Labels" : "Show Labels";
+    });
+
+    // Search Input
+    const searchInput = document.getElementById("searchInput");
+    searchInput.addEventListener("input", e => {
+      const query = e.target.value.toLowerCase().trim();
+      if (!query) {
+        nodes.forEach(n => n.color = getDefaultColor(n.type));
+        return;
+      }
+      nodes.forEach(n => {
+        const matches = n.name.toLowerCase().includes(query) ||
+                        n.functions.some(f => f.toLowerCase().includes(query)) ||
+                        n.classes.some(c => c.toLowerCase().includes(query));
+        n.color = matches ? "#10b981" : "#334155";
+      });
+    });
+
+    function getDefaultColor(type) {
+      if (type === "hub") return "#10b981";
+      if (type === "backend") return "#6366f1";
+      if (type === "extension") return "#06b6d4";
+      return "#f59e0b";
+    }
+
+    // Populate Side Inspector
+    function updateInspector(node) {
+      const content = document.getElementById("inspectorContent");
+      
+      const outgoing = links.filter(l => l.source === node.id).map(l => l.target);
+      const incoming = links.filter(l => l.target === node.id).map(l => l.source);
+
+      content.innerHTML = `
+        <div class="space-y-4">
+          <!-- Header -->
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${node.type}</span>
+              <span class="text-xs font-mono text-slate-400">${node.lines} lines</span>
+            </div>
+            <h2 class="text-base font-bold text-slate-100 font-mono break-all">${node.name}</h2>
+            <p class="text-xs text-slate-400 mt-2 leading-relaxed">${node.description}</p>
+          </div>
+
+          <!-- Token Metrics -->
+          <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+            <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800/80">
+              <div class="text-slate-500 text-[10px] uppercase">Tokens</div>
+              <div class="text-slate-200 font-semibold mt-0.5">~${node.tokens.toLocaleString()}</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800/80">
+              <div class="text-slate-500 text-[10px] uppercase">Centrality</div>
+              <div class="text-emerald-400 font-semibold mt-0.5">${node.centrality} in-degree</div>
+            </div>
+          </div>
+
+          <!-- Classes -->
+          ${node.classes.length > 0 ? `
+            <div>
+              <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Classes & Types (${node.classes.length})</h4>
+              <div class="flex flex-wrap gap-1.5">
+                ${node.classes.map(c => `<span class="px-2 py-1 bg-indigo-950/40 text-indigo-300 border border-indigo-500/30 rounded text-xs font-mono">${c}</span>`).join("")}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Functions -->
+          ${node.functions.length > 0 ? `
+            <div>
+              <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Exported Functions (${node.functions.length})</h4>
+              <div class="flex flex-wrap gap-1.5">
+                ${node.functions.map(f => `<span class="px-2 py-1 bg-emerald-950/40 text-emerald-300 border border-emerald-500/30 rounded text-xs font-mono">${f}()</span>`).join("")}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Relations -->
+          <div class="space-y-2">
+            <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Dependency Relations</h4>
+            ${incoming.length > 0 ? `
+              <div class="text-xs">
+                <span class="text-slate-500">Depended on by:</span>
+                <div class="mt-1 flex flex-wrap gap-1">
+                  ${incoming.map(inc => `<span class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-[11px] font-mono">${inc}</span>`).join("")}
+                </div>
+              </div>
+            ` : ''}
+            ${outgoing.length > 0 ? `
+              <div class="text-xs">
+                <span class="text-slate-500">Imports / Calls:</span>
+                <div class="mt-1 flex flex-wrap gap-1">
+                  ${outgoing.map(out => `<span class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-[11px] font-mono">${out}</span>`).join("")}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    // Populate Hubs in overview
+    function populateHubs() {
+      const hubList = document.getElementById("hubList");
+      const hubs = nodes.filter(n => n.centrality > 0 || n.type === "hub" || n.type === "backend");
+      hubList.innerHTML = hubs.map(h => `
+        <div class="p-2.5 rounded-lg bg-slate-900/60 hover:bg-slate-900 border border-slate-800/80 cursor-pointer transition flex items-center justify-between" onclick="selectHub('${h.id}')">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full" style="background: ${h.color}"></span>
+            <span class="text-xs font-mono text-slate-200">${h.name}</span>
+          </div>
+          <span class="text-[10px] font-mono text-slate-500">~${h.tokens} tok</span>
+        </div>
+      `).join("");
+    }
+
+    window.selectHub = function(id) {
+      const node = nodeMap[id];
+      if (node) {
+        selectedNode = node;
+        transform.x = width / 2 - node.x * transform.scale;
+        transform.y = height / 2 - node.y * transform.scale;
+        updateInspector(node);
+      }
+    };
+
+    // Start
+    resize();
+    populateHubs();
+    animate();
+  </script>
+</body>
+</html>

@@ -812,6 +812,7 @@ When asked to "Squeeze this prompt" or operate in "Squeeze Mode":
   // ==========================================
   const qsModeBtns = document.querySelectorAll('.qs-mode-btn');
   const qsPkgBtns = document.querySelectorAll('.qs-pkg-btn');
+  const qsPkgTabs = document.getElementById('qsPkgTabs');
   const qsCommandCode = document.getElementById('qsCommandCode');
   const qsCopyBtn = document.getElementById('qsCopyBtn');
 
@@ -830,10 +831,22 @@ When asked to "Squeeze this prompt" or operate in "Squeeze Mode":
       yarn: 'squeeze mcp setup',
       pnpm: 'squeeze mcp setup',
       bun: 'squeeze mcp setup'
+    },
+    antigravity: {
+      npm: 'python3 install.py',
+      yarn: 'python3 install.py',
+      pnpm: 'python3 install.py',
+      bun: 'python3 install.py'
     }
   };
 
   function updateQsCommand() {
+    if (activeQsMode === 'antigravity') {
+      if (qsPkgTabs) qsPkgTabs.style.display = 'none';
+      if (qsCommandCode) qsCommandCode.textContent = 'python3 install.py';
+      return;
+    }
+    if (qsPkgTabs) qsPkgTabs.style.display = 'flex';
     if (qsCommandCode && qsCommandMatrix[activeQsMode] && qsCommandMatrix[activeQsMode][activeQsPkg]) {
       qsCommandCode.textContent = qsCommandMatrix[activeQsMode][activeQsPkg];
     }
