@@ -1,22 +1,25 @@
 #!/usr/bin/env python3
 """
 Squeeze AI - Model Context Protocol (MCP) Server
-Integrates Squeeze AI AST Code Skeletonizer, Reversible Chunk Storage (CCR),
-Content-Aware Shrinkers (JSON & Logs), DLP Secret Shield, and CacheAligner
-directly into Claude Code, Claude Desktop, Cursor, and other AI coding assistants.
+Integrates:
+1. Squeeze Codebase Knowledge Graph (Topological Dependency & Symbol Graph)
+2. Squeeze AST Code Skeletonizer (Python, TypeScript, JS, Go, Rust)
+3. Reversible Chunk Storage (CCR: Chunk Compression & Retrieval)
+4. Content-Aware Data Shrinkers (JSON & Logs)
+5. DLP Secret Shield (8 Credential Signatures)
+6. Provider CacheAligner (Prefix Invariance Engine)
 
-Usage:
-  python3 squeeze_mcp.py
+Zero external pip dependencies — 100% Python standard library.
 """
 
 import sys
+import os
 import json
 import re
 import hashlib
 import time
 
-# --- REVERSIBLE CHUNK STORAGE (CCR: Chunk Compression & Retrieval) ---
-# Stores original raw context in memory so the AI agent can losslessly retrieve full details on demand.
+# --- REVERSIBLE CHUNK STORAGE (CCR) ---
 CHUNK_STORE = {}
 
 # Cumulative Token Metrics
@@ -224,7 +227,6 @@ def shrink_logs_data(log_text: str) -> str:
     repeat_count = 0
 
     for line in lines:
-        # Normalize timestamps and UUIDs
         clean_line = re.sub(r'\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(\.\d+)?Z?', '[TIME]', line)
         clean_line = re.sub(r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}', '[UUID]', clean_line, flags=re.IGNORECASE)
 
@@ -241,6 +243,115 @@ def shrink_logs_data(log_text: str) -> str:
         result.append(f"   ↳ [Previous line repeated {repeat_count} additional times]")
 
     return "\n".join(result)
+
+def generate_codebase_graph(root_dir: str = ".", max_files: int = 120) -> str:
+    """Traverses a codebase, extracts AST symbols and imports, and builds a topological knowledge graph."""
+    if not os.path.isdir(root_dir):
+        return f"Error: '{root_dir}' is not a valid directory."
+
+    ignore_dirs = {
+        "node_modules", ".git", "dist", "build", "__pycache__", ".venv", "venv",
+        "env", ".env", "coverage", ".next", ".cache", ".idea", ".vscode", "tmp", "temp",
+        "PERSONAL_GUIDES_AND_DOCS", "icons"
+    }
+    code_exts = {".py", ".ts", ".tsx", ".js", ".jsx", ".go", ".rs", ".java", ".c", ".cpp", ".h"}
+
+    files_indexed = []
+    symbol_count = 0
+    raw_bytes = 0
+
+    for root, dirs, files in os.walk(root_dir):
+        dirs[:] = [d for d in dirs if d not in ignore_dirs and not d.startswith(".")]
+        for f in files:
+            if f.endswith(".min.js") or f.endswith(".min.css") or f.startswith("."):
+                continue
+            ext = os.path.splitext(f)[1].lower()
+            if ext in code_exts:
+                if len(files_indexed) >= max_files:
+                    break
+                full_path = os.path.join(root, f)
+                rel_path = os.path.relpath(full_path, root_dir)
+                try:
+                    with open(full_path, "r", encoding="utf-8", errors="ignore") as fp:
+                        content = fp.read()
+                    raw_bytes += len(content)
+
+                    classes = re.findall(r'\bclass\s+([a-zA-Z0-9_$]+)', content)
+                    types = re.findall(r'\b(?:type|interface)\s+([a-zA-Z0-9_$]+)', content)
+                    raw_funcs = re.findall(r'(?:def|function)\s+([a-zA-Z0-9_$]+)', content)
+
+                    func_names = []
+                    for name in raw_funcs:
+                        if name and name not in func_names and name not in ["if", "for", "while", "switch"]:
+                            func_names.append(name)
+
+                    imports = []
+                    import_matches = re.findall(r'(?:from\s+[\'"]?([a-zA-Z0-9_./-]+)[\'"]?\s+import|import\s+[\'"]?([a-zA-Z0-9_./-]+)[\'"]?|require\([\'"]([a-zA-Z0-9_./-]+)[\'"]\))', content)
+                    for im1, im2, im3 in import_matches:
+                        target = im1 or im2 or im3
+                        if target and target not in imports:
+                            imports.append(target)
+
+                    all_symbols = classes + types + func_names
+                    symbol_count += len(all_symbols)
+
+                    files_indexed.append({
+                        "path": rel_path,
+                        "classes": list(dict.fromkeys(classes + types))[:8],
+                        "functions": list(dict.fromkeys(func_names))[:12],
+                        "imports": list(dict.fromkeys(imports))[:8],
+                        "lines": len(content.split("\n")),
+                        "tokens": max(1, len(content) // 4)
+                    })
+                except Exception:
+                    pass
+
+    if not files_indexed:
+        return f"No matching code files found in '{root_dir}'."
+
+    # Compute dependency in-degrees
+    in_degree = {}
+    for item in files_indexed:
+        base_name = os.path.splitext(os.path.basename(item["path"]))[0]
+        in_degree[item["path"]] = 0
+        for other in files_indexed:
+            for imp in other["imports"]:
+                if base_name in imp:
+                    in_degree[item["path"]] += 1
+
+    files_ranked = sorted(files_indexed, key=lambda x: in_degree.get(x["path"], 0), reverse=True)
+    raw_tokens = max(1, raw_bytes // 4)
+    graph_tokens = max(1, len(files_indexed) * 35)
+    pct_saved = round((1.0 - (graph_tokens / max(1, raw_tokens))) * 100, 1)
+
+    output = [
+        "# 🗺️ SQUEEZE CODEBASE TOPOLOGICAL GRAPH",
+        f"- **Repository Path**: `{os.path.abspath(root_dir)}`",
+        f"- **Files Scanned**: {len(files_indexed)} | **Total Symbols Indexed**: {symbol_count}",
+        f"- **Raw Code Tokens**: ~{raw_tokens:,} | **Graph Tokens**: ~{graph_tokens:,}",
+        f"- **Token Compression**: ~{pct_saved}% savings (exploration cost eliminated)",
+        "",
+        "### 🏛️ Core Architecture Hubs (Ranked by Centrality):"
+    ]
+
+    for item in files_ranked[:5]:
+        p = item["path"]
+        deg = in_degree.get(p, 0)
+        c_str = f"Classes: [{', '.join(item['classes'])}]" if item['classes'] else ""
+        f_str = f"Funcs: [{', '.join(item['functions'][:5])}]" if item['functions'] else ""
+        sym_desc = " | ".join(filter(None, [c_str, f_str])) or "Module exports"
+        output.append(f"- **`{p}`** (Centrality: {deg} imports)\n  ↳ {sym_desc}")
+
+    output.append("\n### 📦 Full Module Symbol & Interface Map:")
+    for item in files_indexed:
+        p = item["path"]
+        c_str = f"Classes: [{', '.join(item['classes'])}]" if item['classes'] else ""
+        f_str = f"Funcs: [{', '.join(item['functions'])}]" if item['functions'] else ""
+        imp_str = f"Imports: [{', '.join(item['imports'][:4])}]" if item['imports'] else ""
+        details = " | ".join(filter(None, [c_str, f_str, imp_str])) or "Declarations & configurations"
+        output.append(f"- `{p}` ({item['lines']} lines, ~{item['tokens']} tokens)\n  ↳ {details}")
+
+    return "\n".join(output)
 
 def align_prompt_for_cache(system_prompt: str, architecture_context: str, user_task: str) -> str:
     """Formats prompt into Tier 1 (Static Persona) -> Tier 2 (Architecture Context) -> Tier 3 (Volatile Task)."""
@@ -285,7 +396,6 @@ def optimize_prompt(prompt: str, store_reversible: bool = True) -> dict:
     
     chunk_id = None
     if store_reversible and orig_len > 300:
-        # Generate stable chunk hash
         chunk_id = f"chunk_{hashlib.md5(prompt.encode('utf-8')).hexdigest()[:8]}"
         CHUNK_STORE[chunk_id] = {
             "original_text": prompt,
@@ -293,7 +403,6 @@ def optimize_prompt(prompt: str, store_reversible: bool = True) -> dict:
             "orig_tokens": max(1, orig_len // 4),
             "opt_tokens": max(1, opt_len // 4)
         }
-        # Annotate with reversible retrieval header
         opt_text = f"[SQUEEZE_CHUNK id=\"{chunk_id}\" (Saved {max(0, (orig_len - opt_len)//4)} tokens). Call squeeze_retrieve(chunk_id=\"{chunk_id}\") for full original]\n" + opt_text
 
     raw_t = max(1, orig_len // 4)
@@ -315,6 +424,25 @@ def optimize_prompt(prompt: str, store_reversible: bool = True) -> dict:
 
 # --- MCP JSON-RPC 2.0 PROTOCOL TOOLS ---
 TOOLS = [
+    {
+        "name": "squeeze_codebase_graph",
+        "description": "Codebase Knowledge Graph: Scans a directory and generates a compact topological symbol and dependency map so coding assistants know where everything lives without reading all files.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "directory_path": {
+                    "type": "string",
+                    "description": "Path to repository or directory to index (defaults to current working directory '.')",
+                    "default": "."
+                },
+                "max_files": {
+                    "type": "integer",
+                    "description": "Maximum number of files to index",
+                    "default": 100
+                }
+            }
+        }
+    },
     {
         "name": "squeeze_compress",
         "description": "Compress prompts, logs, or tool outputs using Squeeze AI heuristics and DLP Secret Shield with reversible chunking.",
@@ -412,7 +540,7 @@ def handle_message(msg):
                 },
                 "serverInfo": {
                     "name": "squeeze-ai-mcp",
-                    "version": "1.2.0"
+                    "version": "1.3.0"
                 }
             }
         }
@@ -433,8 +561,19 @@ def handle_message(msg):
         params = msg.get("params", {})
         tool_name = params.get("name")
         args = params.get("arguments", {})
+
+        if tool_name == "squeeze_codebase_graph":
+            graph = generate_codebase_graph(args.get("directory_path", "."), args.get("max_files", 100))
+            return {
+                "jsonrpc": "2.0",
+                "id": msg_id,
+                "result": {
+                    "content": [{"type": "text", "text": graph}],
+                    "isError": False
+                }
+            }
         
-        if tool_name == "squeeze_compress":
+        elif tool_name == "squeeze_compress":
             res = optimize_prompt(args.get("text", ""), store_reversible=args.get("store_reversible", True))
             return {
                 "jsonrpc": "2.0",
@@ -517,7 +656,6 @@ def handle_message(msg):
 
         elif tool_name == "squeeze_stats":
             tokens_saved = METRICS["tokens_saved"]
-            # Dollar savings: Claude 3.5 Sonnet ($3/M), Claude Opus ($15/M), GPT-4o ($2.50/M)
             dollars_sonnet = (tokens_saved / 1000000.0) * 3.0
             dollars_opus = (tokens_saved / 1000000.0) * 15.0
             stats_json = json.dumps({
