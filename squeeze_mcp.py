@@ -49,13 +49,18 @@ def mask_secrets(text: str) -> str:
 
 def skeletonize_python(code: str) -> str:
     """Strips Python function/method bodies while preserving classes, signatures, and docstrings."""
+    if not code:
+        return ""
     lines = code.split("\n")
     result = []
     skip_body_indent = None
     in_docstring = False
     docstring_delim = ""
+    i = 0
+    n = len(lines)
     
-    for i, line in enumerate(lines):
+    while i < n:
+        line = lines[i]
         trimmed = line.strip()
         indent = len(line) - len(line.lstrip())
         
@@ -64,20 +69,25 @@ def skeletonize_python(code: str) -> str:
                 docstring_delim = trimmed[:3]
                 if len(trimmed) > 3 and trimmed.endswith(docstring_delim):
                     result.append(line)
+                    i += 1
                     continue
                 in_docstring = True
                 result.append(line)
+                i += 1
                 continue
         else:
             result.append(line)
             if trimmed.endswith(docstring_delim):
                 in_docstring = False
+            i += 1
             continue
             
         if skip_body_indent is not None:
             if indent > skip_body_indent and trimmed != "":
+                i += 1
                 continue
             elif trimmed == "":
+                i += 1
                 continue
             else:
                 skip_body_indent = None
@@ -86,93 +96,121 @@ def skeletonize_python(code: str) -> str:
             trimmed.startswith("@") or trimmed.startswith("#") or 
             trimmed.startswith("class ") or trimmed.startswith("type ")):
             result.append(line)
+            i += 1
             continue
             
         if trimmed.startswith("def ") or trimmed.startswith("async def "):
-            result.append(line)
+            sig_lines = [line]
+            p_depth = line.count("(") - line.count(")")
+            while (p_depth > 0 or not re.search(r':\s*(#.*)?$', sig_lines[-1].strip())) and i + 1 < n:
+                i += 1
+                sig_lines.append(lines[i])
+                p_depth += lines[i].count("(") - lines[i].count(")")
+                if p_depth <= 0 and re.search(r':\s*(#.*)?$', lines[i].strip()):
+                    break
+            result.extend(sig_lines)
+
             has_doc = False
-            if i + 1 < len(lines):
-                next_t = lines[i+1].strip()
+            if i + 1 < n:
+                next_t = lines[i + 1].strip()
                 if next_t.startswith('"""') or next_t.startswith("'''"):
                     has_doc = True
             if not has_doc:
                 result.append(" " * (indent + 4) + "...")
             skip_body_indent = indent
+            i += 1
             continue
             
-        if indent == 0 and "=" in trimmed and not trimmed.startswith("if "):
+        if indent == 0 and "=" in trimmed and not trimmed.startswith("if ") and not trimmed.startswith("for "):
             result.append(line)
+        i += 1
             
     return "\n".join(result).strip()
 
 def skeletonize_typescript(code: str) -> str:
     """Strips TypeScript / JavaScript bodies while preserving interfaces, types, classes, and exported signatures."""
+    if not code:
+        return ""
     lines = code.split("\n")
     result = []
     brace_depth = 0
     in_function_body = False
-    func_brace_start = 0
+    func_brace_depth = 0
+    i = 0
+    n = len(lines)
 
-    for i, line in enumerate(lines):
+    while i < n:
+        line = lines[i]
         trimmed = line.strip()
 
         if (trimmed.startswith("import ") or trimmed.startswith("export type ") or
             trimmed.startswith("export interface ") or trimmed.startswith("type ") or
             trimmed.startswith("interface ") or trimmed.startswith("@")):
             result.append(line)
-            open_b = line.count("{")
-            close_b = line.count("}")
-            brace_depth += (open_b - close_b)
+            brace_depth += line.count("{") - line.count("}")
+            i += 1
             continue
 
-        is_func = (
-            bool(re.match(r'^(export\s+)?(async\s+)?function\b', trimmed)) or
-            bool(re.match(r'^(public|private|protected|static|override|async|\s)*[a-zA-Z0-9_$]+\s*\([^)]*\)\s*(:\s*[^={]+)?\s*\{?$', trimmed)) or
-            bool(re.match(r'^(export\s+)?(const|let|var)\s+[a-zA-Z0-9_$]+\s*=\s*(async\s*)?\([^)]*\)\s*(:\s*[^={]+)?\s*=>\s*\{?$', trimmed))
-        )
         is_class = bool(re.match(r'^(export\s+)?(abstract\s+)?class\b', trimmed))
-
         if is_class:
             result.append(line)
             brace_depth += line.count("{") - line.count("}")
+            i += 1
             continue
 
-        if is_func and not in_function_body:
+        is_func_start = (
+            bool(re.match(r'^(export\s+)?(default\s+)?(async\s+)?function\b', trimmed)) or
+            bool(re.match(r'^(public|private|protected|static|override|abstract|async|\s)*(constructor|[a-zA-Z0-9_$]+)\s*(<[^>]*>)?\s*\(', trimmed)) or
+            bool(re.match(r'^(export\s+)?(const|let|var)\s+[a-zA-Z0-9_$]+(\s*:[^=]+)?\s*=\s*(async\s*)?(<[^>]*>)?\s*\(', trimmed))
+        )
+
+        if is_func_start and not in_function_body:
             sig = line
-            while "{" not in sig and not sig.endswith(";") and i + 1 < len(lines):
+            p_depth = line.count("(") - line.count(")")
+
+            while (p_depth > 0 or ("{" not in sig and not sig.rstrip().endswith(";"))) and i + 1 < n:
                 i += 1
                 sig += "\n" + lines[i]
-
-            indent_match = re.match(r'^(\s*)', line)
-            indent_str = indent_match.group(1) if indent_match else ""
+                p_depth += lines[i].count("(") - lines[i].count(")")
+                if p_depth <= 0 and ("{" in sig or lines[i].strip().endswith(";")):
+                    break
 
             if "{" in sig:
-                sig_clean = sig[:sig.index("{")].strip()
-                result.append(f"{indent_str}{sig_clean} {{ /* ... */ }}")
-                in_function_body = True
-                func_brace_start = brace_depth
-                brace_depth += sig.count("{") - sig.count("}")
-                if brace_depth <= func_brace_start:
-                    in_function_body = False
+                brace_idx = sig.index("{")
+                header = sig[:brace_idx].rstrip()
+                result.append(f"{header} {{ /* ... */ }}")
+
+                remaining = sig[brace_idx:]
+                open_b = remaining.count("{")
+                close_b = remaining.count("}")
+                if open_b > close_b:
+                    in_function_body = True
+                    func_brace_depth = open_b - close_b
             else:
                 result.append(sig)
+            i += 1
             continue
 
         open_b = line.count("{")
         close_b = line.count("}")
 
         if in_function_body:
-            brace_depth += (open_b - close_b)
-            if brace_depth <= func_brace_start:
+            func_brace_depth += (open_b - close_b)
+            if func_brace_depth <= 0:
                 in_function_body = False
+                func_brace_depth = 0
+            i += 1
             continue
 
         if brace_depth <= 1 and (":" in trimmed or ";" in trimmed) and not trimmed.startswith("return "):
+            result.append(line)
+        elif trimmed in ("}", "};"):
             result.append(line)
 
         brace_depth += (open_b - close_b)
         if brace_depth < 0:
             brace_depth = 0
+        i += 1
 
     return "\n".join(result).strip()
 

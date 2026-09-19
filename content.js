@@ -78,7 +78,8 @@
     el.focus();
 
     if (el.tagName === "TEXTAREA" || el.tagName === "INPUT") {
-      const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set;
+      const proto = el.tagName === "INPUT" ? window.HTMLInputElement.prototype : window.HTMLTextAreaElement.prototype;
+      const nativeSetter = Object.getOwnPropertyDescriptor(proto, "value")?.set;
       if (nativeSetter) {
         nativeSetter.call(el, text);
       } else {
@@ -186,6 +187,7 @@
 
   // --- TOOLTIP DISPLAY ---
   function showTooltip(targetEl, text) {
+    if (!targetEl) return;
     hideTooltip();
     const tip = document.createElement("div");
     tip.className = "squeeze-tooltip";
@@ -210,6 +212,7 @@
   }
 
   function showToast(targetEl, text) {
+    if (!targetEl) return;
     const toast = document.createElement("div");
     toast.className = "squeeze-tooltip";
     toast.textContent = text;
@@ -387,7 +390,7 @@
     input.addEventListener("keydown", e => {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "s") {
         e.preventDefault();
-        triggerBtn.click();
+        if (triggerBtn) triggerBtn.click();
       }
     });
   }
@@ -1115,10 +1118,11 @@
   async function updateContextDepth() {
     if (!usageBar) return;
 
-    // Estimate thread tokens
-    const textNodes = document.querySelectorAll(
+    // Estimate thread tokens without double-counting parent & child message containers
+    const rawNodes = Array.from(document.querySelectorAll(
       "div.font-user-message, div.font-claude-message, [data-testid='user-message'], [data-message-author-role], user-query, model-response"
-    );
+    ));
+    const textNodes = rawNodes.filter(node => !rawNodes.some(other => other !== node && other.contains(node)));
     let combined = "";
     textNodes.forEach(n => { combined += " " + n.innerText; });
     if (activeInputEl) combined += " " + getInputValue(activeInputEl);

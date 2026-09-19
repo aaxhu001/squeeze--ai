@@ -73,13 +73,17 @@
         continue;
       }
 
-      // Function definition
+      // Function definition (supports multiline parameters and typed arguments)
       if (trimmed.startsWith("def ") || trimmed.startsWith("async def ")) {
-        // Collect full signature if multi-line
         let sig = line;
-        while (!sig.includes(":") && i + 1 < lines.length) {
+        let pDepth = (line.match(/\(/g) || []).length - (line.match(/\)/g) || []).length;
+        while ((pDepth > 0 || !/(:\s*(#.*)?)$/.test(sig.trim())) && i + 1 < lines.length) {
           i++;
           sig += "\n" + lines[i];
+          pDepth += (lines[i].match(/\(/g) || []).length - (lines[i].match(/\)/g) || []).length;
+          if (pDepth <= 0 && /(:\s*(#.*)?)$/.test(sig.trim())) {
+            break;
+          }
         }
         result.push(sig);
 
@@ -93,7 +97,6 @@
         }
 
         if (!hasDocstring) {
-          // Add standard Python placeholder
           const indentStr = " ".repeat(indent + 4);
           result.push(`${indentStr}...`);
         }
@@ -116,7 +119,7 @@
     const result = [];
     let braceDepth = 0;
     let inFunctionBody = false;
-    let funcBraceStart = 0;
+    let funcBraceDepth = 0;
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
@@ -132,21 +135,13 @@
         trimmed.startsWith("@")
       ) {
         result.push(line);
-        // Track braces inside interfaces/types
         const open = (line.match(/{/g) || []).length;
         const close = (line.match(/}/g) || []).length;
         braceDepth += (open - close);
         continue;
       }
 
-      // Detect function or method signatures
-      const isFunction =
-        /^(export\s+)?(async\s+)?function\b/.test(trimmed) ||
-        /^(public|private|protected|static|override|async|\s)*[a-zA-Z0-9_$]+\s*\([^)]*\)\s*(:\s*[^={]+)?\s*\{?$/.test(trimmed) ||
-        /^(export\s+)?(const|let|var)\s+[a-zA-Z0-9_$]+\s*=\s*(async\s*)?\([^)]*\)\s*(:\s*[^={]+)?\s*=>\s*\{?$/.test(trimmed);
-
       const isClassDecl = /^(export\s+)?(abstract\s+)?class\b/.test(trimmed);
-
       if (isClassDecl) {
         result.push(line);
         const open = (line.match(/{/g) || []).length;
@@ -155,26 +150,36 @@
         continue;
       }
 
-      if (isFunction && !inFunctionBody) {
+      // Detect function/method starts (including multiline headers and arrow functions)
+      const isFuncStart =
+        /^(export\s+)?(default\s+)?(async\s+)?function\b/.test(trimmed) ||
+        /^(public|private|protected|static|override|abstract|async|\s)*(constructor|[a-zA-Z0-9_$]+)\s*(<[^>]*>)?\s*\(/.test(trimmed) ||
+        /^(export\s+)?(const|let|var)\s+[a-zA-Z0-9_$]+(\s*:[^=]+)?\s*=\s*(async\s*)?(<[^>]*>)?\s*\(/.test(trimmed);
+
+      if (isFuncStart && !inFunctionBody) {
         let sig = line;
-        // Collect multi-line signature
-        while (!sig.includes("{") && !sig.endsWith(";") && i + 1 < lines.length) {
+        let pDepth = (line.match(/\(/g) || []).length - (line.match(/\)/g) || []).length;
+
+        while ((pDepth > 0 || (!sig.includes("{") && !sig.trim().endsWith(";"))) && i + 1 < lines.length) {
           i++;
           sig += "\n" + lines[i];
+          pDepth += (lines[i].match(/\(/g) || []).length - (lines[i].match(/\)/g) || []).length;
+          if (pDepth <= 0 && (sig.includes("{") || sig.trim().endsWith(";"))) {
+            break;
+          }
         }
 
-        const indentMatch = line.match(/^(\s*)/);
-        const indentStr = indentMatch ? indentMatch[1] : "";
-
         if (sig.includes("{")) {
-          // Replace opening brace with collapsed body
-          const sigClean = sig.substring(0, sig.indexOf("{")).trim();
-          result.push(`${indentStr}${sigClean} { /* ... */ }`);
-          inFunctionBody = true;
-          funcBraceStart = braceDepth;
-          braceDepth += (sig.match(/{/g) || []).length - (sig.match(/}/g) || []).length;
-          if (braceDepth <= funcBraceStart) {
-            inFunctionBody = false;
+          const braceIdx = sig.indexOf("{");
+          const header = sig.substring(0, braceIdx).trimEnd();
+          result.push(`${header} { /* ... */ }`);
+
+          const remaining = sig.substring(braceIdx);
+          const openB = (remaining.match(/{/g) || []).length;
+          const closeB = (remaining.match(/}/g) || []).length;
+          if (openB > closeB) {
+            inFunctionBody = true;
+            funcBraceDepth = openB - closeB;
           }
         } else {
           result.push(sig);
@@ -186,15 +191,18 @@
       const closeBraces = (line.match(/}/g) || []).length;
 
       if (inFunctionBody) {
-        braceDepth += (openBraces - closeBraces);
-        if (braceDepth <= funcBraceStart) {
+        funcBraceDepth += (openBraces - closeBraces);
+        if (funcBraceDepth <= 0) {
           inFunctionBody = false;
+          funcBraceDepth = 0;
         }
         continue;
       }
 
-      // If at top level or class level, keep property definitions
-      if (braceDepth <= 1 && (trimmed.includes(":") || trimmed.includes(";")) && !trimmed.startsWith("return ") && !trimmed.startsWith("const ") && !trimmed.startsWith("let ")) {
+      // Keep property definitions and class/interface closing braces
+      if (braceDepth <= 1 && (trimmed.includes(":") || trimmed.includes(";")) && !trimmed.startsWith("return ")) {
+        result.push(line);
+      } else if (trimmed === "}" || trimmed === "};") {
         result.push(line);
       }
 

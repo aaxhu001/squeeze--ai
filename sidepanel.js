@@ -153,16 +153,48 @@ document.addEventListener("DOMContentLoaded", () => {
       currentMode = btn.getAttribute("data-mode");
       chrome.storage.local.set({ optimizationMode: currentMode });
       // If we already have output, auto-reoptimize
-      if (inputPrompt.value.trim() && outputSection.style.display !== "none") {
+      if (inputPrompt?.value?.trim() && outputSection && outputSection.style.display !== "none") {
         executeOptimization();
       }
     });
   });
 
+  // Fast line-level diff fallback for large prompts (prevents UI freeze)
+  function generateLineDiffHtml(orig, opt) {
+    const origLines = orig.split("\n");
+    const optLines  = opt.split("\n");
+    const origSet   = new Set(origLines.map(l => l.trim()));
+    const optSet    = new Set(optLines.map(l => l.trim()));
+
+    const pieces = [];
+    origLines.forEach(l => {
+      const t = l.trim();
+      if (t && !optSet.has(t)) {
+        pieces.push(`<del class="sp-diff-del">${escapeHtml(l)}</del>`);
+      }
+    });
+    optLines.forEach(l => {
+      const t = l.trim();
+      if (t && !origSet.has(t)) {
+        pieces.push(`<ins class="sp-diff-ins">${escapeHtml(l)}</ins>`);
+      } else {
+        pieces.push(escapeHtml(l));
+      }
+    });
+    return pieces.join("<br>");
+  }
+
   // --- WORD-LEVEL DIFF GENERATOR ---
+  const LCS_WORD_CAP = 500;
   function generateDiffHtml(original, optimized) {
+    if (!original) original = "";
+    if (!optimized) optimized = "";
     const origTokens = original.trim().split(/(\s+)/);
     const optTokens = optimized.trim().split(/(\s+)/);
+
+    if (origTokens.length > LCS_WORD_CAP || optTokens.length > LCS_WORD_CAP) {
+      return generateLineDiffHtml(original, optimized);
+    }
 
     // LCS (Longest Common Subsequence)
     const m = origTokens.length;
@@ -840,14 +872,14 @@ export class AuthenticationManager {
         processed = raw;
       }
 
-      skelOutput.value = processed;
+      if (skelOutput) skelOutput.value = processed;
       const origTok = estimateTokensLocal(raw);
       const newTok = estimateTokensLocal(processed);
       const saved = Math.max(0, origTok - newTok);
       const pct = origTok > 0 ? Math.round((saved / origTok) * 100) : 0;
 
-      skelStats.textContent = `Output: ${newTok.toLocaleString()} tokens (saved ${saved.toLocaleString()} tok, ${pct}%)`;
-      skelResultWrapper.style.display = "block";
+      if (skelStats) skelStats.textContent = `Output: ${newTok.toLocaleString()} tokens (saved ${saved.toLocaleString()} tok, ${pct}%)`;
+      if (skelResultWrapper) skelResultWrapper.style.display = "block";
     });
   }
 
