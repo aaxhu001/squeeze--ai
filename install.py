@@ -47,7 +47,7 @@ def test_mcp_server(mcp_path, python_cmd):
         )
         stdout, _ = proc.communicate(input=test_req, timeout=5)
         if "squeeze_compress" in stdout and "squeeze_skeleton" in stdout:
-            return True, "4 tools verified (squeeze_skeleton, squeeze_compress, squeeze_shrink_json, squeeze_stats)"
+            return True, "7 tools verified (squeeze_compress, squeeze_skeleton, squeeze_shrink_json, squeeze_shrink_logs, squeeze_retrieve, squeeze_cache_align, squeeze_stats)"
         return False, "Server responded but tools list was incomplete"
     except Exception as e:
         return False, str(e)
