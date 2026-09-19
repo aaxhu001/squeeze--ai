@@ -519,8 +519,8 @@ In the event that the service fails, you will be able to retry up to 3 times.`;
 Input: "Show all active users signed up in the last 7 days"
 Output: SELECT * FROM users WHERE status = 'active' AND created_at >= NOW() - INTERVAL '7 days';
 
-Input: "Find total revenue per product category for 2024"
-Output: SELECT category, SUM(amount) AS total_revenue FROM sales WHERE EXTRACT(YEAR FROM sale_date) = 2024 GROUP BY category;
+Input: "Find total revenue per product category for 2026"
+Output: SELECT category, SUM(amount) AS total_revenue FROM sales WHERE EXTRACT(YEAR FROM sale_date) = 2026 GROUP BY category;
 
 Input: "List customers with more than 5 orders who haven't purchased in 30 days"
 Output:`;

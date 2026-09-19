@@ -67,6 +67,11 @@ def main():
     if remove_from_json(cur_path):
         print(f"  {GREEN}✔ Removed from Cursor ({cur_path}){RESET}")
 
+    # 4. Google Antigravity
+    agy_path = os.path.join(home, ".gemini", "config", "mcp_config.json")
+    if remove_from_json(agy_path):
+        print(f"  {GREEN}✔ Removed from Google Antigravity ({agy_path}){RESET}")
+
     print(f"\n{GREEN}✔ Squeeze AI MCP successfully uninstalled.{RESET}\n")
 
 if __name__ == "__main__":

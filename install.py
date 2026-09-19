@@ -6,6 +6,7 @@ Automatically connects Squeeze AI MCP to:
 2. Claude Desktop App (via `claude_desktop_config.json`)
 3. Cursor IDE (via `~/.cursor/mcp.json`)
 4. Windsurf / VS Code (via mcp.json)
+5. Google Antigravity (via `~/.gemini/config/mcp_config.json`)
 
 Zero dependencies — works out of the box with standard Python 3.
 """
@@ -170,6 +171,16 @@ def install_cursor(mcp_path, python_cmd):
     except Exception as e:
         return False, str(e)
 
+def install_antigravity(mcp_path, python_cmd):
+    """Register into Google Antigravity."""
+    home = os.path.expanduser("~")
+    config_path = os.path.join(home, ".gemini", "config", "mcp_config.json")
+    try:
+        update_json_mcp_config(config_path, mcp_path, python_cmd)
+        return True, f"Configured at {config_path}"
+    except Exception as e:
+        return False, str(e)
+
 def main():
     print_banner()
 
@@ -185,7 +196,7 @@ def main():
     print(f"• Squeeze MCP path:  {CYAN}{mcp_file}{RESET}\n")
 
     # Step 1: Self Test
-    print(f"{BOLD}[1/4] Running Squeeze MCP Self-Test...{RESET}")
+    print(f"{BOLD}[1/5] Running Squeeze MCP Self-Test...{RESET}")
     ok, msg = test_mcp_server(mcp_file, python_cmd)
     if ok:
         print(f"  {GREEN}✔ {msg}{RESET}\n")
@@ -193,7 +204,7 @@ def main():
         print(f"  {RED}✖ Self-test failed: {msg}{RESET}\n")
 
     # Step 2: Claude Code CLI
-    print(f"{BOLD}[2/4] Connecting to Claude Code CLI...{RESET}")
+    print(f"{BOLD}[2/5] Connecting to Claude Code CLI...{RESET}")
     ok_cc, msg_cc = install_claude_code(mcp_file, python_cmd)
     if ok_cc:
         print(f"  {GREEN}✔ CONNECTED: {msg_cc}{RESET}\n")
@@ -203,7 +214,7 @@ def main():
         print(f"    claude mcp add squeeze {python_cmd} \"{mcp_file}\"\n")
 
     # Step 3: Claude Desktop App
-    print(f"{BOLD}[3/4] Connecting to Claude Desktop App...{RESET}")
+    print(f"{BOLD}[3/5] Connecting to Claude Desktop App...{RESET}")
     ok_cd, msg_cd = install_claude_desktop(mcp_file, python_cmd)
     if ok_cd:
         print(f"  {GREEN}✔ CONNECTED: {msg_cd}{RESET}\n")
@@ -211,23 +222,32 @@ def main():
         print(f"  {YELLOW}ℹ Skipped: {msg_cd}{RESET}\n")
 
     # Step 4: Cursor IDE
-    print(f"{BOLD}[4/4] Connecting to Cursor IDE...{RESET}")
+    print(f"{BOLD}[4/5] Connecting to Cursor IDE...{RESET}")
     ok_cur, msg_cur = install_cursor(mcp_file, python_cmd)
     if ok_cur:
         print(f"  {GREEN}✔ CONNECTED: {msg_cur}{RESET}\n")
     else:
         print(f"  {YELLOW}ℹ Skipped: {msg_cur}{RESET}\n")
 
+    # Step 5: Google Antigravity
+    print(f"{BOLD}[5/5] Connecting to Google Antigravity...{RESET}")
+    ok_agy, msg_agy = install_antigravity(mcp_file, python_cmd)
+    if ok_agy:
+        print(f"  {GREEN}✔ CONNECTED: {msg_agy}{RESET}\n")
+    else:
+        print(f"  {YELLOW}ℹ Skipped: {msg_agy}{RESET}\n")
+
     print(f"{CYAN}{BOLD}======================================================{RESET}")
     print(f"{GREEN}{BOLD}   🎉 SETUP COMPLETE! Squeeze AI is ready to use.     {RESET}")
     print(f"{CYAN}{BOLD}======================================================{RESET}")
     print(f"""
-{BOLD}How to use inside Claude Code or Cursor:{RESET}
-  1. Restart Claude Code, Claude Desktop, or Cursor to reload tools.
-  2. Ask Claude:
-     • {CYAN}"Use squeeze_skeleton to get the interface for file.py"{RESET}
-     • {CYAN}"Compress this raw log/prompt using squeeze_compress"{RESET}
-     • {CYAN}"Fold this large JSON array using squeeze_shrink_json"{RESET}
+{BOLD}How to use inside Antigravity, Claude Code, or Cursor:{RESET}
+  1. Restart/reload your assistant or IDE to refresh tools.
+  2. In Antigravity:
+     • Check under {CYAN}Additional Options (...) > MCP Servers{RESET} to see Squeeze tools.
+     • Ask: {CYAN}"Use squeeze_codebase_graph to map this repo."{RESET}
+     • Ask: {CYAN}"Skeletonize this file using squeeze_skeleton."{RESET}
+     • Ask: {CYAN}"Compress these logs with squeeze_shrink_logs."{RESET}
 
 To uninstall at any time, run: {YELLOW}python3 uninstall.py{RESET}
 """)
