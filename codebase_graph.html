@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Squeeze AI - Interactive Codebase Knowledge Graph</title>
+  <title>Squeeze - Squeeze AI Codebase Knowledge Graph</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%2307090E'/%3E%3Cpath d='M 20 7 Q 20 20 33 20 Q 20 20 20 33 Q 20 20 7 20 Q 20 20 20 7 Z' fill='%23F5C518'/%3E%3C/svg%3E">
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
@@ -61,7 +61,7 @@
       </svg>
       <div>
         <h1 class="font-bold text-slate-100 text-base tracking-tight flex items-center gap-2">
-          Squeeze AI <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">Codebase Graph</span>
+          Squeeze <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">Codebase Graph</span>
         </h1>
         <p class="text-xs text-slate-400">Interactive Topological Dependency & Symbol Visualizer</p>
       </div>
@@ -72,19 +72,19 @@
       <div class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-2">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
         <span class="text-slate-400">Files:</span>
-        <span class="text-emerald-300 font-semibold" id="statFiles">11</span>
+        <span class="text-emerald-300 font-semibold" id="statFiles">57</span>
       </div>
       <div class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-2">
         <span class="text-slate-400">Symbols:</span>
-        <span class="text-cyan-300 font-semibold" id="statSymbols">150</span>
+        <span class="text-cyan-300 font-semibold" id="statSymbols">1157</span>
       </div>
       <div class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-2">
         <span class="text-slate-400">Raw:</span>
-        <span class="text-slate-300">~59.9k tok</span>
+        <span class="text-slate-300">~205,451 tok</span>
         <span class="text-slate-500">→</span>
         <span class="text-slate-400">Graph:</span>
-        <span class="text-emerald-400 font-bold">~385 tok</span>
-        <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">-99.4%</span>
+        <span class="text-emerald-400 font-bold">~1,995 tok</span>
+        <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">-99.0%</span>
       </div>
     </div>
 
@@ -176,150 +176,1351 @@
   <script>
     // --- CODEBASE GRAPH DATA ---
     const GRAPH_DATA = {
-      nodes: [
-        {
-          id: "skeletonizer.js",
-          name: "skeletonizer.js",
-          type: "hub",
-          lines: 435,
-          tokens: 3773,
-          centrality: 3,
-          color: "#10b981",
-          classes: ["ASTParser", "CodeSkeletonizer"],
-          functions: ["skeletonizePython", "skeletonizeTypeScript", "skeletonizeCode", "shrinkJson", "shrinkLogs", "buildCodebaseGraph", "alignPromptForCache"],
-          description: "Core deterministic AST parser and token reducer. Extracts structural skeletons, strips implementations, and condenses JSON/logs."
-        },
-        {
-          id: "squeeze_mcp.py",
-          name: "squeeze_mcp.py",
-          type: "backend",
-          lines: 771,
-          tokens: 7476,
-          centrality: 2,
-          color: "#6366f1",
-          classes: [],
-          functions: ["mask_secrets", "skeletonize_python", "skeletonize_typescript", "skeletonize_code", "shrink_json_data", "shrink_logs_data", "generate_codebase_graph", "align_prompt_for_cache", "optimize_prompt", "handle_message"],
-          description: "Standalone JSON-RPC 2.0 MCP server for Claude Code and Cursor. Exposes AST skeletonization, prompt compression, cache alignment, and graph visualizer tools."
-        },
-        {
-          id: "background.js",
-          name: "background.js",
-          type: "extension",
-          lines: 859,
-          tokens: 7328,
-          centrality: 1,
-          color: "#06b6d4",
-          classes: [],
-          functions: ["estimateTokens", "maskSensitiveData", "removeDuplicateSentences", "optimizeLocally", "processVaultContext"],
-          description: "Manifest V3 service worker. Manages extension background state, context vault persistence, and real-time prompt telemetry."
-        },
-        {
-          id: "content.js",
-          name: "content.js",
-          type: "extension",
-          lines: 1323,
-          tokens: 13146,
-          centrality: 1,
-          color: "#06b6d4",
-          classes: [],
-          functions: ["findChatInput", "getInputValue", "setInputValue", "findToolbarAnchor", "estimateTokensLocal", "mountWidgets", "wireInputEvents"],
-          description: "DOM content script injected into Claude, ChatGPT, and DeepSeek. Attaches real-time token counters, floating compression HUD, and context buttons."
-        },
-        {
-          id: "sidepanel.js",
-          name: "sidepanel.js",
-          type: "extension",
-          lines: 928,
-          tokens: 8947,
-          centrality: 1,
-          color: "#06b6d4",
-          classes: ["PaymentGateway", "AuthenticationManager", "SessionPayload"],
-          functions: ["switchTab", "estimateTokensLocal", "updateInputMetrics", "generateLineDiffHtml", "executeOptimization", "renderOutput", "loadAndRunDemo", "processBatch"],
-          description: "Interactive Optimization Studio side panel. Provides side-by-side diffing, AST skeleton playground, and JSON array truncation viewer."
-        },
-        {
-          id: "popup.js",
-          name: "popup.js",
-          type: "extension",
-          lines: 336,
-          tokens: 3238,
-          centrality: 1,
-          color: "#06b6d4",
-          classes: [],
-          functions: ["launchSidePanel", "formatNumber", "formatBytes", "escapeHtml", "loadDashboardData", "processUploadedFiles", "renderVaultFiles"],
-          description: "Extension popup dashboard. Displays lifetime token/dollar savings, compression rule toggles, and direct side panel triggers."
-        },
-        {
-          id: "install.py",
-          name: "install.py",
-          type: "tooling",
-          lines: 257,
-          tokens: 2383,
-          centrality: 1,
-          color: "#f59e0b",
-          classes: [],
-          functions: ["test_mcp_server", "update_json_mcp_config", "install_claude_code", "install_claude_desktop", "install_cursor", "install_antigravity"],
-          description: "Zero-dependency multi-agent installer. Auto-detects and configures Claude Code, Cursor, and Claude Desktop MCP setups."
-        },
-        {
-          id: "uninstall.py",
-          name: "uninstall.py",
-          type: "tooling",
-          lines: 79,
-          tokens: 617,
-          centrality: 0,
-          color: "#f59e0b",
-          classes: [],
-          functions: ["remove_from_json", "main"],
-          description: "Clean uninstaller for removing Squeeze MCP registrations across all assistant configurations."
-        },
-        {
-          id: "test_suite.js",
-          name: "test_suite.js",
-          type: "tooling",
-          lines: 149,
-          tokens: 1657,
-          centrality: 1,
-          color: "#f59e0b",
-          classes: ["PaymentGateway", "AuthenticationManager", "Database", "UserProfile"],
-          functions: ["process_transaction", "calculate_fee", "start", "verify"],
-          description: "Automated regression verification suite for multiline AST signature preservation, JSON array folding, and log deduplication."
-        },
-        {
-          id: "website/app.js",
-          name: "website/app.js",
-          type: "web",
-          lines: 884,
-          tokens: 7841,
-          centrality: 0,
-          color: "#8b5cf6",
-          classes: [],
-          functions: ["renderCanvas", "optimizeSandboxPrompt", "updateCalculator", "openWaitlist"],
-          description: "Interactive landing page engine featuring live token savings calculator and visual sandbox."
-        },
-        {
-          id: "website/index.js",
-          name: "website/index.js",
-          type: "web",
-          lines: 435,
-          tokens: 3546,
-          centrality: 0,
-          color: "#8b5cf6",
-          classes: [],
-          functions: ["initStickyNavbar", "initWordRotator", "initScrollReveal", "initStatsCounter", "initFaqAccordion"],
-          description: "Showcase animations, FAQ accordions, and documentation tab switches."
-        }
+  "nodes": [
+    {
+      "id": "skeletonizer.js",
+      "name": "skeletonizer.js",
+      "type": "hub",
+      "lines": 435,
+      "tokens": 3773,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [
+        "annotations",
+        "closing"
       ],
-      links: [
-        { source: "background.js", target: "skeletonizer.js", label: "imports" },
-        { source: "sidepanel.js", target: "skeletonizer.js", label: "uses AST rules" },
-        { source: "popup.js", target: "sidepanel.js", label: "opens" },
-        { source: "install.py", target: "squeeze_mcp.py", label: "registers" },
-        { source: "uninstall.py", target: "squeeze_mcp.py", label: "unregisters" },
-        { source: "test_suite.js", target: "skeletonizer.js", label: "validates" },
-        { source: "content.js", target: "background.js", label: "messages" }
-      ]
-    };
+      "functions": [
+        "skeletonizePython",
+        "lines",
+        "result",
+        "line",
+        "trimmed",
+        "indentMatch",
+        "indent",
+        "nextTrim",
+        "indentStr",
+        "skeletonizeTypeScript",
+        "open",
+        "close"
+      ],
+      "description": "skeletonizer.js: 2 classes (annotations) | 12 functions (skeletonizePython)"
+    },
+    {
+      "id": "squeeze_mcp.py",
+      "name": "squeeze_mcp.py",
+      "type": "hub",
+      "lines": 914,
+      "tokens": 11123,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_code",
+        "shrink_json_data",
+        "fold",
+        "shrink_logs_data",
+        "resolve_import_path",
+        "build_codebase_graph_html",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "squeeze_mcp.py: 12 functions (mask_secrets) | 9 imports"
+    },
+    {
+      "id": "popup.js",
+      "name": "popup.js",
+      "type": "hub",
+      "lines": 336,
+      "tokens": 3238,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "tabButtons",
+        "tabPanes",
+        "statPrompts",
+        "statTokens",
+        "statCost",
+        "statusBadge",
+        "openSidePanelTopBtn",
+        "openSidePanelActionBtn",
+        "footerStudioLink",
+        "settingsForm",
+        "ruleSecretShield",
+        "ruleStripGreetings"
+      ],
+      "description": "popup.js: 12 functions (tabButtons)"
+    },
+    {
+      "id": "sidepanel.js",
+      "name": "sidepanel.js",
+      "type": "hub",
+      "lines": 928,
+      "tokens": 8947,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [
+        "PaymentGateway",
+        "AuthenticationManager",
+        "SessionPayload"
+      ],
+      "functions": [
+        "navButtons",
+        "panes",
+        "inputPrompt",
+        "inputTokenBadge",
+        "charCount",
+        "clearInputBtn",
+        "modeButtons",
+        "toggleDlp",
+        "toggleVault",
+        "squeezeBtn",
+        "outputSection",
+        "secretAlertBanner"
+      ],
+      "description": "sidepanel.js: 3 classes (PaymentGateway) | 12 functions (navButtons) | 2 imports"
+    },
+    {
+      "id": "background.js",
+      "name": "background.js",
+      "type": "hub",
+      "lines": 859,
+      "tokens": 7328,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "MODEL_RATES",
+        "defaults",
+        "current",
+        "toSet",
+        "estimateTokens",
+        "trimmed",
+        "words",
+        "chars",
+        "specialChars",
+        "codeRatio",
+        "charEstimate",
+        "wordEstimate"
+      ],
+      "description": "background.js: 12 functions (MODEL_RATES) | 1 imports"
+    },
+    {
+      "id": "uninstall.py",
+      "name": "uninstall.py",
+      "type": "backend",
+      "lines": 79,
+      "tokens": 617,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "remove_from_json",
+        "main"
+      ],
+      "description": "uninstall.py: 2 functions (remove_from_json) | 6 imports"
+    },
+    {
+      "id": "install.py",
+      "name": "install.py",
+      "type": "hub",
+      "lines": 257,
+      "tokens": 2383,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "print_banner",
+        "get_script_dir",
+        "test_mcp_server",
+        "update_json_mcp_config",
+        "install_claude_code",
+        "install_claude_desktop",
+        "install_cursor",
+        "install_antigravity",
+        "main"
+      ],
+      "description": "install.py: 9 functions (print_banner) | 7 imports"
+    },
+    {
+      "id": "content.js",
+      "name": "content.js",
+      "type": "hub",
+      "lines": 1323,
+      "tokens": 13146,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "HOST",
+        "IS_CLAUDE",
+        "IS_CHATGPT",
+        "IS_GEMINI",
+        "findChatInput",
+        "getInputValue",
+        "setInputValue",
+        "proto",
+        "nativeSetter",
+        "selection",
+        "range",
+        "execSuccess"
+      ],
+      "description": "content.js: 12 functions (HOST)"
+    },
+    {
+      "id": "generate_feature_guide_pdf.py",
+      "name": "generate_feature_guide_pdf.py",
+      "type": "hub",
+      "lines": 606,
+      "tokens": 7598,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [
+        "NumberedCanvas",
+        "and",
+        "PaymentManager"
+      ],
+      "functions": [
+        "__init__",
+        "showPage",
+        "save",
+        "draw_page_decorations",
+        "build_pdf",
+        "process_payment"
+      ],
+      "description": "generate_feature_guide_pdf.py: 3 classes (NumberedCanvas) | 6 functions (__init__) | 8 imports"
+    },
+    {
+      "id": "test_suite.js",
+      "name": "test_suite.js",
+      "type": "hub",
+      "lines": 157,
+      "tokens": 1819,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [
+        "PaymentGateway",
+        "AuthenticationManager",
+        "decl",
+        "closing",
+        "Database",
+        "AuthManager",
+        "annotation",
+        "UserProfile"
+      ],
+      "functions": [
+        "fs",
+        "vm",
+        "assert",
+        "ctx",
+        "skelCode",
+        "pyInput",
+        "__init__",
+        "process_transaction",
+        "calculate_fee",
+        "pySkeleton",
+        "tsInput",
+        "auth"
+      ],
+      "description": "test_suite.js: 8 classes (PaymentGateway) | 12 functions (fs) | 7 imports"
+    },
+    {
+      "id": "website/index.js",
+      "name": "website/index.js",
+      "type": "hub",
+      "lines": 360,
+      "tokens": 2887,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "initStickyNavbar",
+        "navbar",
+        "handleScroll",
+        "initWordRotator",
+        "rotatorEl",
+        "words",
+        "STAGGER",
+        "renderWordSpans",
+        "container",
+        "charSpan",
+        "nextIdx",
+        "currentWord"
+      ],
+      "description": "website/index.js: 12 functions (initStickyNavbar)"
+    },
+    {
+      "id": "website/app.js",
+      "name": "website/app.js",
+      "type": "hub",
+      "lines": 897,
+      "tokens": 7957,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "htmlEl",
+        "themeToggleBtn",
+        "themeIcon",
+        "moonIconPath",
+        "sunIconPath",
+        "setTheme",
+        "canvas",
+        "ctx",
+        "CELL_SIZE",
+        "INFLUENCE_RADIUS",
+        "MAX_WARP",
+        "DOT_SPACING"
+      ],
+      "description": "website/app.js: 12 functions (htmlEl)"
+    },
+    {
+      "id": "aws/lambdas/log-processor/index.py",
+      "name": "aws/lambdas/log-processor/index.py",
+      "type": "backend",
+      "lines": 229,
+      "tokens": 2264,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "emit_cloudwatch_metrics",
+        "invoke_bedrock_summarizer",
+        "lambda_handler"
+      ],
+      "description": "aws/lambdas/log-processor/index.py: 3 functions (emit_cloudwatch_metrics) | 8 imports"
+    },
+    {
+      "id": "aws/lambdas/log-processor/squeeze_core.py",
+      "name": "aws/lambdas/log-processor/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 3,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/lambdas/log-processor/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/lambdas/codebase-indexer/index.py",
+      "name": "aws/lambdas/codebase-indexer/index.py",
+      "type": "backend",
+      "lines": 119,
+      "tokens": 1011,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "download_and_extract_repo",
+        "lambda_handler"
+      ],
+      "description": "aws/lambdas/codebase-indexer/index.py: 2 functions (download_and_extract_repo) | 8 imports"
+    },
+    {
+      "id": "aws/lambdas/codebase-indexer/squeeze_core.py",
+      "name": "aws/lambdas/codebase-indexer/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/lambdas/codebase-indexer/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/lambdas/dlp-verifier/index.py",
+      "name": "aws/lambdas/dlp-verifier/index.py",
+      "type": "backend",
+      "lines": 70,
+      "tokens": 651,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "lambda_handler"
+      ],
+      "description": "aws/lambdas/dlp-verifier/index.py: 1 functions (lambda_handler) | 5 imports"
+    },
+    {
+      "id": "aws/lambdas/dlp-verifier/squeeze_core.py",
+      "name": "aws/lambdas/dlp-verifier/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/lambdas/dlp-verifier/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/lambdas/bedrock-action-handler/index.py",
+      "name": "aws/lambdas/bedrock-action-handler/index.py",
+      "type": "backend",
+      "lines": 181,
+      "tokens": 1701,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "emit_metrics",
+        "lambda_handler"
+      ],
+      "description": "aws/lambdas/bedrock-action-handler/index.py: 2 functions (emit_metrics) | 5 imports"
+    },
+    {
+      "id": "aws/lambdas/bedrock-action-handler/squeeze_core.py",
+      "name": "aws/lambdas/bedrock-action-handler/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/lambdas/bedrock-action-handler/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/lambdas/noisy-logger/index.py",
+      "name": "aws/lambdas/noisy-logger/index.py",
+      "type": "backend",
+      "lines": 49,
+      "tokens": 628,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "lambda_handler"
+      ],
+      "description": "aws/lambdas/noisy-logger/index.py: 1 functions (lambda_handler) | 3 imports"
+    },
+    {
+      "id": "aws/cdk/bin/squeeze-app.ts",
+      "name": "aws/cdk/bin/squeeze-app.ts",
+      "type": "hub",
+      "lines": 52,
+      "tokens": 533,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "app",
+        "bedrockModelId",
+        "mcpBedrockStack",
+        "logPipelineStack",
+        "dashboardStack",
+        "devToolsStack"
+      ],
+      "description": "aws/cdk/bin/squeeze-app.ts: 6 functions (app) | 1 imports"
+    },
+    {
+      "id": "aws/cdk/lib/squeeze-dev-tools-stack.ts",
+      "name": "aws/cdk/lib/squeeze-dev-tools-stack.ts",
+      "type": "tooling",
+      "lines": 142,
+      "tokens": 1411,
+      "centrality": 0,
+      "color": "#f59e0b",
+      "classes": [
+        "SqueezeDevToolsStack"
+      ],
+      "functions": [
+        "ciBuildProject",
+        "indexerFunction",
+        "indexerUrlResource",
+        "dlpVerifierFunction",
+        "dlpUrlResource"
+      ],
+      "description": "aws/cdk/lib/squeeze-dev-tools-stack.ts: 1 classes (SqueezeDevToolsStack) | 5 functions (ciBuildProject) | 1 imports"
+    },
+    {
+      "id": "aws/cdk/lib/squeeze-log-pipeline-stack.ts",
+      "name": "aws/cdk/lib/squeeze-log-pipeline-stack.ts",
+      "type": "hub",
+      "lines": 120,
+      "tokens": 1262,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [
+        "SqueezeLogPipelineStack",
+        "SqueezeLogPipelineStackProps"
+      ],
+      "functions": [
+        "modelId",
+        "noisyLogGroup"
+      ],
+      "description": "aws/cdk/lib/squeeze-log-pipeline-stack.ts: 2 classes (SqueezeLogPipelineStack) | 2 functions (modelId)"
+    },
+    {
+      "id": "aws/cdk/lib/squeeze-dashboard-stack.ts",
+      "name": "aws/cdk/lib/squeeze-dashboard-stack.ts",
+      "type": "hub",
+      "lines": 143,
+      "tokens": 1138,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [
+        "SqueezeDashboardStack"
+      ],
+      "functions": [
+        "dashboard",
+        "tokensBeforeMetric",
+        "tokensAfterMetric",
+        "tokensSavedMetric",
+        "costSavedMetric",
+        "secretsMaskedMetric",
+        "compressionRatioMetric"
+      ],
+      "description": "aws/cdk/lib/squeeze-dashboard-stack.ts: 1 classes (SqueezeDashboardStack) | 7 functions (dashboard)"
+    },
+    {
+      "id": "aws/cdk/lib/squeeze-mcp-bedrock-stack.ts",
+      "name": "aws/cdk/lib/squeeze-mcp-bedrock-stack.ts",
+      "type": "hub",
+      "lines": 167,
+      "tokens": 1670,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [
+        "SqueezeMcpBedrockStack",
+        "SqueezeMcpBedrockStackProps"
+      ],
+      "functions": [
+        "modelId",
+        "mcpFunction",
+        "fnUrl",
+        "actionGroupFunction",
+        "agentRole",
+        "schemaPath",
+        "openApiSchema",
+        "agent",
+        "agentAlias"
+      ],
+      "description": "aws/cdk/lib/squeeze-mcp-bedrock-stack.ts: 2 classes (SqueezeMcpBedrockStack) | 9 functions (modelId)"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.687ea3d7eb5d8cabddea98082a49acc148edcee403230563a840770b95284092/index.py",
+      "name": "aws/cdk/cdk.out/asset.687ea3d7eb5d8cabddea98082a49acc148edcee403230563a840770b95284092/index.py",
+      "type": "backend",
+      "lines": 175,
+      "tokens": 1678,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "emit_metrics",
+        "lambda_handler"
+      ],
+      "description": "aws/cdk/cdk.out/asset.687ea3d7eb5d8cabddea98082a49acc148edcee403230563a840770b95284092/index.py: 2 functions (emit_metrics) | 5 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.687ea3d7eb5d8cabddea98082a49acc148edcee403230563a840770b95284092/squeeze_core.py",
+      "name": "aws/cdk/cdk.out/asset.687ea3d7eb5d8cabddea98082a49acc148edcee403230563a840770b95284092/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/cdk/cdk.out/asset.687ea3d7eb5d8cabddea98082a49acc148edcee403230563a840770b95284092/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.5f881867aa123bca5dae14c42018fbcb5967c9572e762dab572874ed27058276/index.py",
+      "name": "aws/cdk/cdk.out/asset.5f881867aa123bca5dae14c42018fbcb5967c9572e762dab572874ed27058276/index.py",
+      "type": "backend",
+      "lines": 119,
+      "tokens": 1011,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "download_and_extract_repo",
+        "lambda_handler"
+      ],
+      "description": "aws/cdk/cdk.out/asset.5f881867aa123bca5dae14c42018fbcb5967c9572e762dab572874ed27058276/index.py: 2 functions (download_and_extract_repo) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.5f881867aa123bca5dae14c42018fbcb5967c9572e762dab572874ed27058276/squeeze_core.py",
+      "name": "aws/cdk/cdk.out/asset.5f881867aa123bca5dae14c42018fbcb5967c9572e762dab572874ed27058276/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/cdk/cdk.out/asset.5f881867aa123bca5dae14c42018fbcb5967c9572e762dab572874ed27058276/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6/index.js",
+      "name": "aws/cdk/cdk.out/asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6/index.js",
+      "type": "hub",
+      "lines": 2,
+      "tokens": 1100,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "R",
+        "k",
+        "u",
+        "D",
+        "T",
+        "O",
+        "b",
+        "S",
+        "F",
+        "_",
+        "U",
+        "N"
+      ],
+      "description": "aws/cdk/cdk.out/asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6/index.js: 12 functions (R) | 2 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.fb7524e4bdfa49a7c0562cbda0a8fcb4382ae04921545c47005de6f6d6593dcf/index.py",
+      "name": "aws/cdk/cdk.out/asset.fb7524e4bdfa49a7c0562cbda0a8fcb4382ae04921545c47005de6f6d6593dcf/index.py",
+      "type": "backend",
+      "lines": 181,
+      "tokens": 1701,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "emit_metrics",
+        "lambda_handler"
+      ],
+      "description": "aws/cdk/cdk.out/asset.fb7524e4bdfa49a7c0562cbda0a8fcb4382ae04921545c47005de6f6d6593dcf/index.py: 2 functions (emit_metrics) | 5 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.fb7524e4bdfa49a7c0562cbda0a8fcb4382ae04921545c47005de6f6d6593dcf/squeeze_core.py",
+      "name": "aws/cdk/cdk.out/asset.fb7524e4bdfa49a7c0562cbda0a8fcb4382ae04921545c47005de6f6d6593dcf/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/cdk/cdk.out/asset.fb7524e4bdfa49a7c0562cbda0a8fcb4382ae04921545c47005de6f6d6593dcf/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.81fdfd454df1b33db3e850aeb6c423df6be298d85a4ab7f85d63c99f76eb53c7/index.py",
+      "name": "aws/cdk/cdk.out/asset.81fdfd454df1b33db3e850aeb6c423df6be298d85a4ab7f85d63c99f76eb53c7/index.py",
+      "type": "backend",
+      "lines": 49,
+      "tokens": 628,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "lambda_handler"
+      ],
+      "description": "aws/cdk/cdk.out/asset.81fdfd454df1b33db3e850aeb6c423df6be298d85a4ab7f85d63c99f76eb53c7/index.py: 1 functions (lambda_handler) | 3 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.bc4ffbbca47c22f996253bf20885cc775eff2dd56315f240a0d49cb2ad455959/index.py",
+      "name": "aws/cdk/cdk.out/asset.bc4ffbbca47c22f996253bf20885cc775eff2dd56315f240a0d49cb2ad455959/index.py",
+      "type": "backend",
+      "lines": 119,
+      "tokens": 1011,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "download_and_extract_repo",
+        "lambda_handler"
+      ],
+      "description": "aws/cdk/cdk.out/asset.bc4ffbbca47c22f996253bf20885cc775eff2dd56315f240a0d49cb2ad455959/index.py: 2 functions (download_and_extract_repo) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.bc4ffbbca47c22f996253bf20885cc775eff2dd56315f240a0d49cb2ad455959/squeeze_core.py",
+      "name": "aws/cdk/cdk.out/asset.bc4ffbbca47c22f996253bf20885cc775eff2dd56315f240a0d49cb2ad455959/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/cdk/cdk.out/asset.bc4ffbbca47c22f996253bf20885cc775eff2dd56315f240a0d49cb2ad455959/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.21663d0d6a5e6803837b4781d94cdb20d1034e67c34b7f4c17e192e288483d1f/index.py",
+      "name": "aws/cdk/cdk.out/asset.21663d0d6a5e6803837b4781d94cdb20d1034e67c34b7f4c17e192e288483d1f/index.py",
+      "type": "backend",
+      "lines": 70,
+      "tokens": 651,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "lambda_handler"
+      ],
+      "description": "aws/cdk/cdk.out/asset.21663d0d6a5e6803837b4781d94cdb20d1034e67c34b7f4c17e192e288483d1f/index.py: 1 functions (lambda_handler) | 5 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.21663d0d6a5e6803837b4781d94cdb20d1034e67c34b7f4c17e192e288483d1f/squeeze_core.py",
+      "name": "aws/cdk/cdk.out/asset.21663d0d6a5e6803837b4781d94cdb20d1034e67c34b7f4c17e192e288483d1f/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/cdk/cdk.out/asset.21663d0d6a5e6803837b4781d94cdb20d1034e67c34b7f4c17e192e288483d1f/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.6732323ac764912c1126eb2a09ad4f297d4f7747e794397ac2a7b4169f7bd6c7/app.py",
+      "name": "aws/cdk/cdk.out/asset.6732323ac764912c1126eb2a09ad4f297d4f7747e794397ac2a7b4169f7bd6c7/app.py",
+      "type": "hub",
+      "lines": 463,
+      "tokens": 4599,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [
+        "SqueezeHTTPRequestHandler"
+      ],
+      "functions": [
+        "handle_mcp_jsonrpc",
+        "handle_rest_request",
+        "lambda_handler",
+        "_send_json",
+        "do_OPTIONS",
+        "do_GET",
+        "do_POST",
+        "log_message",
+        "run_standalone"
+      ],
+      "description": "aws/cdk/cdk.out/asset.6732323ac764912c1126eb2a09ad4f297d4f7747e794397ac2a7b4169f7bd6c7/app.py: 1 classes (SqueezeHTTPRequestHandler) | 9 functions (handle_mcp_jsonrpc) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.6732323ac764912c1126eb2a09ad4f297d4f7747e794397ac2a7b4169f7bd6c7/squeeze_core.py",
+      "name": "aws/cdk/cdk.out/asset.6732323ac764912c1126eb2a09ad4f297d4f7747e794397ac2a7b4169f7bd6c7/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/cdk/cdk.out/asset.6732323ac764912c1126eb2a09ad4f297d4f7747e794397ac2a7b4169f7bd6c7/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.2bb8068f1633690dd140c3204e2d80eeb8f75444523681282b357b92b00610bb/index.py",
+      "name": "aws/cdk/cdk.out/asset.2bb8068f1633690dd140c3204e2d80eeb8f75444523681282b357b92b00610bb/index.py",
+      "type": "backend",
+      "lines": 223,
+      "tokens": 2236,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "emit_cloudwatch_metrics",
+        "invoke_bedrock_summarizer",
+        "lambda_handler"
+      ],
+      "description": "aws/cdk/cdk.out/asset.2bb8068f1633690dd140c3204e2d80eeb8f75444523681282b357b92b00610bb/index.py: 3 functions (emit_cloudwatch_metrics) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.2bb8068f1633690dd140c3204e2d80eeb8f75444523681282b357b92b00610bb/squeeze_core.py",
+      "name": "aws/cdk/cdk.out/asset.2bb8068f1633690dd140c3204e2d80eeb8f75444523681282b357b92b00610bb/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/cdk/cdk.out/asset.2bb8068f1633690dd140c3204e2d80eeb8f75444523681282b357b92b00610bb/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.71b047216f66595e3f8565f28dc2f8d23141556e0f166053d4a48b80fcd2af7f/app.py",
+      "name": "aws/cdk/cdk.out/asset.71b047216f66595e3f8565f28dc2f8d23141556e0f166053d4a48b80fcd2af7f/app.py",
+      "type": "hub",
+      "lines": 463,
+      "tokens": 4599,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [
+        "SqueezeHTTPRequestHandler"
+      ],
+      "functions": [
+        "handle_mcp_jsonrpc",
+        "handle_rest_request",
+        "lambda_handler",
+        "_send_json",
+        "do_OPTIONS",
+        "do_GET",
+        "do_POST",
+        "log_message",
+        "run_standalone"
+      ],
+      "description": "aws/cdk/cdk.out/asset.71b047216f66595e3f8565f28dc2f8d23141556e0f166053d4a48b80fcd2af7f/app.py: 1 classes (SqueezeHTTPRequestHandler) | 9 functions (handle_mcp_jsonrpc) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.71b047216f66595e3f8565f28dc2f8d23141556e0f166053d4a48b80fcd2af7f/squeeze_core.py",
+      "name": "aws/cdk/cdk.out/asset.71b047216f66595e3f8565f28dc2f8d23141556e0f166053d4a48b80fcd2af7f/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/cdk/cdk.out/asset.71b047216f66595e3f8565f28dc2f8d23141556e0f166053d4a48b80fcd2af7f/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.56c263d9e76312476cd8ca620fd191b4d2db9ee4537f33eff0658877dacb7124/index.py",
+      "name": "aws/cdk/cdk.out/asset.56c263d9e76312476cd8ca620fd191b4d2db9ee4537f33eff0658877dacb7124/index.py",
+      "type": "backend",
+      "lines": 229,
+      "tokens": 2264,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "emit_cloudwatch_metrics",
+        "invoke_bedrock_summarizer",
+        "lambda_handler"
+      ],
+      "description": "aws/cdk/cdk.out/asset.56c263d9e76312476cd8ca620fd191b4d2db9ee4537f33eff0658877dacb7124/index.py: 3 functions (emit_cloudwatch_metrics) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.56c263d9e76312476cd8ca620fd191b4d2db9ee4537f33eff0658877dacb7124/squeeze_core.py",
+      "name": "aws/cdk/cdk.out/asset.56c263d9e76312476cd8ca620fd191b4d2db9ee4537f33eff0658877dacb7124/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/cdk/cdk.out/asset.56c263d9e76312476cd8ca620fd191b4d2db9ee4537f33eff0658877dacb7124/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.dece92409bfe79ff340f4db9acc75cee7682bfb648c637ba67e53695a6b7f061/index.py",
+      "name": "aws/cdk/cdk.out/asset.dece92409bfe79ff340f4db9acc75cee7682bfb648c637ba67e53695a6b7f061/index.py",
+      "type": "backend",
+      "lines": 70,
+      "tokens": 651,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "lambda_handler"
+      ],
+      "description": "aws/cdk/cdk.out/asset.dece92409bfe79ff340f4db9acc75cee7682bfb648c637ba67e53695a6b7f061/index.py: 1 functions (lambda_handler) | 5 imports"
+    },
+    {
+      "id": "aws/cdk/cdk.out/asset.dece92409bfe79ff340f4db9acc75cee7682bfb648c637ba67e53695a6b7f061/squeeze_core.py",
+      "name": "aws/cdk/cdk.out/asset.dece92409bfe79ff340f4db9acc75cee7682bfb648c637ba67e53695a6b7f061/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/cdk/cdk.out/asset.dece92409bfe79ff340f4db9acc75cee7682bfb648c637ba67e53695a6b7f061/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/ci/triage_build_failure.py",
+      "name": "aws/ci/triage_build_failure.py",
+      "type": "backend",
+      "lines": 80,
+      "tokens": 698,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "main"
+      ],
+      "description": "aws/ci/triage_build_failure.py: 1 functions (main) | 5 imports"
+    },
+    {
+      "id": "aws/mcp-server/app.py",
+      "name": "aws/mcp-server/app.py",
+      "type": "hub",
+      "lines": 463,
+      "tokens": 4599,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [
+        "SqueezeHTTPRequestHandler"
+      ],
+      "functions": [
+        "handle_mcp_jsonrpc",
+        "handle_rest_request",
+        "lambda_handler",
+        "_send_json",
+        "do_OPTIONS",
+        "do_GET",
+        "do_POST",
+        "log_message",
+        "run_standalone"
+      ],
+      "description": "aws/mcp-server/app.py: 1 classes (SqueezeHTTPRequestHandler) | 9 functions (handle_mcp_jsonrpc) | 8 imports"
+    },
+    {
+      "id": "aws/mcp-server/squeeze_core.py",
+      "name": "aws/mcp-server/squeeze_core.py",
+      "type": "hub",
+      "lines": 600,
+      "tokens": 5819,
+      "centrality": 1,
+      "color": "#10b981",
+      "classes": [],
+      "functions": [
+        "mask_secrets",
+        "skeletonize_python",
+        "skeletonize_typescript",
+        "skeletonize_go",
+        "skeletonize_rust",
+        "skeletonize_code",
+        "shrink_json_data",
+        "_shrink",
+        "shrink_logs_data",
+        "generate_codebase_graph",
+        "align_prompt_for_cache",
+        "optimize_prompt"
+      ],
+      "description": "aws/mcp-server/squeeze_core.py: 12 functions (mask_secrets) | 8 imports"
+    },
+    {
+      "id": "aws/demo-data/sample_repo_snippet.py",
+      "name": "aws/demo-data/sample_repo_snippet.py",
+      "type": "hub",
+      "lines": 68,
+      "tokens": 681,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [
+        "OrderValidationError",
+        "PaymentGatewayError",
+        "OrderItem",
+        "OrderProcessor"
+      ],
+      "functions": [
+        "__init__",
+        "total",
+        "validate_order",
+        "calculate_tax_and_discounts",
+        "authorize_payment",
+        "settle_and_dispatch"
+      ],
+      "description": "aws/demo-data/sample_repo_snippet.py: 4 classes (OrderValidationError) | 6 functions (__init__) | 5 imports"
+    },
+    {
+      "id": "aws/scripts/simulate_demo_traffic.py",
+      "name": "aws/scripts/simulate_demo_traffic.py",
+      "type": "backend",
+      "lines": 111,
+      "tokens": 1229,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "simulate_traffic"
+      ],
+      "description": "aws/scripts/simulate_demo_traffic.py: 1 functions (simulate_traffic) | 7 imports"
+    },
+    {
+      "id": "aws/scripts/test_bedrock_agent.py",
+      "name": "aws/scripts/test_bedrock_agent.py",
+      "type": "backend",
+      "lines": 104,
+      "tokens": 1036,
+      "centrality": 0,
+      "color": "#6366f1",
+      "classes": [],
+      "functions": [
+        "invoke_agent"
+      ],
+      "description": "aws/scripts/test_bedrock_agent.py: 1 functions (invoke_agent) | 6 imports"
+    },
+    {
+      "id": "aws/scripts/test_local_engine.py",
+      "name": "aws/scripts/test_local_engine.py",
+      "type": "hub",
+      "lines": 162,
+      "tokens": 1773,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [
+        "TestSqueezeAIEngine",
+        "OrderProcessor"
+      ],
+      "functions": [
+        "setUp",
+        "test_01_shrink_logs",
+        "test_02_shrink_json",
+        "test_03_skeletonize_code",
+        "test_04_dlp_secret_shield",
+        "test_05_reversible_chunks",
+        "test_06_codebase_graph",
+        "test_07_bedrock_action_group_event",
+        "test_08_mcp_lambda_function_url"
+      ],
+      "description": "aws/scripts/test_local_engine.py: 2 classes (TestSqueezeAIEngine) | 9 functions (setUp) | 7 imports"
+    },
+    {
+      "id": "assets/05_squeezed_code_skeleton.py",
+      "name": "assets/05_squeezed_code_skeleton.py",
+      "type": "hub",
+      "lines": 80,
+      "tokens": 850,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [
+        "PaymentGatewayException",
+        "InventoryExhaustedException",
+        "FraudDetectionAlert",
+        "LineItem",
+        "OrderHeader",
+        "FraudAssessmentEngine",
+        "InventoryReservationManager",
+        "PaymentRailClient"
+      ],
+      "functions": [
+        "compute_subtotal_cents",
+        "is_eligible_for_free_shipping",
+        "total_cents",
+        "__init__",
+        "inspect_request",
+        "reserve_skus",
+        "release_reservation",
+        "authorize_charge",
+        "capture_charge",
+        "execute_order_pipeline"
+      ],
+      "description": "assets/05_squeezed_code_skeleton.py: 8 classes (PaymentGatewayException) | 10 functions (compute_subtotal_cents) | 10 imports"
+    },
+    {
+      "id": "assets/04_big_code_chunk_500lines.py",
+      "name": "assets/04_big_code_chunk_500lines.py",
+      "type": "hub",
+      "lines": 224,
+      "tokens": 2072,
+      "centrality": 0,
+      "color": "#10b981",
+      "classes": [
+        "PaymentGatewayException",
+        "InventoryExhaustedException",
+        "FraudDetectionAlert",
+        "LineItem",
+        "OrderHeader",
+        "FraudAssessmentEngine",
+        "InventoryReservationManager",
+        "PaymentRailClient"
+      ],
+      "functions": [
+        "compute_subtotal_cents",
+        "is_eligible_for_free_shipping",
+        "total_cents",
+        "__init__",
+        "inspect_request",
+        "reserve_skus",
+        "release_reservation",
+        "authorize_charge",
+        "capture_charge",
+        "execute_order_pipeline"
+      ],
+      "description": "assets/04_big_code_chunk_500lines.py: 8 classes (PaymentGatewayException) | 10 functions (compute_subtotal_cents) | 10 imports"
+    }
+  ],
+  "links": [
+    {
+      "source": "background.js",
+      "target": "skeletonizer.js",
+      "label": "imports"
+    },
+    {
+      "source": "test_suite.js",
+      "target": "squeeze_mcp.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/lambdas/log-processor/index.py",
+      "target": "aws/lambdas/log-processor/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/lambdas/codebase-indexer/index.py",
+      "target": "aws/lambdas/codebase-indexer/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/lambdas/dlp-verifier/index.py",
+      "target": "aws/lambdas/dlp-verifier/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/lambdas/bedrock-action-handler/index.py",
+      "target": "aws/lambdas/bedrock-action-handler/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/cdk/cdk.out/asset.687ea3d7eb5d8cabddea98082a49acc148edcee403230563a840770b95284092/index.py",
+      "target": "aws/cdk/cdk.out/asset.687ea3d7eb5d8cabddea98082a49acc148edcee403230563a840770b95284092/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/cdk/cdk.out/asset.5f881867aa123bca5dae14c42018fbcb5967c9572e762dab572874ed27058276/index.py",
+      "target": "aws/cdk/cdk.out/asset.5f881867aa123bca5dae14c42018fbcb5967c9572e762dab572874ed27058276/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/cdk/cdk.out/asset.fb7524e4bdfa49a7c0562cbda0a8fcb4382ae04921545c47005de6f6d6593dcf/index.py",
+      "target": "aws/cdk/cdk.out/asset.fb7524e4bdfa49a7c0562cbda0a8fcb4382ae04921545c47005de6f6d6593dcf/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/cdk/cdk.out/asset.bc4ffbbca47c22f996253bf20885cc775eff2dd56315f240a0d49cb2ad455959/index.py",
+      "target": "aws/cdk/cdk.out/asset.bc4ffbbca47c22f996253bf20885cc775eff2dd56315f240a0d49cb2ad455959/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/cdk/cdk.out/asset.21663d0d6a5e6803837b4781d94cdb20d1034e67c34b7f4c17e192e288483d1f/index.py",
+      "target": "aws/cdk/cdk.out/asset.21663d0d6a5e6803837b4781d94cdb20d1034e67c34b7f4c17e192e288483d1f/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/cdk/cdk.out/asset.6732323ac764912c1126eb2a09ad4f297d4f7747e794397ac2a7b4169f7bd6c7/app.py",
+      "target": "aws/cdk/cdk.out/asset.6732323ac764912c1126eb2a09ad4f297d4f7747e794397ac2a7b4169f7bd6c7/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/cdk/cdk.out/asset.2bb8068f1633690dd140c3204e2d80eeb8f75444523681282b357b92b00610bb/index.py",
+      "target": "aws/cdk/cdk.out/asset.2bb8068f1633690dd140c3204e2d80eeb8f75444523681282b357b92b00610bb/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/cdk/cdk.out/asset.71b047216f66595e3f8565f28dc2f8d23141556e0f166053d4a48b80fcd2af7f/app.py",
+      "target": "aws/cdk/cdk.out/asset.71b047216f66595e3f8565f28dc2f8d23141556e0f166053d4a48b80fcd2af7f/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/cdk/cdk.out/asset.56c263d9e76312476cd8ca620fd191b4d2db9ee4537f33eff0658877dacb7124/index.py",
+      "target": "aws/cdk/cdk.out/asset.56c263d9e76312476cd8ca620fd191b4d2db9ee4537f33eff0658877dacb7124/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/cdk/cdk.out/asset.dece92409bfe79ff340f4db9acc75cee7682bfb648c637ba67e53695a6b7f061/index.py",
+      "target": "aws/cdk/cdk.out/asset.dece92409bfe79ff340f4db9acc75cee7682bfb648c637ba67e53695a6b7f061/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/mcp-server/app.py",
+      "target": "aws/mcp-server/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/scripts/simulate_demo_traffic.py",
+      "target": "aws/lambdas/log-processor/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/scripts/test_local_engine.py",
+      "target": "aws/lambdas/log-processor/squeeze_core.py",
+      "label": "imports"
+    },
+    {
+      "source": "aws/scripts/test_local_engine.py",
+      "target": "website/app.js",
+      "label": "imports"
+    }
+  ]
+};
 
     // --- CANVAS FORCE SIMULATION ---
     const container = document.getElementById("canvas-container");

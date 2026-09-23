@@ -143,6 +143,14 @@ assert(graph.graphText.includes("AppServer"), "Graph text missing AppServer clas
 assert(graph.graphText.includes("AuthManager"), "Graph text missing AuthManager class");
 console.log("✓ Test 7: Topological codebase knowledge graph generation passed.");
 
+// 8. MCP Codebase Graph Disk Generation (codebase_graph.html & CODEBASE_GRAPH.md)
+const { execSync } = require("child_process");
+const mcpGraphOutput = execSync(`python3 -c "import squeeze_mcp; print(squeeze_mcp.generate_codebase_graph('.'))"`).toString();
+assert(mcpGraphOutput.includes("codebase_graph.html"), "Missing codebase_graph.html in MCP output");
+assert(fs.existsSync("codebase_graph.html"), "codebase_graph.html was not written to disk");
+assert(fs.existsSync("CODEBASE_GRAPH.md"), "CODEBASE_GRAPH.md was not written to disk");
+console.log("✓ Test 8: MCP automated codebase_graph.html & CODEBASE_GRAPH.md disk generation passed.");
+
 console.log("\n==========================================");
 console.log("🎉 ALL TESTS PASSED SUCCESSFULLY (100%)");
 console.log("==========================================");

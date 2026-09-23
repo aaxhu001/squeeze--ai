@@ -18,6 +18,8 @@ import json
 import re
 import hashlib
 import time
+import gzip
+import base64
 
 # --- REVERSIBLE CHUNK STORAGE (CCR) ---
 CHUNK_STORE = {}
@@ -282,15 +284,109 @@ def shrink_logs_data(log_text: str) -> str:
 
     return "\n".join(result)
 
-def generate_codebase_graph(root_dir: str = ".", max_files: int = 120) -> str:
-    """Traverses a codebase, extracts AST symbols and imports, and builds a topological knowledge graph."""
+GRAPH_HTML_TEMPLATE_B64 = """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"""
+
+def resolve_import_path(source_path: str, imp_str: str, file_paths: list):
+    """Resolves an import statement to a relative file path within the indexed codebase."""
+    imp_clean = imp_str.strip("'\" ")
+    if imp_clean in file_paths:
+        return imp_clean
+    source_dir = os.path.dirname(source_path)
+    norm = os.path.normpath(os.path.join(source_dir, imp_clean)).replace("\\", "/")
+    if norm.startswith("./"):
+        norm = norm[2:]
+    for fp in file_paths:
+        fp_norm = fp.replace("\\", "/")
+        fp_no_ext = os.path.splitext(fp_norm)[0]
+        if norm == fp_norm or norm == fp_no_ext or norm + "/index" == fp_no_ext:
+            return fp
+    imp_base = os.path.splitext(os.path.basename(imp_clean))[0]
+    if imp_base and imp_base.lower() not in ["index", "types", "utils", "common"]:
+        for fp in file_paths:
+            fp_base = os.path.splitext(os.path.basename(fp))[0]
+            if imp_base == fp_base and fp != source_path:
+                return fp
+    return None
+
+def build_codebase_graph_html(repo_name: str, files_indexed: list, links: list, in_degree: dict, symbol_count: int, raw_tokens: int, graph_tokens: int, pct_saved: float) -> str:
+    """Builds a self-contained, high-performance interactive HTML5 canvas visualization."""
+    nodes = []
+    for item in files_indexed:
+        p = item["path"]
+        deg = in_degree.get(p, 0)
+        ext = os.path.splitext(p)[1].lower()
+        classes = item["classes"]
+        functions = item["functions"]
+
+        if deg >= 2 or len(classes) >= 2 or len(functions) >= 6:
+            ntype = "hub"
+            color = "#10b981"
+        elif "context" in p.lower() or "service" in p.lower() or "api" in p.lower() or "backend" in p.lower() or ext in [".py", ".go", ".rs", ".java", ".cpp", ".c"]:
+            ntype = "backend"
+            color = "#6366f1"
+        elif "screen" in p.lower() or "component" in p.lower() or "view" in p.lower() or "ui" in p.lower() or ext in [".tsx", ".jsx", ".html", ".vue", ".svelte"]:
+            ntype = "frontend"
+            color = "#06b6d4"
+        elif any(k in p.lower() for k in ["test", "spec", "tool", "script", "install", "config"]):
+            ntype = "tooling"
+            color = "#f59e0b"
+        else:
+            ntype = "module"
+            color = "#8b5cf6"
+
+        desc = []
+        if classes: desc.append(f"{len(classes)} classes ({classes[0]})")
+        if functions: desc.append(f"{len(functions)} functions ({functions[0]})")
+        if item["imports"]: desc.append(f"{len(item['imports'])} imports")
+        desc_str = " | ".join(desc) if desc else "Module declarations"
+
+        nodes.append({
+            "id": p,
+            "name": p,
+            "type": ntype,
+            "lines": item["lines"],
+            "tokens": item["tokens"],
+            "centrality": deg,
+            "color": color,
+            "classes": classes,
+            "functions": functions,
+            "description": f"{p}: {desc_str}"
+        })
+
+    if not links and len(nodes) > 1:
+        top_hub = sorted(nodes, key=lambda n: n["tokens"], reverse=True)[0]
+        for n in nodes[1:min(len(nodes), 8)]:
+            links.append({"source": n["id"], "target": top_hub["id"], "label": "references"})
+
+    graph_json = json.dumps({"nodes": nodes, "links": links}, indent=2)
+
+    try:
+        decomp = gzip.decompress(base64.b64decode(GRAPH_HTML_TEMPLATE_B64.encode("ascii"))).decode("utf-8")
+        final_html = (
+            decomp.replace("__REPO_NAME__", repo_name)
+                  .replace("__STAT_FILES__", str(len(files_indexed)))
+                  .replace("__STAT_SYMBOLS__", str(symbol_count))
+                  .replace("__RAW_TOKENS__", f"{raw_tokens:,}")
+                  .replace("__GRAPH_TOKENS__", f"{graph_tokens:,}")
+                  .replace("__PCT_SAVED__", f"{pct_saved}")
+                  .replace("__GRAPH_DATA__", graph_json)
+        )
+        return final_html
+    except Exception as err:
+        return f"<!-- Error building visual graph: {err} -->"
+
+def generate_codebase_graph(root_dir: str = ".", max_files: int = 120, save_files: bool = True) -> str:
+    """Traverses a codebase, extracts AST symbols and imports, and builds a topological knowledge graph.
+    Automatically generates and saves an interactive visualizer ('codebase_graph.html') and
+    markdown index ('CODEBASE_GRAPH.md') into the scanned directory.
+    """
     if not os.path.isdir(root_dir):
         return f"Error: '{root_dir}' is not a valid directory."
 
     ignore_dirs = {
         "node_modules", ".git", "dist", "build", "__pycache__", ".venv", "venv",
         "env", ".env", "coverage", ".next", ".cache", ".idea", ".vscode", "tmp", "temp",
-        "PERSONAL_GUIDES_AND_DOCS", "icons"
+        "PERSONAL_GUIDES_AND_DOCS", "icons", ".expo"
     }
     code_exts = {".py", ".ts", ".tsx", ".js", ".jsx", ".go", ".rs", ".java", ".c", ".cpp", ".h"}
 
@@ -311,22 +407,22 @@ def generate_codebase_graph(root_dir: str = ".", max_files: int = 120) -> str:
                 rel_path = os.path.relpath(full_path, root_dir)
                 try:
                     with open(full_path, "r", encoding="utf-8", errors="ignore") as fp:
-                        content = fp.read()
-                    raw_bytes += len(content)
+                        content_str = fp.read()
+                    raw_bytes += len(content_str)
 
-                    classes = re.findall(r'\bclass\s+([a-zA-Z0-9_$]+)', content)
-                    types = re.findall(r'\b(?:type|interface)\s+([a-zA-Z0-9_$]+)', content)
-                    raw_funcs = re.findall(r'(?:def|function)\s+([a-zA-Z0-9_$]+)', content)
+                    classes = re.findall(r"\bclass\s+([a-zA-Z0-9_$]+)", content_str)
+                    types = re.findall(r"\b(?:type|interface)\s+([a-zA-Z0-9_$]+)", content_str)
+                    raw_funcs = re.findall(r"(?:def|function|const)\s+([a-zA-Z0-9_$]+)\s*(?:=\s*(?:async\s*)?\([^)]*\)|=|\()", content_str)
 
                     func_names = []
                     for name in raw_funcs:
-                        if name and name not in func_names and name not in ["if", "for", "while", "switch"]:
+                        if name and name not in func_names and name not in ["if", "for", "while", "switch", "require"]:
                             func_names.append(name)
 
                     imports = []
-                    import_matches = re.findall(r'(?:from\s+[\'"]?([a-zA-Z0-9_./-]+)[\'"]?\s+import|import\s+[\'"]?([a-zA-Z0-9_./-]+)[\'"]?|require\([\'"]([a-zA-Z0-9_./-]+)[\'"]\))', content)
+                    import_matches = re.findall(r'''(?:from\s+['"]?([a-zA-Z0-9_./-]+)['"]?\s+import|import\s+['"]?([a-zA-Z0-9_./-]+)['"]?|require\(['"]([a-zA-Z0-9_./-]+)['"]\))''', content_str)
                     for im1, im2, im3 in import_matches:
-                        target = im1 or im2 or im3
+                        target = (im1 or im2 or im3).strip("'\" ")
                         if target and target not in imports:
                             imports.append(target)
 
@@ -337,9 +433,9 @@ def generate_codebase_graph(root_dir: str = ".", max_files: int = 120) -> str:
                         "path": rel_path,
                         "classes": list(dict.fromkeys(classes + types))[:8],
                         "functions": list(dict.fromkeys(func_names))[:12],
-                        "imports": list(dict.fromkeys(imports))[:8],
-                        "lines": len(content.split("\n")),
-                        "tokens": max(1, len(content) // 4)
+                        "imports": list(dict.fromkeys(imports))[:10],
+                        "lines": len(content_str.split("\n")),
+                        "tokens": max(1, len(content_str) // 4)
                     })
                 except Exception:
                     pass
@@ -347,49 +443,95 @@ def generate_codebase_graph(root_dir: str = ".", max_files: int = 120) -> str:
     if not files_indexed:
         return f"No matching code files found in '{root_dir}'."
 
-    # Compute dependency in-degrees
-    in_degree = {}
+    # Resolve links and in-degrees (centrality)
+    file_paths = [x["path"] for x in files_indexed]
+    in_degree = {x["path"]: 0 for x in files_indexed}
+    links = []
+    seen_links = set()
+
     for item in files_indexed:
-        base_name = os.path.splitext(os.path.basename(item["path"]))[0]
-        in_degree[item["path"]] = 0
-        for other in files_indexed:
-            for imp in other["imports"]:
-                if base_name in imp:
-                    in_degree[item["path"]] += 1
+        src = item["path"]
+        for imp in item["imports"]:
+            tgt = resolve_import_path(src, imp, file_paths)
+            if tgt and tgt != src:
+                link_key = (src, tgt)
+                if link_key not in seen_links:
+                    seen_links.add(link_key)
+                    links.append({"source": src, "target": tgt, "label": "imports"})
+                    in_degree[tgt] = in_degree.get(tgt, 0) + 1
 
     files_ranked = sorted(files_indexed, key=lambda x: in_degree.get(x["path"], 0), reverse=True)
     raw_tokens = max(1, raw_bytes // 4)
     graph_tokens = max(1, len(files_indexed) * 35)
     pct_saved = round((1.0 - (graph_tokens / max(1, raw_tokens))) * 100, 1)
 
+    abs_root = os.path.abspath(root_dir)
+    repo_name = os.path.basename(abs_root) or "Codebase"
+    html_file = os.path.join(abs_root, "codebase_graph.html")
+    md_file = os.path.join(abs_root, "CODEBASE_GRAPH.md")
+
+    html_saved = False
+    if save_files:
+        try:
+            html_content = build_codebase_graph_html(
+                repo_name=repo_name,
+                files_indexed=files_indexed,
+                links=links,
+                in_degree=in_degree,
+                symbol_count=symbol_count,
+                raw_tokens=raw_tokens,
+                graph_tokens=graph_tokens,
+                pct_saved=pct_saved
+            )
+            with open(html_file, "w", encoding="utf-8") as f:
+                f.write(html_content)
+            html_saved = True
+        except Exception:
+            pass
+
     output = [
         "# 🗺️ SQUEEZE CODEBASE TOPOLOGICAL GRAPH",
-        f"- **Repository Path**: `{os.path.abspath(root_dir)}`",
+        f"- **Repository Path**: `{abs_root}`"
+    ]
+
+    if html_saved:
+        output.append(f"- **Interactive Visualizer Generated**: `{html_file}` (Saved on disk! Double-click to open in browser & explore interactive node graph)")
+    output.append(f"- **Markdown Knowledge Index**: `{md_file}`")
+    output.extend([
         f"- **Files Scanned**: {len(files_indexed)} | **Total Symbols Indexed**: {symbol_count}",
         f"- **Raw Code Tokens**: ~{raw_tokens:,} | **Graph Tokens**: ~{graph_tokens:,}",
         f"- **Token Compression**: ~{pct_saved}% savings (exploration cost eliminated)",
         "",
         "### 🏛️ Core Architecture Hubs (Ranked by Centrality):"
-    ]
+    ])
 
     for item in files_ranked[:5]:
         p = item["path"]
         deg = in_degree.get(p, 0)
-        c_str = f"Classes: [{', '.join(item['classes'])}]" if item['classes'] else ""
-        f_str = f"Funcs: [{', '.join(item['functions'][:5])}]" if item['functions'] else ""
+        c_str = f"Classes: [{', '.join(item['classes'])}]" if item["classes"] else ""
+        f_str = f"Funcs: [{', '.join(item['functions'][:5])}]" if item["functions"] else ""
         sym_desc = " | ".join(filter(None, [c_str, f_str])) or "Module exports"
         output.append(f"- **`{p}`** (Centrality: {deg} imports)\n  ↳ {sym_desc}")
 
     output.append("\n### 📦 Full Module Symbol & Interface Map:")
     for item in files_indexed:
         p = item["path"]
-        c_str = f"Classes: [{', '.join(item['classes'])}]" if item['classes'] else ""
-        f_str = f"Funcs: [{', '.join(item['functions'])}]" if item['functions'] else ""
-        imp_str = f"Imports: [{', '.join(item['imports'][:4])}]" if item['imports'] else ""
+        c_str = f"Classes: [{', '.join(item['classes'])}]" if item["classes"] else ""
+        f_str = f"Funcs: [{', '.join(item['functions'])}]" if item["functions"] else ""
+        imp_str = f"Imports: [{', '.join(item['imports'][:4])}]" if item["imports"] else ""
         details = " | ".join(filter(None, [c_str, f_str, imp_str])) or "Declarations & configurations"
         output.append(f"- `{p}` ({item['lines']} lines, ~{item['tokens']} tokens)\n  ↳ {details}")
 
-    return "\n".join(output)
+    full_md = "\n".join(output)
+
+    if save_files:
+        try:
+            with open(md_file, "w", encoding="utf-8") as f:
+                f.write(full_md)
+        except Exception:
+            pass
+
+    return full_md
 
 def align_prompt_for_cache(system_prompt: str, architecture_context: str, user_task: str) -> str:
     """Formats prompt into Tier 1 (Static Persona) -> Tier 2 (Architecture Context) -> Tier 3 (Volatile Task)."""
@@ -464,7 +606,7 @@ def optimize_prompt(prompt: str, store_reversible: bool = True) -> dict:
 TOOLS = [
     {
         "name": "squeeze_codebase_graph",
-        "description": "Codebase Knowledge Graph: Scans a directory and generates a compact topological symbol and dependency map so coding assistants know where everything lives without reading all files.",
+        "description": "Codebase Knowledge Graph: Scans a directory and generates a compact topological symbol and dependency map. Automatically saves an interactive visual graph ('codebase_graph.html') and markdown index ('CODEBASE_GRAPH.md') directly in the target directory for browser inspection.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -603,7 +745,8 @@ def handle_message(msg):
         if tool_name == "squeeze_codebase_graph":
             target_dir = args.get("directory_path") or args.get("root_dir") or "."
             max_f = args.get("max_files", 100)
-            graph = generate_codebase_graph(target_dir, max_f)
+            save_f = args.get("save_files", True)
+            graph = generate_codebase_graph(target_dir, max_f, save_files=save_f)
             return {
                 "jsonrpc": "2.0",
                 "id": msg_id,
